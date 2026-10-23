@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Gestión de Flota CONAF</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Maqueta UIA · registro OPERATIVO (ESTANDAR_UI coipo_master_produccion): banner de gerencia arriba,
+   barra de aplicación con selector de perfil, navegación por módulo y área de trabajo densa. */
+:root{
+  /* Medidos del banner (UI-2) — sólo superficie */
+  --banner-campo-principal:#064928; --banner-campo-izquierdo:#15301d;
+  /* Neutros con sesgo verde */
+  --bg:#f3f5f2; --sup:#ffffff; --sup-2:#edf1ec; --sup-3:#e3e9e3; --linea:#d3dcd4; --linea-fuerte:#a9b8ad;
+  --tinta:#16231b; --tinta-2:#45554b; --tinta-3:#647368;
+  --verde-tinta:#064928; --verde-tinta-fuerte:#043620; --foco-color:#064928;
+  --boton:#064928; --boton-hover:#0a5a33; --boton-texto:#ffffff;
+  --placa-fondo:#ffffff; --placa-tinta:#111111; --placa-borde:#1d1d1d;
+  --franja-fondo:#fff4cf; --franja-tinta:#5c4100; --franja-borde:#e3c35c;
+  /* Estados: forma + etiqueta + color (UI-13); texto ≥4,5:1 sobre su fondo (UI-14) */
+  --st-disp:#1f6b3f; --st-disp-bg:#ddf0e3;
+  --st-res:#1d4f8c;  --st-res-bg:#dde8f7;
+  --st-pend:#704600; --st-pend-bg:#fbebbd;
+  --st-terr:#58318e; --st-terr-bg:#ebe2f7;
+  --st-tall:#923e05; --st-tall-bg:#fde3cf;
+  --st-malo:#9e1c13; --st-malo-bg:#fbdcd8;
+  --st-excl:#3d4550; --st-excl-bg:#e2e6ea;
+  --st-neu:#3d4e45;  --st-neu-bg:#e4eae5;
+  /* Tipografía */
+  --ff-cuerpo:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --ff-titulo:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --ff-dato:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --f-xs:.75rem; --f-s:.875rem; --f-m:1rem; --f-l:1.125rem; --f-xl:1.375rem; --f-2xl:1.75rem; --f-3xl:2.25rem;
+  /* Espaciado, radio, elevación, capas, movimiento (§3.1) */
+  --e-1:.25rem; --e-2:.5rem; --e-3:.75rem; --e-4:1rem; --e-5:1.5rem; --e-6:2rem; --e-7:3rem;
+  --r-s:4px; --r-m:8px; --r-l:16px; --r-pill:999px;
+  --s-1:0 2px 6px rgba(6,73,40,.08); --s-2:0 6px 18px rgba(6,73,40,.10); --s-3:0 12px 36px rgba(6,73,40,.12); --s-4:0 24px 72px rgba(6,73,40,.14);
+  --z-barra:100; --z-desplegable:200; --z-modal:300; --z-aviso:400;
+  --curva:cubic-bezier(.16,.85,.2,1); --t-micro:.2s; --t-local:.35s; --t-capa:.5s;
+  --gutter-l:max(16px, env(safe-area-inset-left, 0px)); --gutter-r:max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#121814; --sup:#1a221d; --sup-2:#212b25; --sup-3:#29342d; --linea:#33413a; --linea-fuerte:#4e5f55;
+  --tinta:#e5ece7; --tinta-2:#b4c1b8; --tinta-3:#8f9d94;
+  --verde-tinta:#4fb37a; --verde-tinta-fuerte:#7fcb9d; --foco-color:#4fb37a;
+  --boton:#0b6a3a; --boton-hover:#0e7c45; --boton-texto:#ffffff;
+  --placa-fondo:#f4f4f2; --placa-tinta:#111111; --placa-borde:#000000;
+  --franja-fondo:#3a2f0c; --franja-tinta:#f3d98a; --franja-borde:#6d5617;
+  --st-disp:#86d7a6; --st-disp-bg:#163825; --st-res:#a3c6f3; --st-res-bg:#182b45;
+  --st-pend:#f3c969; --st-pend-bg:#3b2e0c; --st-terr:#cbb1f1; --st-terr-bg:#2e2246;
+  --st-tall:#f7b183; --st-tall-bg:#43250e; --st-malo:#f6a69f; --st-malo-bg:#481a16;
+  --st-excl:#c6ccd4; --st-excl-bg:#2b3036; --st-neu:#bccabf; --st-neu-bg:#25302a;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#121814; --sup:#1a221d; --sup-2:#212b25; --sup-3:#29342d; --linea:#33413a; --linea-fuerte:#4e5f55;
+  --tinta:#e5ece7; --tinta-2:#b4c1b8; --tinta-3:#8f9d94;
+  --verde-tinta:#4fb37a; --verde-tinta-fuerte:#7fcb9d; --foco-color:#4fb37a;
+  --boton:#0b6a3a; --boton-hover:#0e7c45; --boton-texto:#ffffff;
+  --placa-fondo:#f4f4f2; --placa-tinta:#111111; --placa-borde:#000000;
+  --franja-fondo:#3a2f0c; --franja-tinta:#f3d98a; --franja-borde:#6d5617;
+  --st-disp:#86d7a6; --st-disp-bg:#163825; --st-res:#a3c6f3; --st-res-bg:#182b45;
+  --st-pend:#f3c969; --st-pend-bg:#3b2e0c; --st-terr:#cbb1f1; --st-terr-bg:#2e2246;
+  --st-tall:#f7b183; --st-tall-bg:#43250e; --st-malo:#f6a69f; --st-malo-bg:#481a16;
+  --st-excl:#c6ccd4; --st-excl-bg:#2b3036; --st-neu:#bccabf; --st-neu-bg:#25302a;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--tinta)}
+body{font-family:var(--ff-cuerpo);font-size:var(--f-s);line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sup)}
+h1,h2,h3,h4{font-family:var(--ff-titulo);margin:0;text-wrap:balance;line-height:1.2}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--foco-color);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--ff-dato)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Banner GEFA (UI-1: título sin caja, del px 875 al 2704 del asset) ---------- */
+.banner{position:relative;background:var(--banner-campo-principal);container-type:inline-size;line-height:0}
+.banner img{display:block;width:100%;height:auto}
+.banner .corto{display:none}
+.banner .titulo-banner{position:absolute;top:0;bottom:0;left:calc(875 / 3032 * 100%);right:calc((3032 - 2704) / 3032 * 100%);display:flex;align-items:center;line-height:1.1;color:#fff;font-family:var(--ff-titulo);font-weight:600;font-size:clamp(1rem,2.1cqi,2rem);letter-spacing:.01em;padding-left:1cqi}
+.titulo-banner small{display:block;font-family:var(--ff-cuerpo);font-weight:400;font-size:.55em;opacity:.92;margin-top:.2em;letter-spacing:.02em}
+@media (max-width:559.98px){ /* teléfono */
+  .banner .largo{display:none} .banner .corto{display:block;width:auto;height:64px;max-width:100%}
+  .banner .titulo-banner{display:none}
+}
+.franja{background:var(--franja-fondo);color:var(--franja-tinta);border-bottom:1px solid var(--franja-borde);font-size:var(--f-xs);padding-block:var(--e-2);padding-left:var(--gutter-l);padding-right:var(--gutter-r);display:flex;gap:var(--e-2);flex-wrap:wrap;align-items:center}
+.franja b{letter-spacing:.06em;text-transform:uppercase}
+
+/* ---------- Barra de aplicación ---------- */
+.barra{position:sticky;top:env(safe-area-inset-top,0px);z-index:var(--z-barra);background:var(--sup);border-bottom:1px solid var(--linea);box-shadow:var(--s-1)}
+.barra-in{display:flex;align-items:center;gap:var(--e-4);flex-wrap:wrap;padding-block:var(--e-2);padding-left:var(--gutter-l);padding-right:var(--gutter-r)}
+.app-nombre{font-family:var(--ff-titulo);font-weight:700;font-size:var(--f-l);color:var(--verde-tinta);display:flex;align-items:center;gap:var(--e-2)}
+.app-nombre .sigla{font-family:var(--ff-dato);font-size:var(--f-xs);color:var(--tinta-3);font-weight:500;border:1px solid var(--linea);border-radius:var(--r-s);padding:0 var(--e-1)}
+.perfil{margin-left:auto;display:flex;align-items:center;gap:var(--e-3);flex-wrap:wrap}
+.perfil label{font-size:var(--f-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-3)}
+.perfil select{width:auto;min-height:36px;border:1px solid var(--linea-fuerte);border-radius:var(--r-m);background:var(--sup);padding:0 var(--e-3);font-weight:600}
+.quien{display:flex;flex-direction:column;line-height:1.25;font-size:var(--f-xs);color:var(--tinta-2)}
+.quien b{color:var(--tinta);font-size:var(--f-s)}
+.nav{display:flex;gap:var(--e-1);overflow-x:auto;padding-left:var(--gutter-l);padding-right:var(--gutter-r);border-top:1px solid var(--linea);scrollbar-width:thin}
+.nav button{border:0;background:none;padding:var(--e-3) var(--e-3);min-height:44px;font-weight:500;color:var(--tinta-2);border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:var(--e-2);transition:color var(--t-micro) var(--curva),border-color var(--t-micro) var(--curva)}
+.nav button:hover{color:var(--tinta)}
+.nav button[aria-current="page"]{color:var(--verde-tinta);border-bottom-color:var(--verde-tinta);font-weight:600}
+.nav .cuenta{font-family:var(--ff-dato);font-size:var(--f-xs);background:var(--st-pend-bg);color:var(--st-pend);border-radius:var(--r-pill);padding:0 var(--e-2);font-weight:600}
+
+/* ---------- Área de trabajo ---------- */
+main{padding-block:var(--e-5) var(--e-7);padding-left:var(--gutter-l);padding-right:var(--gutter-r);max-width:1480px;margin:0 auto}
+.cab-vista{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--e-4);flex-wrap:wrap;margin-bottom:var(--e-5)}
+.cab-vista h1{font-size:var(--f-2xl);font-weight:600}
+.cab-vista p{color:var(--tinta-2);max-width:72ch;margin-top:var(--e-1)}
+.ref-ers{font-family:var(--ff-dato);font-size:var(--f-xs);color:var(--tinta-3)}
+.grid{display:grid;gap:var(--e-4)}
+.g-kpi{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.g-2{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+.g-2b{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.g-form{grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);align-items:start}
+@media (max-width:767.98px){ /* tableta */ .barra{position:relative;top:0} .perfil{margin-left:0} }
+@media (max-width:899.98px){ /* columna */ .g-2,.g-2b,.g-form{grid-template-columns:minmax(0,1fr)} }
+.panel{background:var(--sup);border:1px solid var(--linea);border-radius:var(--r-m);min-width:0}
+.panel>header{display:flex;align-items:center;justify-content:space-between;gap:var(--e-3);padding:var(--e-3) var(--e-4);border-bottom:1px solid var(--linea);flex-wrap:wrap}
+.panel>header h2{font-size:var(--f-l);font-weight:600}
+.panel>header .sub{font-size:var(--f-xs);color:var(--tinta-3)}
+.panel .cuerpo{padding:var(--e-4)}
+.kpi{background:var(--sup);border:1px solid var(--linea);border-radius:var(--r-m);padding:var(--e-3) var(--e-4);display:flex;flex-direction:column;gap:var(--e-1)}
+.kpi .k{font-size:var(--f-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--tinta-3)}
+.kpi .v{font-family:var(--ff-titulo);font-size:var(--f-3xl);font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:var(--f-xs);color:var(--tinta-2)}
+.kpi.alerta .v{color:var(--st-malo)}
+
+/* Placa patente chilena */
+.placa{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:var(--placa-fondo);color:var(--placa-tinta);border:1.5px solid var(--placa-borde);border-radius:3px;padding:1px 6px 0;font-family:var(--ff-dato);font-weight:600;font-size:var(--f-s);letter-spacing:.06em;line-height:1.05;min-width:80px;white-space:nowrap}
+.placa::after{content:"CHILE";font-size:7px;letter-spacing:.3em;font-weight:500;color:#444;font-family:var(--ff-cuerpo)}
+
+/* Chips de estado (forma + etiqueta + color) */
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:var(--r-pill);padding:2px 9px 2px 7px;font-size:var(--f-xs);font-weight:600;border:1px solid currentColor;white-space:nowrap;line-height:1.4}
+.chip i{font-style:normal;font-size:.95em;line-height:1}
+.c-disp{color:var(--st-disp);background:var(--st-disp-bg)} .c-res{color:var(--st-res);background:var(--st-res-bg)}
+.c-pend{color:var(--st-pend);background:var(--st-pend-bg)} .c-terr{color:var(--st-terr);background:var(--st-terr-bg)}
+.c-tall{color:var(--st-tall);background:var(--st-tall-bg)} .c-malo{color:var(--st-malo);background:var(--st-malo-bg)}
+.c-excl{color:var(--st-excl);background:var(--st-excl-bg)} .c-neu{color:var(--st-neu);background:var(--st-neu-bg)}
+
+/* Tablas */
+.tabla-env{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:var(--f-s)}
+th{text-align:left;font-weight:600;font-size:var(--f-xs);text-transform:uppercase;letter-spacing:.05em;color:var(--tinta-3);padding:var(--e-2) var(--e-3);border-bottom:1px solid var(--linea-fuerte);white-space:nowrap;background:var(--sup)}
+td{padding:var(--e-2) var(--e-3);border-bottom:1px solid var(--linea);vertical-align:middle}
+tr.clic{cursor:pointer;transition:background var(--t-micro) var(--curva)}
+tr.clic:hover{background:var(--sup-2)}
+td.d{text-align:right;font-variant-numeric:tabular-nums}
+.tenue{color:var(--tinta-3)}
+.peq{font-size:var(--f-xs)}
+
+/* Botones (8 estados, UI-9: cargando = no aplica en maqueta sin red; vacío/error se declaran por vista) */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--e-2);min-height:40px;padding:0 var(--e-4);border-radius:var(--r-m);border:1px solid var(--boton);background:var(--boton);color:var(--boton-texto);font-weight:600;cursor:pointer;transition:background var(--t-micro) var(--curva),transform var(--t-micro) var(--curva)}
+.btn:hover{background:var(--boton-hover)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{background:var(--sup-3);border-color:var(--linea);color:var(--tinta-3);cursor:not-allowed;transform:none}
+.btn.sec{background:var(--sup);color:var(--verde-tinta);border-color:var(--linea-fuerte)}
+.btn.sec:hover{background:var(--sup-2)}
+.btn.peligro{background:var(--sup);color:var(--st-malo);border-color:var(--st-malo)}
+.btn.peligro:hover{background:var(--st-malo-bg)}
+.btn.aviso{background:var(--sup);color:var(--st-pend);border-color:var(--st-pend)}
+.btn.aviso:hover{background:var(--st-pend-bg)}
+.btn.chico{min-height:32px;padding:0 var(--e-3);font-size:var(--f-xs)}
+@media (pointer:coarse){ .btn,.btn.chico{min-height:44px} }
+.acciones{display:flex;gap:var(--e-2);flex-wrap:wrap}
+
+/* Formularios */
+.campos{display:grid;gap:var(--e-4);grid-template-columns:repeat(2,minmax(0,1fr))}
+.campos .ancho{grid-column:1/-1}
+@media (max-width:559.98px){ .campos{grid-template-columns:minmax(0,1fr)} }
+.campo{display:flex;flex-direction:column;gap:var(--e-1);min-width:0}
+.campo>label,.campo>.lbl{font-weight:600;font-size:var(--f-s)}
+.campo .ayuda{font-size:var(--f-xs);color:var(--tinta-3)}
+input[type=text],input[type=number],input[type=datetime-local],input[type=search],select,textarea{min-height:40px;border:1px solid var(--linea-fuerte);border-radius:var(--r-m);background:var(--sup);padding:var(--e-2) var(--e-3);width:100%;transition:border-color var(--t-micro) var(--curva)}
+textarea{min-height:76px;resize:vertical}
+input:disabled,select:disabled,input[readonly]{background:var(--sup-2);color:var(--tinta-2)}
+input[aria-invalid="true"],select[aria-invalid="true"],textarea[aria-invalid="true"]{border-color:var(--st-malo);border-width:2px}
+@media (hover:none) and (pointer:coarse){ input,select,textarea{font-size:16px;touch-action:manipulation} }
+fieldset{border:1px solid var(--linea);border-radius:var(--r-m);padding:var(--e-3) var(--e-4) var(--e-4);margin:0;min-width:0}
+legend{font-family:var(--ff-titulo);font-weight:600;font-size:var(--f-m);padding:0 var(--e-2);color:var(--verde-tinta)}
+.seccion-num{font-family:var(--ff-dato);font-size:var(--f-xs);color:var(--tinta-3);margin-right:var(--e-1)}
+.opciones{display:flex;gap:var(--e-4);flex-wrap:wrap}
+.opciones label{display:flex;align-items:center;gap:var(--e-2);font-weight:500;min-height:32px;cursor:pointer}
+.lista-check{max-height:200px;overflow:auto;border:1px solid var(--linea);border-radius:var(--r-m);padding:var(--e-1) var(--e-2)}
+.lista-check label{display:flex;align-items:center;gap:var(--e-2);padding:var(--e-1) 0;font-weight:400;cursor:pointer}
+.destino{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr) auto;gap:var(--e-2);align-items:end}
+@media (max-width:767.98px){ .destino{grid-template-columns:minmax(0,1fr)} }
+.cc-res{border:1px solid var(--linea);border-radius:var(--r-m);max-height:170px;overflow:auto;margin-top:var(--e-1)}
+.cc-res button{display:flex;gap:var(--e-3);width:100%;text-align:left;border:0;background:none;padding:var(--e-2) var(--e-3);cursor:pointer;border-bottom:1px solid var(--linea)}
+.cc-res button:hover,.cc-res button[aria-selected="true"]{background:var(--st-disp-bg)}
+
+/* Revisión automática */
+.revision{display:flex;flex-direction:column;gap:var(--e-2)}
+.regla{display:grid;grid-template-columns:22px minmax(0,1fr);gap:var(--e-2);padding:var(--e-2) var(--e-3);border-radius:var(--r-m);border:1px solid var(--linea);background:var(--sup)}
+.regla .ico{font-weight:700;font-size:var(--f-m);line-height:1.3;text-align:center}
+.regla b{display:block;font-size:var(--f-s)}
+.regla span{font-size:var(--f-xs);color:var(--tinta-2)}
+.regla.ok .ico{color:var(--st-disp)} .regla.av{border-color:var(--st-pend);background:var(--st-pend-bg)} .regla.av .ico{color:var(--st-pend)}
+.regla.bl{border-color:var(--st-malo);background:var(--st-malo-bg)} .regla.bl .ico{color:var(--st-malo)}
+.regla.inf .ico{color:var(--st-res)}
+
+/* Flujo de estados */
+.flujo{display:flex;gap:0;flex-wrap:wrap;margin-top:var(--e-2)}
+.flujo span{font-size:var(--f-xs);padding:2px 8px;border:1px solid var(--linea);margin-right:-1px;color:var(--tinta-3);background:var(--sup)}
+.flujo span.hecho{background:var(--st-disp-bg);color:var(--st-disp);border-color:var(--st-disp)}
+.flujo span.actual{background:var(--boton);color:var(--boton-texto);border-color:var(--boton);font-weight:600}
+.flujo span:first-child{border-radius:var(--r-s) 0 0 var(--r-s)} .flujo span:last-child{border-radius:0 var(--r-s) var(--r-s) 0}
+
+/* Tarjetas de solicitud */
+.sol{border:1px solid var(--linea);border-radius:var(--r-m);background:var(--sup);padding:var(--e-3) var(--e-4);display:flex;flex-direction:column;gap:var(--e-2)}
+.sol .fila{display:flex;align-items:center;gap:var(--e-3);flex-wrap:wrap;justify-content:space-between}
+.sol .id{font-family:var(--ff-dato);font-weight:600;font-size:var(--f-s)}
+.sol h3{font-size:var(--f-m);font-weight:600}
+.meta{display:flex;gap:var(--e-4);flex-wrap:wrap;font-size:var(--f-xs);color:var(--tinta-2)}
+.meta b{color:var(--tinta);font-weight:600}
+.lista{display:flex;flex-direction:column;gap:var(--e-3)}
+.seleccionable{cursor:pointer;transition:border-color var(--t-micro) var(--curva),box-shadow var(--t-micro) var(--curva)}
+.seleccionable:hover{border-color:var(--linea-fuerte);box-shadow:var(--s-1)}
+.seleccionable[aria-pressed="true"]{border-color:var(--verde-tinta);box-shadow:0 0 0 1px var(--verde-tinta)}
+dl.ficha{display:grid;grid-template-columns:minmax(120px,max-content) minmax(0,1fr);gap:var(--e-1) var(--e-4);margin:0;font-size:var(--f-s)}
+dl.ficha dt{color:var(--tinta-3);font-size:var(--f-xs);text-transform:uppercase;letter-spacing:.04em;padding-top:2px}
+dl.ficha dd{margin:0;min-width:0}
+
+/* Visor Gantt */
+.gantt-ctl{display:flex;gap:var(--e-3);flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--linea-fuerte);border-radius:var(--r-m);overflow:hidden}
+.seg button{border:0;background:var(--sup);padding:0 var(--e-3);min-height:36px;cursor:pointer;font-weight:500;border-right:1px solid var(--linea)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--boton);color:var(--boton-texto)}
+.gantt-env{overflow-x:auto;border-top:1px solid var(--linea)}
+.gantt{min-width:960px;position:relative}
+.g-fila{display:grid;grid-template-columns:230px minmax(0,1fr);border-bottom:1px solid var(--linea);min-height:46px}
+.g-fila.cab{position:sticky;top:0;background:var(--sup);z-index:3;min-height:40px}
+.g-et{position:sticky;left:0;background:var(--sup);z-index:2;border-right:1px solid var(--linea-fuerte);padding:var(--e-1) var(--e-3);display:flex;align-items:center;gap:var(--e-2);min-width:0}
+.g-et .txt{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.g-et .txt span{font-size:11px;color:var(--tinta-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-pista{position:relative}
+.g-dias{display:grid;height:100%}
+.g-dia{border-right:1px solid var(--linea);font-size:11px;text-align:center;padding-top:4px;color:var(--tinta-2);line-height:1.15}
+.g-dia.fin{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--sup-2) 6px 8px)}
+.g-dia.hoy{background:var(--st-disp-bg)}
+.g-dia b{display:block;font-family:var(--ff-dato);font-size:12px;color:var(--tinta)}
+.g-fondo{position:absolute;inset:0;display:grid;pointer-events:none}
+.g-fondo div{border-right:1px solid var(--linea)}
+.g-fondo .fin{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--sup-2) 6px 8px)}
+.g-hoy{position:absolute;top:0;bottom:0;width:2px;background:var(--st-malo);z-index:1}
+.barra-g{position:absolute;top:7px;bottom:7px;border-radius:var(--r-s);border:1.5px solid currentColor;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;padding:0 6px;overflow:hidden;white-space:nowrap;cursor:pointer;z-index:1;transition:box-shadow var(--t-micro) var(--curva)}
+.barra-g:hover,.barra-g:focus-visible{box-shadow:var(--s-2);z-index:2}
+.barra-g.pend{border-style:dashed}
+.barra-g.conflicto{outline:2px solid var(--st-malo);outline-offset:1px}
+.leyenda{display:flex;gap:var(--e-2);flex-wrap:wrap;padding:var(--e-3) var(--e-4);border-top:1px solid var(--linea)}
+
+/* Semáforo mantención */
+.medidor{height:8px;border-radius:var(--r-pill);background:var(--sup-3);overflow:hidden;min-width:80px}
+.medidor span{display:block;height:100%}
+
+/* Modal / panel lateral */
+.velo{position:fixed;inset:0;background:rgba(10,24,16,.45);z-index:var(--z-modal);display:flex;justify-content:flex-end}
+.cajon{background:var(--bg);width:min(920px,100%);height:100%;overflow:auto;box-shadow:var(--s-4);display:flex;flex-direction:column;animation:entra var(--t-capa) var(--curva)}
+.cajon>header{position:sticky;top:0;background:var(--sup);border-bottom:1px solid var(--linea);padding:var(--e-3) var(--e-4);padding-top:calc(var(--e-3) + env(safe-area-inset-top,0px));display:flex;gap:var(--e-3);align-items:center;justify-content:space-between;z-index:2}
+.cajon .cuerpo{padding:var(--e-4);padding-bottom:calc(var(--e-6) + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:var(--e-4)}
+@keyframes entra{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+.pestanas{display:flex;gap:var(--e-1);border-bottom:1px solid var(--linea);overflow-x:auto}
+.pestanas button{border:0;background:none;padding:var(--e-2) var(--e-3);min-height:40px;border-bottom:3px solid transparent;cursor:pointer;font-weight:500;color:var(--tinta-2);white-space:nowrap}
+.pestanas button[aria-selected="true"]{border-bottom-color:var(--verde-tinta);color:var(--verde-tinta);font-weight:600}
+
+/* Orden de salida */
+.orden{background:#fff;color:#111;border:1px solid #999;padding:var(--e-5);font-size:13px;max-width:780px;margin:0 auto;width:100%}
+.orden .enc{display:flex;justify-content:space-between;gap:var(--e-4);border-bottom:2px solid #064928;padding-bottom:var(--e-3);margin-bottom:var(--e-3);flex-wrap:wrap}
+.orden h3{font-size:20px;color:#064928}
+.orden table td{border-bottom:1px solid #ddd;padding:5px 6px;color:#111}
+.orden table td:first-child{color:#555;width:30%;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.orden .pie{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--e-4);margin-top:var(--e-6);text-align:center;font-size:12px;color:#333}
+.orden .pie div{border-top:1px solid #333;padding-top:4px}
+.orden .qr{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;color:#333}
+.orden .qr canvas,.orden .qr img{width:112px;height:112px}
+.orden .sello{display:inline-block;border:2px solid #1d4f8c;color:#1d4f8c;padding:2px 8px;font-weight:700;font-size:11px;letter-spacing:.08em;transform:rotate(-2deg)}
+
+/* Barras de reporte */
+.barras{display:flex;flex-direction:column;gap:var(--e-2)}
+.barras .b{display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr) 84px;gap:var(--e-3);align-items:center;font-size:var(--f-xs)}
+.barras .pista{height:18px;background:var(--sup-2);border-radius:var(--r-s);overflow:hidden}
+.barras .pista span{display:block;height:100%;background:var(--verde-tinta);border-radius:var(--r-s)}
+.barras .eti{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:559.98px){ .barras .b{grid-template-columns:minmax(0,1fr) 70px} .barras .pista{grid-column:1/-1;grid-row:2} }
+
+/* Avisos y vacío */
+.aviso-tostada{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:var(--z-aviso);display:flex;flex-direction:column;gap:var(--e-2);max-width:min(420px,calc(100% - 32px))}
+.tostada{background:var(--tinta);color:var(--bg);padding:var(--e-3) var(--e-4);border-radius:var(--r-m);box-shadow:var(--s-3);font-size:var(--f-s);animation:sube var(--t-local) var(--curva)}
+@keyframes sube{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.vacio{padding:var(--e-6) var(--e-4);text-align:center;color:var(--tinta-2);display:flex;flex-direction:column;align-items:center;gap:var(--e-2)}
+.vacio h3{font-size:var(--f-l);color:var(--tinta)}
+.nota{font-size:var(--f-xs);color:var(--tinta-2);background:var(--sup-2);border:1px dashed var(--linea-fuerte);border-radius:var(--r-m);padding:var(--e-2) var(--e-3)}
+.alerta-fila{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:var(--e-3);align-items:center;padding:var(--e-2) 0;border-bottom:1px solid var(--linea)}
+.alerta-fila:last-child{border-bottom:0}
+.pin-reveal{border:1px solid var(--linea-fuerte);background:var(--sup);border-radius:var(--r-s);padding:0 var(--e-2);cursor:pointer;font-size:var(--f-xs);min-height:28px}
+footer.pie-app{padding-block:var(--e-5);padding-left:var(--gutter-l);padding-right:var(--gutter-r);border-top:1px solid var(--linea);color:var(--tinta-3);font-size:var(--f-xs);display:flex;gap:var(--e-4);flex-wrap:wrap;justify-content:space-between}
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important} }
+</style>
+
+</head><body>
+<div class="banner" role="banner">
+  <img class="largo" src="banner-gefa.jpg" alt="CONAF · Unidad de Información y Análisis · Gerencia de Finanzas y Administración" width="3032" height="177">
+  <img class="corto" src="banner-gefa-corto.jpg" alt="CONAF · Unidad de Información y Análisis" width="875" height="177">
+  <div class="titulo-banner" aria-hidden="true"><div>Sistema Nacional de Gestión de Flota<small>Pool de vehículos y control de salidas a terreno</small></div></div>
+</div>
+<div class="franja" role="note"><b>Maqueta no operacional</b><span>Vehículos y vencimientos: datos reales de Oficina Central (números de motor y chasis enmascarados) (planilla de mantenciones al 28-09-2026). Personas, RUT, pólizas y cargas de combustible: ficticios. Fecha de referencia: jueves 22-10-2026.</span></div>
+
+<div class="barra">
+  <div class="barra-in">
+    <div class="app-nombre">Gestión de Flota <span class="sigla">INF-LOG-TI-2026-V1</span></div>
+    <div class="perfil">
+      <label for="sel-rol">Ver como</label>
+      <select id="sel-rol">
+        <option value="solicitante">Funcionario solicitante</option>
+        <option value="jefatura">Jefatura directa</option>
+        <option value="encargado" selected>Encargado de vehículos</option>
+        <option value="conductor">Conductor</option>
+        <option value="super">Administrador nacional</option>
+      </select>
+      <div class="quien" id="quien"></div>
+    </div>
+  </div>
+  <nav class="nav" id="nav" aria-label="Módulos"></nav>
+</div>
+
+<main id="vista" tabindex="-1"></main>
+<footer class="pie-app"><span>CONAF · Unidad de Información y Análisis · Maqueta para revisión con la Sección Servicios Generales (GEFA)</span><span>Base: ERS INF-LOG-TI-2026-V1 (15-10-2026) · Prototipo Pool de Vehículos V7 · GESAD</span></footer>
+<div class="aviso-tostada" id="tostadas" aria-live="polite"></div>
+<div id="capa"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+"use strict";
+/* ======================= DATOS ======================= */
+const HOY = new Date("2026-10-22T10:00:00");
+const DIA = 864e5;
+const F = s => new Date(s.length===10 ? s+"T00:00:00" : s);
+const FERIADOS = ["2026-10-12","2026-10-31","2026-11-01","2026-12-08","2026-12-25"];
+
+function dv(n){let s=0,m=2;for(const c of String(n).split("").reverse()){s+=+c*m;m=m===7?2:m+1}const r=11-(s%11);return r===11?"0":r===10?"K":String(r)}
+function rutF(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,".")+"-"+dv(n)}
+
+/* Vehículos: datos reales normalizados de la planilla de mantenciones + inventario del Prototipo V7 */
+const VEH_RAW = [{"raw": "CR BJ - 40", "pat": "CRBJ-40", "anio": 2009, "mm": "Nissan QASH QAI", "ultMant": 267615, "km": 291231, "gases": "2027-02-28", "rt": "2027-02-28", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "RIESGO CATASTRÓFICO (>250k sin repuestos): Peligro inminente de accidente o falla de motor. OBLIGATORIO Y URGENTE cambiar kit de distribución (correa/cadena), embrague, amortiguadores, frenos completos (discos y pastillas), bomba de agua y fluidos. No apto para rutas largas.", "obs": null, "tipo": "STATION WAGON", "marca": "Nissan", "modelo": "Qashqai", "motor": "SJNFBAJ10U13·····", "chasis": "MR2069·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "DR SY - 45", "pat": "DRSY-45", "anio": 2012, "mm": "Chevrolet Combo 1.3", "ultMant": 102063, "km": 123798, "gases": "2026-08-31", "rt": "2026-08-31", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "URGENTE (>90k sin repuestos): Entrando a zona roja de corte de correa de distribución. Proceder de inmediato con reemplazo de correa/cadena de distribución, bujías, pastillas/discos de freno, y aceite de caja de transmisión.", "obs": null, "tipo": "FURGÓN", "marca": "Chevrolet", "modelo": "Combo 1.3", "motor": "Z13DTJ42·····", "chasis": "WOLVXCF25B43·····", "estadoInv": "EN TALLER", "asig": "Pool", "enInv": true}, {"raw": "FH WT - 20", "pat": "FHWT-20", "anio": 2013, "mm": "Nissan Terrano DXS 4X4", "ultMant": 217617, "km": 247198, "gases": "2027-02-28", "rt": "2027-02-28", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "CRÍTICO (>150k sin repuestos): Límite excedido para piezas vitales. Urge cambiar kit de distribución (las correas suelen cortar a los 100k), bomba de agua, líquido de frenos, líquido refrigerante y revisión profunda del tren delantero (bandejas y bujes).", "obs": null, "tipo": "CAMIONETA", "marca": "Nissan", "modelo": "Terrano DXS 4X4", "motor": "YD2539·····", "chasis": "3N6PD23W7ZK9·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "FX HB - 90", "pat": "FXHB-90", "anio": 2013, "mm": "Hyundai HD - 65", "ultMant": 394124, "km": 490993, "gases": "2026-10-21", "rt": "2026-10-21", "soap": "2026-09-30", "perm": "2026-09-30", "diag": "RIESGO CATASTRÓFICO (>250k sin repuestos): Peligro inminente de accidente o falla de motor. OBLIGATORIO Y URGENTE cambiar kit de distribución (correa/cadena), embrague, amortiguadores, frenos completos (discos y pastillas), bomba de agua y fluidos. No apto para rutas largas.", "obs": null, "tipo": "CAMIÓN", "marca": "Hyundai", "modelo": "HD-65", "motor": "D4GAC1·····", "chasis": "KMFGA17HPDC2·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "GV YR - 53", "pat": "GVYR-53", "anio": 2015, "mm": "Nissan Navara", "ultMant": 266443, "km": 266443, "gases": null, "rt": null, "soap": null, "perm": null, "diag": "RIESGO CATASTRÓFICO (>250k sin repuestos): Peligro inminente de accidente o falla de motor. OBLIGATORIO Y URGENTE cambiar kit de distribución (correa/cadena), embrague, amortiguadores, frenos completos (discos y pastillas), bomba de agua y fluidos. No apto para rutas largas.", "obs": "TALLER", "tipo": "CAMIONETA", "marca": "Nissan", "modelo": "Navara", "motor": "YD2586·····", "chasis": "MNTVCUD4E0E66·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "JF TS - 53", "pat": "JFTS-53", "anio": 2017, "mm": "Toyota New Hi LUX", "ultMant": 200495, "km": 237498, "gases": "2026-12-31", "rt": "2027-06-30", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "CRÍTICO (>150k sin repuestos): Límite excedido para piezas vitales. Urge cambiar kit de distribución (las correas suelen cortar a los 100k), bomba de agua, líquido de frenos, líquido refrigerante y revisión profunda del tren delantero (bandejas y bujes).", "obs": null, "tipo": "CAMIONETA", "marca": "Toyota", "modelo": "New Hi Lux", "motor": "2TRA0·····", "chasis": "MR0JX8DD5G05·····", "estadoInv": "D. Ejecutiva", "asig": "Dirección", "enInv": true}, {"raw": "JG ZP - 49", "pat": "JGZP-49", "anio": 2017, "mm": "Mahindra XUV 500 2.2", "ultMant": 141054, "km": 165360, "gases": "2027-01-31", "rt": "2027-01-31", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "CRÍTICO (>150k sin repuestos): Límite excedido para piezas vitales. Urge cambiar kit de distribución (las correas suelen cortar a los 100k), bomba de agua, líquido de frenos, líquido refrigerante y revisión profunda del tren delantero (bandejas y bujes).", "obs": null, "tipo": "STATION WAGON", "marca": "Mahindra", "modelo": "XUV 500 2.2", "motor": "HNG4F·····", "chasis": "MA1YW2HNUG6F·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "JX ZS - 29", "pat": "JXZS-29", "anio": 2018, "mm": "Hyundai Porter 2.5", "ultMant": 114722, "km": 174941, "gases": "2027-01-31", "rt": "2027-01-31", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "CRÍTICO (>150k sin repuestos): Límite excedido para piezas vitales. Urge cambiar kit de distribución (las correas suelen cortar a los 100k), bomba de agua, líquido de frenos, líquido refrigerante y revisión profunda del tren delantero (bandejas y bujes).", "obs": null, "tipo": "CAMIONETA", "marca": "Hyundai", "modelo": "Porter 2.5", "motor": "D4CBH2·····", "chasis": "KMFZAY7KAHU4·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "JY DC - 46", "pat": "JYDC-46", "anio": 2018, "mm": "Toyota Hi Lux 2.4", "ultMant": 138740, "km": 149069, "gases": "2026-09-30", "rt": "2026-09-30", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "URGENTE (>90k sin repuestos): Entrando a zona roja de corte de correa de distribución. Proceder de inmediato con reemplazo de correa/cadena de distribución, bujías, pastillas/discos de freno, y aceite de caja de transmisión.", "obs": null, "tipo": "CAMIONETA", "marca": "Toyota", "modelo": "Hi Lux 2.4", "motor": "2GDC2·····", "chasis": "MR0EB8DD1J05·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "KB DB - 91", "pat": "KBDB-91", "anio": 2018, "mm": "KIA OPTIMA Automat.", "ultMant": 127741, "km": 198596, "gases": "2027-04-30", "rt": "2027-04-30", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "CRÍTICO (>150k sin repuestos): Límite excedido para piezas vitales. Urge cambiar kit de distribución (las correas suelen cortar a los 100k), bomba de agua, líquido de frenos, líquido refrigerante y revisión profunda del tren delantero (bandejas y bujes).", "obs": null, "tipo": "AUTOMÓVIL", "marca": "KIA", "modelo": "Optima Automático", "motor": "G4KJHH3·····", "chasis": "KNAGW413BJ52·····", "estadoInv": "D. Ejecutiva", "asig": "Pool", "enInv": true}, {"raw": "KB SW - 97", "pat": "KBSW-97", "anio": 2018, "mm": "Suzuki Grand Vitara", "ultMant": 194466, "km": 237058, "gases": "2026-10-31", "rt": "2026-10-31", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "CRÍTICO (>150k sin repuestos): Límite excedido para piezas vitales. Urge cambiar kit de distribución (las correas suelen cortar a los 100k), bomba de agua, líquido de frenos, líquido refrigerante y revisión profunda del tren delantero (bandejas y bujes).", "obs": null, "tipo": "TODOTERRENO", "marca": "Suzuki", "modelo": "Grand Vitara", "motor": "J24B-13·····", "chasis": "JS3TA04V2J41·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "PL LH - 22", "pat": "PLLH-22", "anio": 2021, "mm": "Nissan NP300 NAVARA SE", "ultMant": 63205, "km": 119106, "gases": "2026-11-30", "rt": "2027-05-31", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "URGENTE (>90k sin repuestos): Entrando a zona roja de corte de correa de distribución. Proceder de inmediato con reemplazo de correa/cadena de distribución, bujías, pastillas/discos de freno, y aceite de caja de transmisión.", "obs": null, "tipo": "CAMIONETA", "marca": "Nissan", "modelo": "NP300 Navara DC SE 2.3D", "motor": "YS23B266C0·····", "chasis": "3N6BD33A2MK8·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "PL LH - 76", "pat": "PLLH-76", "anio": 2020, "mm": "Nissan NP300 NAVARA XE", "ultMant": 32530, "km": 71390, "gases": "2026-09-30", "rt": "2026-09-30", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "PREVENTIVO (>50k sin repuestos): Requiere cambio urgente de pastillas de freno y bujías. Inspección de neumáticos (desgaste irregular), alineación, balanceo y estado de amortiguadores.", "obs": null, "tipo": "CAMIONETA", "marca": "Nissan", "modelo": "NP300 Navara DC XE 2.3D", "motor": "YS23B266C0·····", "chasis": "3N6BD31A3LK8·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "SF HW - 60", "pat": "SFHW-60", "anio": 2022, "mm": "Peugeot Landtrek 4X4", "ultMant": 33019, "km": 62011, "gases": "2027-02-28", "rt": "2027-02-28", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "PREVENTIVO (>50k sin repuestos): Requiere cambio urgente de pastillas de freno y bujías. Inspección de neumáticos (desgaste irregular), alineación, balanceo y estado de amortiguadores.", "obs": null, "tipo": "CAMIONETA", "marca": "Peugeot", "modelo": "Landtrek 4X4 1.9", "motor": "A5D220·····", "chasis": "VR3FDAHDLP30·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "SH PY - 15", "pat": "SHPY-15", "anio": 2022, "mm": "Nissan Kicks 1.6", "ultMant": 39905, "km": 90713, "gases": "2027-08-31", "rt": "2027-08-31", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "URGENTE (>90k sin repuestos): Entrando a zona roja de corte de correa de distribución. Proceder de inmediato con reemplazo de correa/cadena de distribución, bujías, pastillas/discos de freno, y aceite de caja de transmisión.", "obs": null, "tipo": "SUV", "marca": "Nissan", "modelo": "Kicks 1.6", "motor": "HR16-54·····", "chasis": "3N8CP5HE2PL4·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "SZ CK - 83", "pat": "SZCK-83", "anio": 2023, "mm": "Suzuki NEW GRAND VITARA", "ultMant": 9390, "km": 52410, "gases": null, "rt": "2028-06-30", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "PREVENTIVO (>50k sin repuestos): Requiere cambio urgente de pastillas de freno y bujías. Inspección de neumáticos (desgaste irregular), alineación, balanceo y estado de amortiguadores.", "obs": null, "tipo": "SUV", "marca": "Suzuki", "modelo": "New Grand Vitara 1.5 AWD", "motor": "K15CN71·····", "chasis": "MA3YLL1S3RT1·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "SZ WY - 98", "pat": "SZWY-98", "anio": 2023, "mm": "Suzuki S-Cross 1.4t", "ultMant": 15958, "km": 80812, "gases": "2027-11-30", "rt": "2027-11-30", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "PREVENTIVO (>50k sin repuestos): Requiere cambio urgente de pastillas de freno y bujías. Inspección de neumáticos (desgaste irregular), alineación, balanceo y estado de amortiguadores.", "obs": null, "tipo": "SUV", "marca": "Suzuki", "modelo": "S-Cross 1.4T AWD", "motor": "K14C-13·····", "chasis": "TSMYBA2S7RMB·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "SZ WZ - 31", "pat": "SZWZ-31", "anio": 2023, "mm": "Suzuki S-Cross 1.4t", "ultMant": 12155, "km": 61039, "gases": "2028-04-30", "rt": "2028-04-30", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "PREVENTIVO (>50k sin repuestos): Requiere cambio urgente de pastillas de freno y bujías. Inspección de neumáticos (desgaste irregular), alineación, balanceo y estado de amortiguadores.", "obs": null, "tipo": "SUV", "marca": "Suzuki", "modelo": "S-Cross 1.4T AWD", "motor": "K14C-13·····", "chasis": "TSMYBA2S7RMB·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "VG XF - 75", "pat": "VGXF-75", "anio": 2026, "mm": "KIA Sorento", "ultMant": 38820, "km": 38820, "gases": null, "rt": null, "soap": null, "perm": null, "diag": "? ESTABLE: Mantener rigor en cambios de aceite y filtros. Revisión visual de niveles y presión de neumáticos.", "obs": "ARRENDADA MITTA", "tipo": "SUV", "marca": "KIA", "modelo": "Sorento", "motor": null, "chasis": null, "estadoInv": "BUENO", "asig": "Pool", "enInv": false}, {"raw": "WJ - 77 12", "pat": "WJ-7712", "anio": 2006, "mm": "Nissan Terrano AX- SP", "ultMant": 362284, "km": 373872, "gases": "2026-11-30", "rt": "2027-05-31", "soap": "2027-03-31", "perm": "2027-03-31", "diag": "RIESGO CATASTRÓFICO (>250k sin repuestos): Peligro inminente de accidente o falla de motor. OBLIGATORIO Y URGENTE cambiar kit de distribución (correa/cadena), embrague, amortiguadores, frenos completos (discos y pastillas), bomba de agua y fluidos. No apto para rutas largas.", "obs": null, "tipo": "CAMIONETA", "marca": "Nissan", "modelo": "Terrano AX-SP", "motor": "YD2520·····", "chasis": "JN1CPUD22Z00·····", "estadoInv": "BUENO", "asig": "Pool", "enInv": true}, {"raw": "WX - 66 22", "pat": "WX-6622", "anio": 2007, "mm": "Nissan Terrano 2.5", "ultMant": 352000, "km": 352000, "gases": null, "rt": null, "soap": null, "perm": null, "diag": "RIESGO CATASTRÓFICO (>250k sin repuestos): Peligro inminente de accidente o falla de motor. OBLIGATORIO Y URGENTE cambiar kit de distribución (correa/cadena), embrague, amortiguadores, frenos completos (discos y pastillas), bomba de agua y fluidos. No apto para rutas largas.", "obs": "VIVERO BUIN", "tipo": "CAMIONETA", "marca": "Nissan", "modelo": "Terrano 2.5", "motor": "YD2520·····", "chasis": "JN1CPUD22Z00·····", "estadoInv": "MALO", "asig": "Pool", "enInv": true}];
+const REF = { /* capacidad, tracción, combustible, carga: referenciales a confirmar con la Unidad de Vehículos */
+ "CRBJ-40":[5,"4x2","Gasolina 95",350],"DRSY-45":[2,"4x2","Diésel",650],"FHWT-20":[5,"4x4","Diésel",700],"FXHB-90":[3,"4x2","Diésel",3500],
+ "GVYR-53":[5,"4x4","Diésel",1000],"JFTS-53":[5,"4x4","Diésel",1000],"JGZP-49":[7,"4x2","Diésel",400],"JXZS-29":[3,"4x2","Diésel",1000],
+ "JYDC-46":[5,"4x4","Diésel",1000],"KBDB-91":[5,"4x2","Gasolina 95",400],"KBSW-97":[5,"4x4","Gasolina 95",450],"PLLH-22":[5,"4x4","Diésel",1000],
+ "PLLH-76":[5,"4x2","Diésel",1000],"SFHW-60":[5,"4x4","Diésel",1000],"SHPY-15":[5,"4x2","Gasolina 93",400],"SZCK-83":[5,"AWD","Gasolina 95",400],
+ "SZWY-98":[5,"AWD","Gasolina 95",400],"SZWZ-31":[5,"AWD","Gasolina 95",400],"VGXF-75":[7,"AWD","Diésel",500],"WJ-7712":[5,"4x4","Diésel",700],"WX-6622":[5,"4x4","Diésel",700]};
+const VEH = VEH_RAW.map((v,i)=>{
+  const r = REF[v.pat]||[5,"4x2","Diésel",400];
+  let estado="DISP", modalidad="Pool vehicular (uso compartido)", tenencia="Propiedad CONAF (fiscal)", unidad="Oficina Central · Estacionamiento Eleuterio Ramírez";
+  if(v.pat==="DRSY-45") estado="TALL_C";
+  if(v.pat==="GVYR-53") estado="TALL_P";
+  if(v.pat==="WX-6622"){estado="MALO"; modalidad="Asignación permanente unidad"; unidad="Vivero Buin";}
+  if(v.pat==="JXZS-29") unidad="Oficina Central · base Vivero Buin";
+  if(v.pat==="JFTS-53"||v.pat==="KBDB-91"){estado="EXCL"; modalidad="Asignación exclusiva (Dirección Ejecutiva)";}
+  if(v.pat==="VGXF-75") tenencia="Arriendo operativo (MITTA)";
+  const tarj = 4000+((i*733)%5000);
+  return {...v, cap:r[0], trac:r[1], comb:r[2], cargaKg:r[3], estado, modalidad, tenencia, unidad, region:"Oficina Central",
+    programa:"P01 Gestión Institucional / Finanzas y Administración", proxMant:(v.ultMant||v.km)+10000,
+    poliza:"BCI-"+(1058000+i*37)+"-"+((i*7)%9), polizaVence:"2027-01-31", tarjeta:"COPEC TCT ···· "+tarj, tarjetaEstado: v.pat==="WX-6622"?"En custodia":"Activa", pin:String(1000+((i*389)%9000)).slice(-4), tag:"TAG "+(70500+i*13), cupo:"$ 350.000 / mes"};
+});
+const VX = Object.fromEntries(VEH.map(v=>[v.pat,v]));
+
+/* Personas (FICTICIAS) */
+let NRUT=20000101;
+const P = (id,nom,cargo,ger,extra={})=>({id,nom,cargo,ger,rut:rutF(NRUT+=37),correo:nom.split(" ")[0].toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")+"."+nom.split(" ")[1].toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")+"@conaf.cl",calidad:"Contrata",...extra});
+const PERS = [
+ P("p1","Tomás Riquelme Ortega","Administrador nacional de flota","GEFA · Depto. Servicios y Logística"),
+ P("p2","Daniela Fuentes Araya","Encargada de Vehículos Oficina Central","GEFA · Sección Servicios Generales"),
+ P("p3","Carolina Méndez Rojas","Jefa Departamento de Abastecimiento","GEFA · Depto. Abastecimiento",{jefe:true}),
+ P("p4","Valentina Correa Muñoz","Profesional Depto. Abastecimiento","GEFA · Depto. Abastecimiento",{jefeDe:"p3"}),
+ P("p5","Felipe Arancibia Soto","Jefe Sección Análisis y Diagnóstico","GEPRIF · Depto. Análisis y Predicción",{jefe:true}),
+ P("p6","Matías Leiva Contreras","Profesional Sección Análisis y Diagnóstico","GEPRIF · Depto. Análisis y Predicción",{jefeDe:"p5"}),
+ P("p7","Andrea Pizarro Castillo","Fiscalizadora Forestal","GEF · Depto. Fiscalización Forestal",{jefeDe:"p8"}),
+ P("p8","Raúl Espinoza Medina","Jefe Departamento de Fiscalización Forestal","GEF · Depto. Fiscalización Forestal",{jefe:true}),
+ P("p9","Gonzalo Tapia Herrera","Profesional Depto. Viveros","GEBCC · Depto. Viveros",{jefeDe:"p10"}),
+ P("p10","Marcela Ruiz Quezada","Jefa Departamento de Viveros","GEBCC · Depto. Viveros",{jefe:true}),
+ P("p11","Lorena Díaz Saavedra","Técnica Sección Análisis","GEPRIF · Depto. Análisis y Predicción"),
+ P("p12","Cristián Molina Vera","Fiscalizador Forestal","GEF · Depto. Fiscalización Forestal"),
+ P("p13","Javiera Rojas Bustos","Profesional Prevención Social","GEPRIF · Depto. Prevención"),
+ P("p14","Sebastián Cáceres Peña","Técnico Vivero","GEBCC · Depto. Viveros"),
+ P("p15","Paula Vergara Inostroza","Analista de Compras","GEFA · Depto. Abastecimiento"),
+ P("p16","Nicolás Sandoval Ríos","Analista de Compras","GEFA · Depto. Abastecimiento"),
+ P("c1","Héctor Lagos Vidal","Conductor institucional","GEFA · Sección Servicios Generales",{calidad:"Código del Trabajo"}),
+ P("c2","Juan Pablo Henríquez Toro","Conductor institucional","GEFA · Sección Servicios Generales"),
+ P("c3","Marcelo Bravo Cifuentes","Conductor institucional","GEFA · Sección Servicios Generales"),
+ P("c4","Camila Toledo Reyes","Profesional Depto. Arbolado Urbano","GEBCC · Depto. Arbolado Urbano"),
+ P("c5","Sofía Navarrete León","Profesional Depto. Monitoreo","GEBCC · Depto. Monitoreo"),
+ P("c6","Pedro Olivares Gajardo","Profesional Depto. Planificación","GEPRIF · Depto. Planificación y Control"),
+];
+const PX = Object.fromEntries(PERS.map(p=>[p.id,p]));
+/* Padrón de conductores (DL 799): caución + licencia */
+const COND = [
+ {id:"c1",tipo:"POOL",caucion:"Vigente",polCau:"CAU-2025-00412",cauDesde:"2025-06-01",cauHasta:"2027-05-31",resol:"Res. Ex. 1.204/2025",clases:["B","A4"],licHasta:"2028-03-14"},
+ {id:"c2",tipo:"POOL",caucion:"Vigente",polCau:"CAU-2024-00388",cauDesde:"2024-11-16",cauHasta:"2026-11-15",resol:"Res. Ex. 988/2024",clases:["B","A2"],licHasta:"2027-09-01"},
+ {id:"c3",tipo:"POOL",caucion:"Vigente",polCau:"CAU-2025-00471",cauDesde:"2025-08-31",cauHasta:"2027-08-30",resol:"Res. Ex. 1.377/2025",clases:["B","A4","A5"],licHasta:"2026-11-03"},
+ {id:"p6",tipo:"HABILITADO",caucion:"Vigente",polCau:"CAU-2025-00502",cauDesde:"2025-05-01",cauHasta:"2027-04-30",resol:"Res. Ex. 1.180/2025",clases:["B"],licHasta:"2029-02-11"},
+ {id:"p7",tipo:"HABILITADO",caucion:"Vigente",polCau:"CAU-2024-00310",cauDesde:"2024-03-01",cauHasta:"2027-02-28",resol:"Res. Ex. 402/2024",clases:["B"],licHasta:"2030-07-19"},
+ {id:"p9",tipo:"HABILITADO",caucion:"Vigente",polCau:"CAU-2025-00533",cauDesde:"2025-09-01",cauHasta:"2027-08-31",resol:"Res. Ex. 1.402/2025",clases:["B"],licHasta:"2027-12-02"},
+ {id:"c4",tipo:"HABILITADO",caucion:"Vigente",polCau:"CAU-2025-00560",cauDesde:"2025-02-11",cauHasta:"2027-02-10",resol:"Res. Ex. 233/2025",clases:["B"],licHasta:"2028-06-30"},
+ {id:"c5",tipo:"HABILITADO",caucion:"Vigente",polCau:"CAU-2024-00290",cauDesde:"2024-08-01",cauHasta:"2027-07-31",resol:"Res. Ex. 870/2024",clases:["B"],licHasta:"2026-10-05"},
+ {id:"c6",tipo:"HABILITADO",caucion:"En trámite de renovación",polCau:"Folio CGR 2026-11873",cauDesde:"2023-10-01",cauHasta:"2026-09-30",resol:"Res. Ex. 1.011/2023",clases:["B"],licHasta:"2028-01-20"},
+];
+const CX = Object.fromEntries(COND.map(c=>[c.id,c]));
+
+/* Catálogo de imputación: folios reales del Prototipo V7 (más el centro de costo GEFA visto en comprobantes GESAD) */
+const CC = [
+ ["P01-601","P01 VIAT Y BBYSS CC116 GESTIÓN GEFA-DEFA UD 601","P01"],
+ ["48003","P03 BBYSS OPERACION GERENCIA DEPRIF PT 3-","P03"],["48005","P03 BBYS Y VIATICOS CC 35 OPERACION PREVENCIÓN","P03"],
+ ["48006","P03 GEPRIF 1 BBYS CC 91 ANALISIS Y DIAG","P03"],["48007","P03 BBYS GEPRIF 2 CC87 COMUNID Y PLANI. TERRITORIAL","P03"],
+ ["48010","P03 GEPRIF 12 BBYS CC 36 PREVENCION SOCIAL","P03"],["48011","P03 GEPRIF 13 BBYS CC 70 SILVICULTURA PREVENTIVA","P03"],
+ ["48015","P03 BBYS CC 92 OPERACION ANALISIS Y PREDICCIÓN IF","P03"],["48017","P03 BBYS CC 43 OPERACION LOGISTICA 1ER SEMESTRE","P03"],
+ ["48022","P03 CC43 OPERACION LOGISTICA 2° SEMESTRE","P03"],["48032","P04 BBYSS Y VIATICOS CC 10 GERENCIA DE AREAS PROTEGIDAS","P04"],
+ ["48034","P04 BBYSS CC 10 DEPTO DE USO PUBLICO Y GUARDAPARQUES","P04"],["48037","P04 BBYSS Y VIATICOS CC 53 PLANIFICACION DEL SNASPE","P04"],
+ ["48043","P05 VIATICOS Y BBYSS UD 1401 GERENCIA DE FISCAL.FORESTAL Y EVALUA","P05"],["48046","P05 VIATICOS Y BBYSS UD 1402 GEF1 DEPTO FISCALIZACIÓN FORESTAL","P05"],
+ ["48049","P05 VIATICOS Y BBYSS UD 1402 GEF2 FISCALIZACIÓN AMBIENTAL","P05"],["48053","P05 VIATICOS Y BBYSS UD 1403 GEF 5 EVAL PROYECTO SEIA","P05"],
+ ["48057","P05 VIATICOS Y BBYSS UD 1406 GEF 4 CATASTRO USO DE LA TIERRA","P05"],["48065","P06 UD 1301 CC 002 COSTOS PROPORCIONALES","P06"],
+ ["48067","P06 UD 1301 CC 126 GESTION GCEBX DEPTO ARBOLADO URBANO","P06"]
+].map(([folio,t,prog])=>({folio,t,prog}));
+const CCX = Object.fromEntries(CC.map(c=>[c.folio,c]));
+const PROGRAMAS = {P01:"P01 Gestión Institucional",P03:"P03 Manejo del Fuego (GEPRIF)",P04:"P04 Áreas Silvestres Protegidas",P05:"P05 Fiscalización y Evaluación Ambiental",P06:"P06 Bosques y Cambio Climático"};
+const REGIONES = ["Arica y Parinacota","Tarapacá","Antofagasta","Atacama","Coquimbo","Valparaíso","Metropolitana","O'Higgins","Maule","Ñuble","Biobío","La Araucanía","Los Ríos","Los Lagos","Aysén","Magallanes"];
+
+/* Reservas (ejemplo) */
+const R = (o)=>({pas:[],destinos:[],req:{t4:false,carga:false},reqCond:false,cond:null,relevo:null,pat:null,hist:[],bit:null,dl799:null,obsLog:"",...o});
+let RES = [
+ R({id:"OC-2026-000401",est:"FINALIZADA",fSol:"2026-10-14T09:12",sol:"p6",jefe:"p5",salida:"2026-10-19T08:00",regreso:"2026-10-20T19:00",destinos:[{reg:"Ñuble",com:"Quillón",lug:"Oficina Provincial Diguillín"}],cometido:"Reunión técnica de análisis de causalidad con equipo provincial, previo a la temporada 2026-2027.",km:860,cc:"48006",cond:"p6",pas:["p11"],pat:"SZWY-98",bit:{sal:"2026-10-19T08:10",odoS:79952,combS:"Lleno",docs:true,reg:"2026-10-20T18:42",odoR:80812,combR:"1/2",nov:"Sin novedades"}}),
+ R({id:"OC-2026-000407",est:"FINALIZADA",fSol:"2026-10-09T11:40",sol:"p9",jefe:"p10",salida:"2026-10-15T07:30",regreso:"2026-10-16T18:00",destinos:[{reg:"Valparaíso",com:"Limache",lug:"Vivero Limache"}],cometido:"Retiro de material vegetal para el Programa de Arborización.",km:380,cc:"48067",cond:"p9",pas:["p14"],pat:"PLLH-76",req:{carga:true},bit:{sal:"2026-10-15T07:41",odoS:71010,combS:"3/4",docs:true,reg:"2026-10-16T17:55",odoR:71390,combR:"1/4",nov:"Luz de patente trasera quemada"}}),
+ R({id:"OC-2026-000403",est:"RECHAZADA",fSol:"2026-10-13T10:02",sol:"p6",jefe:"p5",salida:"2026-10-21T09:00",regreso:"2026-10-21T14:00",destinos:[{reg:"Metropolitana",com:"Santiago",lug:"Oficina Regional RM"}],cometido:"Reunión de coordinación de pronóstico.",km:30,cc:"48015",obsLog:"Rechazada: la reunión puede realizarse por videoconferencia."}),
+ R({id:"OC-2026-000406",est:"ANULADA",fSol:"2026-10-15T15:20",sol:"p4",jefe:"p3",salida:"2026-10-22T08:00",regreso:"2026-10-22T17:00",destinos:[{reg:"Valparaíso",com:"Valparaíso",lug:"Dirección Regional"}],cometido:"Visita a bodega regional.",km:250,cc:"P01-601",obsLog:"Anulada por la solicitante: visita reprogramada."}),
+ R({id:"OC-2026-000405",est:"EN_TERRENO",fSol:"2026-10-16T12:30",sol:"p7",jefe:"p8",salida:"2026-10-21T07:30",regreso:"2026-10-23T19:00",destinos:[{reg:"Valparaíso",com:"Quillota",lug:"Sector Pocochay"},{reg:"Valparaíso",com:"Hijuelas",lug:"Predio denunciado"}],cometido:"Fiscalización por corta no autorizada de bosque nativo (denuncia ciudadana).",km:420,cc:"48046",cond:"p7",pas:["p12"],pat:"PLLH-22",req:{t4:true},bit:{sal:"2026-10-21T07:38",odoS:119106,combS:"Lleno",docs:true}}),
+ R({id:"OC-2026-000408",est:"CONFIRMADA",fSol:"2026-10-17T09:05",sol:"p9",jefe:"p10",salida:"2026-10-23T07:30",regreso:"2026-10-24T13:00",destinos:[{reg:"O'Higgins",com:"Rancagua",lug:"Municipalidad de Rancagua"}],cometido:"Entrega de plantas del Programa de Arborización a municipio.",km:210,cc:"48067",reqCond:true,cond:"c1",pat:"JXZS-29",req:{carga:true}}),
+ R({id:"OC-2026-000409",est:"CONFIRMADA",fSol:"2026-10-18T16:44",sol:"p6",jefe:"p5",salida:"2026-10-24T08:00",regreso:"2026-10-25T18:00",destinos:[{reg:"Biobío",com:"Santa Juana",lug:"Sede vecinal sector Tanahuillín"}],cometido:"Apoyo a simulacro comunitario de evacuación ante incendios forestales.",km:1050,cc:"48007",reqCond:true,cond:"c2",relevo:"c3",pas:["p13"],pat:"SFHW-60",req:{t4:true},dl799:{req:true,adj:"Autorización de circulación en día inhábil firmada por Director Ejecutivo (ejemplo)"}}),
+ R({id:"OC-2026-000410",est:"APROBADA",fSol:"2026-10-19T10:15",sol:"p9",jefe:"p10",salida:"2026-10-27T07:00",regreso:"2026-10-30T20:00",destinos:[{reg:"Ñuble",com:"Chillán",lug:"Vivero Chillán (carga)"},{reg:"Atacama",com:"Copiapó",lug:"Vivero Copiapó (descarga)"}],cometido:"Traslado de plantas desde Vivero Chillán a Vivero Copiapó.",km:2700,cc:"48065",reqCond:true,pas:["p14"],req:{carga:true}}),
+ R({id:"OC-2026-000411",est:"CONFIRMADA",fSol:"2026-10-19T14:02",sol:"p4",jefe:"p3",salida:"2026-10-28T08:00",regreso:"2026-10-30T18:00",destinos:[{reg:"La Araucanía",com:"Temuco",lug:"Dirección Regional La Araucanía"}],cometido:"Supervisión de inventario de bodega regional y cierre de procesos de compra.",km:1450,cc:"P01-601",reqCond:true,cond:"c2",pas:["p15"],pat:"KBSW-97"}),
+ R({id:"OC-2026-000412",est:"PEND_JEFE",fSol:"2026-10-21T16:20",sol:"p4",jefe:"p3",salida:"2026-10-26T08:00",regreso:"2026-10-27T20:00",destinos:[{reg:"Ñuble",com:"Bulnes",lug:"Oficina Provincial Diguillín"}],cometido:"Capacitación en compras públicas al equipo regional de abastecimiento.",km:900,cc:"P01-601",reqCond:true,pas:["p15","p16"]}),
+ R({id:"OC-2026-000413",est:"PEND_JEFE",fSol:"2026-10-22T08:47",sol:"p7",jefe:"p8",salida:"2026-10-29T08:00",regreso:"2026-10-29T18:00",destinos:[{reg:"Metropolitana",com:"Melipilla",lug:"Oficina Provincial Melipilla"}],cometido:"Fiscalización de plan de manejo en predio rural.",km:160,cc:"48046",cond:"p7",req:{t4:true}}),
+ R({id:"OC-2026-000414",est:"CONFIRMADA",fSol:"2026-10-20T11:11",sol:"p9",jefe:"p10",salida:"2026-11-02T08:00",regreso:"2026-11-04T18:00",destinos:[{reg:"Maule",com:"Talca",lug:"Centro de Semillas"}],cometido:"Revisión de lotes de semillas y coordinación de despacho.",km:540,cc:"48065",reqCond:true,cond:"c1",pas:["c4"],pat:"JYDC-46"}),
+];
+/* Histórico de ejemplo para reportería (sep-oct 2026) */
+const HIST = [["SHPY-15","P01-601",640],["SZCK-83","48006",1210],["JGZP-49","48046",380],["KBSW-97","48015",920],["SFHW-60","48007",1480],["FHWT-20","48046",310],["CRBJ-40","P01-601",120],["PLLH-22","48043",760],["JYDC-46","48065",530],["SZWZ-31","48032",870],["JXZS-29","48067",260],["SZWY-98","48011",1120],["PLLH-76","48053",410],["VGXF-75","P01-601",190],["FHWT-20","48037",660]];
+RES.forEach(r=>r.hist.push({t:r.fSol,quien:r.sol,acc:"Solicitud ingresada"}));
+let AUD = [
+ {t:"2026-10-22T08:47",u:"p7",acc:"Crea solicitud",obj:"OC-2026-000413",ant:"—",nue:"Pendiente jefatura",ip:"10.20.4.18"},
+ {t:"2026-10-21T16:20",u:"p4",acc:"Crea solicitud",obj:"OC-2026-000412",ant:"—",nue:"Pendiente jefatura",ip:"10.20.4.33"},
+ {t:"2026-10-21T07:38",u:"c2",acc:"Registra salida",obj:"OC-2026-000405 · PLLH-22",ant:"Confirmada",nue:"En terreno · odómetro 119.106",ip:"10.20.9.2"},
+ {t:"2026-10-20T15:02",u:"p2",acc:"Asigna vehículo y conductor",obj:"OC-2026-000411",ant:"Aprobada",nue:"KBSW-97 · J.P. Henríquez",ip:"10.20.4.51"},
+ {t:"2026-10-20T09:30",u:"p1",acc:"Actualiza estado operativo",obj:"GVYR-53",ant:"Disponible",nue:"En taller (preventiva)",ip:"10.20.4.10"},
+];
+const ROLES = {
+ solicitante:{quien:"p4",nombre:"Funcionario solicitante",nav:[["mis","Mis solicitudes"],["nueva","Nueva solicitud"],["visor","Disponibilidad"]]},
+ jefatura:{quien:"p3",nombre:"Jefatura directa",nav:[["bandeja","Bandeja de aprobación"],["visor","Disponibilidad"]]},
+ encargado:{quien:"p2",nombre:"Encargado de vehículos",nav:[["panel","Panel"],["asignacion","Asignación"],["visor","Visor Gantt"],["porteria","Salida y regreso"],["flota","Flota"],["conductores","Conductores"],["reportes","Reportes"]]},
+ conductor:{quien:"c1",nombre:"Conductor",nav:[["agenda","Mi agenda"],["porteria","Salida y regreso"]]},
+ super:{quien:"p1",nombre:"Administrador nacional",nav:[["panel","Panel"],["asignacion","Asignación"],["visor","Visor Gantt"],["porteria","Salida y regreso"],["flota","Flota"],["conductores","Conductores"],["reportes","Reportes"],["admin","Administración"]]},
+};
+const EST = {
+ BORRADOR:["Borrador","c-neu","✎"], PEND_JEFE:["Pendiente jefatura","c-pend","◔"], OBSERVADA:["Observada por jefatura","c-pend","!"],
+ APROBADA:["Aprobada · por asignar","c-pend","◑"], CONFIRMADA:["Confirmada","c-res","■"], EN_TERRENO:["En terreno","c-terr","▶"],
+ FINALIZADA:["Finalizada","c-neu","✓"], RECHAZADA:["Rechazada","c-malo","✕"], SIN_DISP:["Sin disponibilidad","c-malo","∅"], ANULADA:["Anulada","c-neu","—"]};
+const EST_V = {DISP:["Disponible","c-disp","●"],TERR:["En terreno","c-terr","▶"],TALL_P:["En taller · preventiva","c-tall","⚙"],TALL_C:["En taller · correctiva","c-tall","⚙"],MALO:["Fuera de servicio","c-malo","✕"],EXCL:["Asignación exclusiva","c-excl","◆"],BAJA:["En proceso de baja","c-malo","↓"]};
+const ETAPAS = [["BORRADOR","Borrador"],["PEND_JEFE","Jefatura"],["APROBADA","Aprobada"],["CONFIRMADA","Asignada"],["EN_TERRENO","En terreno"],["FINALIZADA","Finalizada"]];
+
+/* ======================= UTILIDADES ======================= */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const DS = ["dom","lun","mar","mié","jue","vie","sáb"], MS=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const fF = d=>{d=typeof d==="string"?F(d):d; return d? String(d.getDate()).padStart(2,"0")+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+d.getFullYear():"—"};
+const fFH = d=>{d=typeof d==="string"?F(d):d; return fF(d)+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
+const fCorta = d=>{d=typeof d==="string"?F(d):d; return DS[d.getDay()]+" "+d.getDate()+" "+MS[d.getMonth()]+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
+const km = n=>n==null?"—":Math.round(n).toLocaleString("es-CL");
+const nom = id=>PX[id]?PX[id].nom:"—";
+const iso = d=>{const z=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())+"T"+z(d.getHours())+":"+z(d.getMinutes())};
+const diasEntre = (a,b)=>Math.round((F(b)-F(a))/DIA);
+const chip = (txt,cls,ico)=>`<span class="chip ${cls}"><i aria-hidden="true">${ico}</i>${esc(txt)}</span>`;
+const chipR = e=>chip(...EST[e]);
+const placa = p=>`<span class="placa" aria-label="Patente ${esc(p)}">${esc(p)}</span>`;
+function chipDoc(fecha, ref=HOY){
+  if(!fecha) return chip("Sin registro","c-malo","?");
+  const d=(F(fecha)-ref)/DIA;
+  if(d<0) return chip("Vencido "+fF(fecha),"c-malo","✕");
+  if(d<=30) return chip("Vence "+fF(fecha),"c-pend","!");
+  return `<span class="num">${fF(fecha)}</span>`;
+}
+function docEstado(fecha, ref=HOY){ if(!fecha) return "SIN"; const d=(F(fecha)-ref)/DIA; return d<0?"VENC":d<=30?"POR":"OK"; }
+function mant(v){ const resta=v.proxMant-v.km; return {resta, est: resta<0?"VENC":resta<=1000?"PROX":"OK"}; }
+function chipMant(v){ const m=mant(v); return m.est==="VENC"?chip("Vencida · "+km(-m.resta)+" km","c-malo","✕"):m.est==="PROX"?chip("Próxima · "+km(m.resta)+" km","c-pend","!"):chip("Al día · "+km(m.resta)+" km","c-disp","●"); }
+function estadoHoy(v){
+  if(["TALL_P","TALL_C","MALO","EXCL","BAJA"].includes(v.estado)) return v.estado;
+  return RES.some(r=>r.pat===v.pat && r.est==="EN_TERRENO")?"TERR":"DISP";
+}
+const chipV = v=>chip(...EST_V[estadoHoy(v)]);
+function inhabiles(sal,reg){ /* DL 799: sábado desde 14:00, domingo, festivo */
+  const out=[]; const a=F(sal), b=F(reg); if(!(b>a)) return out;
+  for(let d=new Date(a.getFullYear(),a.getMonth(),a.getDate()); d<=b; d=new Date(d.getTime()+DIA)){
+    const y=iso(d).slice(0,10), dw=d.getDay();
+    if(FERIADOS.includes(y)) out.push(DS[dw]+" "+fF(d)+" (festivo)");
+    else if(dw===0) out.push("dom "+fF(d));
+    else if(dw===6){ const fin=new Date(d.getTime()+DIA); const s14=new Date(d.getTime()+14*36e5); if(b>s14 && a<fin) out.push("sáb "+fF(d)+" desde 14:00"); }
+  }
+  return out;
+}
+const solapa = (a1,a2,b1,b2)=>F(a1)<F(b2)&&F(b1)<F(a2);
+const ACTIVAS = ["CONFIRMADA","EN_TERRENO"];
+function condApto(cid, r, ignorar){
+  const c=CX[cid], motivos=[]; const fin=F(r.regreso);
+  if(!c) return {ok:false,motivos:["No figura en el padrón de conductores"]};
+  if(c.caucion!=="Vigente") motivos.push("Caución "+c.caucion.toLowerCase());
+  else if(F(c.cauHasta)<fin) motivos.push("Caución vence "+fF(c.cauHasta));
+  if(F(c.licHasta)<fin) motivos.push("Licencia vence "+fF(c.licHasta));
+  const v=r.pat?VX[r.pat]:null;
+  if(v && (v.tipo==="CAMIÓN"||v.cargaKg>3500||v.tipo==="MINIBÚS") && !c.clases.some(x=>["A4","A5","A3"].includes(x))) motivos.push("Requiere licencia profesional clase A");
+  const choque=RES.find(o=>o.id!==r.id&&o.id!==ignorar&&(ACTIVAS.includes(o.est))&&(o.cond===cid||o.relevo===cid)&&solapa(o.salida,o.regreso,r.salida,r.regreso));
+  if(choque) motivos.push("Ocupado en "+choque.id);
+  return {ok:!motivos.length,motivos};
+}
+function vehApto(v, r){
+  const m=[], av=[]; const fin=F(r.regreso);
+  if(["TALL_P","TALL_C"].includes(v.estado)) m.push("En taller");
+  if(v.estado==="MALO") m.push("Fuera de servicio");
+  if(v.estado==="EXCL") m.push("Asignación exclusiva Dirección");
+  const pas=pasajeros(r); if(pas>v.cap) m.push(`Capacidad ${v.cap} < ${pas} personas`);
+  if(r.req.t4 && v.trac==="4x2") m.push("Requiere 4x4");
+  if(r.req.carga && !["CAMIONETA","CAMIÓN","FURGÓN"].includes(v.tipo)) m.push("Sin espacio de carga");
+  [["rt","Revisión técnica"],["soap","SOAP"],["perm","Permiso de circulación"],["gases","Revisión de gases"]].forEach(([k,n])=>{
+    if(!v[k]) av.push(n+" sin registro"); else if(F(v[k])<fin) m.push(n+" vencida al "+fF(v[k]));
+  });
+  const ch=RES.find(o=>o.id!==r.id&&ACTIVAS.includes(o.est)&&o.pat===v.pat&&solapa(o.salida,o.regreso,r.salida,r.regreso));
+  if(ch) m.push("Reservado: "+ch.id);
+  const mt=mant(v); if(mt.est==="VENC") av.push("Mantención vencida hace "+km(-mt.resta)+" km"); else if(mt.resta < (r.km||0)) av.push("Mantención vence durante el viaje");
+  return {ok:!m.length,motivos:m,avisos:av};
+}
+const pasajeros = r=>(r.cond||r.reqCond?1:0)+(r.relevo?1:0)+r.pas.length+(r.externos||0);
+function tostada(t){const c=$("#tostadas"); while(c.children.length>=2) c.firstChild.remove(); const d=document.createElement("div");d.className="tostada";d.textContent=t;$("#tostadas").appendChild(d);setTimeout(()=>d.remove(),4200)}
+function audit(acc,obj,ant,nue){AUD.unshift({t:iso(new Date(HOY.getTime()+(AUD.length%50)*60000)),u:ROLES[rol].quien,acc,obj,ant,nue,ip:"10.20.4."+(10+AUD.length%40)})}
+let corr=415; const nuevoId=()=>"OC-2026-"+String(corr++).padStart(6,"0");
+
+/* ======================= ESTADO DE VISTA ======================= */
+let rol = "encargado", vista = "panel";
+let sel = {asig:null, bandeja:null, port:null, gantt:{ini:F("2026-10-19"),dias:14}, ganttSel:null, flotaFiltro:"todos", condFiltro:"todos"};
+try{ const g=localStorage.getItem("flota-rol"); if(g&&ROLES[g]) rol=g; }catch(e){}
+document.getElementById("sel-rol").value=rol;
+
+function pintarBarra(){
+  const R0=ROLES[rol], p=PX[R0.quien];
+  $("#quien").innerHTML=`<b>${esc(p.nom)}</b><span>${esc(p.cargo)}</span>`;
+  const cuenta = {bandeja:RES.filter(r=>r.est==="PEND_JEFE"&&r.jefe===R0.quien).length, asignacion:RES.filter(r=>r.est==="APROBADA").length,
+                  porteria:RES.filter(r=>(r.est==="CONFIRMADA"&&diasEntre(iso(HOY).slice(0,10),r.salida.slice(0,10))<=2)||r.est==="EN_TERRENO").filter(r=>rol!=="conductor"||r.cond==="c1"||r.relevo==="c1").length};
+  $("#nav").innerHTML=R0.nav.map(([k,t])=>`<button type="button" data-v="${k}" ${k===vista?'aria-current="page"':""}>${t}${cuenta[k]?`<span class="cuenta num" aria-label="${cuenta[k]} pendientes">${cuenta[k]}</span>`:""}</button>`).join("");
+}
+function ir(v){ vista=v; try{history.replaceState(null,"","#"+v)}catch(e){} render(); $("#vista").focus({preventScroll:true}); }
+$("#nav").addEventListener("click",e=>{const b=e.target.closest("button[data-v]"); if(b) ir(b.dataset.v)});
+$("#sel-rol").addEventListener("change",e=>{rol=e.target.value; try{localStorage.setItem("flota-rol",rol)}catch(_){} vista=ROLES[rol].nav[0][0]; render(); tostada("Vista cambiada a: "+ROLES[rol].nombre)});
+
+function render(){
+  if(!ROLES[rol].nav.some(n=>n[0]===vista)) vista=ROLES[rol].nav[0][0];
+  pintarBarra();
+  const viejo=$("#vista"), nuevo=viejo.cloneNode(false); viejo.replaceWith(nuevo); /* descarta oyentes de la vista anterior */
+  const fn = {mis:vMis,nueva:vNueva,visor:vVisor,bandeja:vBandeja,panel:vPanel,asignacion:vAsignacion,porteria:vPorteria,flota:vFlota,conductores:vConductores,reportes:vReportes,agenda:vAgenda,admin:vAdmin}[vista];
+  $("#vista").innerHTML = fn();
+  (post[vista]||(()=>{}))();
+}
+const post = {};
+const cab = (t,d,ref)=>`<div class="cab-vista"><div><h1>${t}</h1><p>${d}</p></div>${ref?`<span class="ref-ers">${ref}</span>`:""}</div>`;
+function flujoHTML(est){
+  const idx = {BORRADOR:0,PEND_JEFE:1,OBSERVADA:1,APROBADA:2,CONFIRMADA:3,EN_TERRENO:4,FINALIZADA:5}[est];
+  if(idx==null) return "";
+  return `<div class="flujo" aria-label="Etapa del flujo">${ETAPAS.map((e,i)=>`<span class="${i<idx?"hecho":i===idx?"actual":""}">${e[1]}</span>`).join("")}</div>`;
+}
+function tarjetaSol(r,{boton,seleccion}={}){
+  const cc=CCX[r.cc];
+  return `<article class="sol ${seleccion!==undefined?"seleccionable":""}" ${seleccion!==undefined?`role="button" tabindex="0" data-sel="${r.id}" aria-pressed="${seleccion}"`:""}>
+   <div class="fila"><span class="id">${r.id}</span>${chipR(r.est)}</div>
+   <h3>${esc(r.cometido)}</h3>
+   <div class="meta"><span><b>${fCorta(r.salida)}</b> → <b>${fCorta(r.regreso)}</b></span><span>${esc(r.destinos.map(d=>d.com+" ("+d.reg+")").join(" · "))}</span><span><b class="num">${km(r.km)}</b> km aprox.</span><span><b>${pasajeros(r)}</b> personas</span>${r.pat?`<span>${placa(r.pat)}</span>`:""}</div>
+   <div class="meta"><span>Solicita: <b>${esc(nom(r.sol))}</b></span><span>Imputación: <b class="mono">${esc(r.cc)}</b> ${cc?esc(cc.prog):""}</span>${r.dl799?.req?`<span>${chip("DL 799 · día inhábil","c-pend","!")}</span>`:""}</div>
+   ${flujoHTML(r.est)}
+   ${r.obsLog?`<p class="nota">${esc(r.obsLog)}</p>`:""}
+   ${boton||""}
+  </article>`;
+}
+
+/* ======================= VISTAS: SOLICITANTE ======================= */
+function vMis(){
+  const yo=ROLES[rol].quien, mias=RES.filter(r=>r.sol===yo).sort((a,b)=>b.fSol.localeCompare(a.fSol));
+  return cab("Mis solicitudes","Estado en tiempo real de tus reservas. Cuando el encargado asigna el vehículo, puedes ver y compartir la orden de salida con código QR.","ERS §4.3 · Perfil 4")+
+  `<div class="acciones" style="margin-bottom:var(--e-4)"><button class="btn" type="button" data-ir="nueva">Nueva solicitud</button></div>
+   <div class="lista">${mias.length?mias.map(r=>tarjetaSol(r,{boton:`<div class="acciones">${["CONFIRMADA","EN_TERRENO","FINALIZADA"].includes(r.est)?`<button class="btn sec chico" type="button" data-orden="${r.id}">Ver orden de salida</button>`:""}${["PEND_JEFE","APROBADA","OBSERVADA","CONFIRMADA"].includes(r.est)?`<button class="btn peligro chico" type="button" data-anular="${r.id}">Anular solicitud</button>`:""}</div>`})).join(""):vacio("Aún no tienes solicitudes","Ingresa tu primera solicitud de vehículo para una salida a terreno.")}</div>`;
+}
+post.mis = ()=>{};
+function vacio(t,d){return `<div class="vacio"><h3>${t}</h3><p>${d}</p></div>`}
+
+let borrador = null;
+function borradorEjemplo(){ return {jefe:"p3",salida:"2026-11-06T08:00",regreso:"2026-11-07T18:00",prog:"P01",cc:"P01-601",cometido:"Supervisión del cierre de inventario anual en bodega de la Dirección Regional del Maule.",destinos:[{reg:"Maule",com:"Talca",lug:"Dirección Regional del Maule"}],km:620,tipo:"Camioneta doble cabina",t4:false,carga:false,reqCond:true,cond:"",relevo:"",pas:["p15"],externos:0,extJust:"",ejemplo:true}; }
+function vNueva(){
+  if(!borrador) borrador=borradorEjemplo();
+  const b=borrador, yo=PX[ROLES[rol].quien];
+  const jefes=PERS.filter(p=>p.jefe);
+  const condOpts=(selId)=>`<option value="">— Seleccionar —</option>`+COND.map(c=>{const ap=condApto(c.id,{...b,id:"tmp",pas:[],req:{}},null);return `<option value="${c.id}" ${c.id===selId?"selected":""} ${ap.ok?"":"disabled"}>${esc(nom(c.id))} · ${c.tipo==="POOL"?"Pool":"Habilitado"}${ap.ok?"":" — bloqueado: "+esc(ap.motivos[0])}</option>`}).join("");
+  return cab("Nueva solicitud de vehículo","Reemplaza el formulario Word «Solicitud de vehículo para salida a terreno» y el correo de aprobación. Tus datos se cargan desde la nómina institucional.","ERS §4.3-A · Formulario vigente")+
+  (b.ejemplo?`<p class="nota" style="margin-bottom:var(--e-4)">Formulario precargado con un ejemplo para la demostración. <button class="btn sec chico" type="button" id="btn-limpiar">Limpiar formulario</button></p>`:"")+
+  `<div class="grid g-form"><form id="form-sol" class="grid" novalidate>
+   <fieldset><legend><span class="seccion-num">1</span>Identificación</legend><div class="campos">
+     <div class="campo"><span class="lbl">Solicitante</span><input type="text" id="f-sol" readonly value="${esc(yo.nom)} · ${esc(yo.rut)}"><span class="ayuda">${esc(yo.cargo)} · ${esc(yo.ger)}</span></div>
+     <div class="campo"><label for="f-jefe">Jefatura que autoriza el cometido</label><select id="f-jefe">${jefes.map(j=>`<option value="${j.id}" ${j.id===b.jefe?"selected":""}>${esc(j.nom)} · ${esc(j.cargo)}</option>`).join("")}</select></div>
+   </div></fieldset>
+   <fieldset><legend><span class="seccion-num">2</span>Programación del viaje</legend><div class="campos">
+     <div class="campo"><label for="f-sal">Salida</label><input type="datetime-local" id="f-sal" value="${b.salida}"></div>
+     <div class="campo"><label for="f-reg">Regreso estimado</label><input type="datetime-local" id="f-reg" value="${b.regreso}"></div>
+     <div class="campo ancho"><span class="lbl">Duración calculada</span><span id="f-dur" class="num"></span></div>
+   </div></fieldset>
+   <fieldset><legend><span class="seccion-num">3</span>Imputación presupuestaria</legend><div class="campos">
+     <div class="campo"><label for="f-prog">Programa presupuestario</label><select id="f-prog">${Object.entries(PROGRAMAS).map(([k,t])=>`<option value="${k}" ${k===b.prog?"selected":""}>${t}</option>`).join("")}</select></div>
+     <div class="campo"><label for="f-cc-buscar">Centro de costo / folio</label><input type="search" id="f-cc-buscar" placeholder="Buscar por folio, código o nombre" autocomplete="off"><div class="cc-res" id="f-cc-res" role="listbox" aria-label="Centros de costo"></div><span class="ayuda" id="f-cc-sel"></span></div>
+   </div></fieldset>
+   <fieldset><legend><span class="seccion-num">4</span>Itinerario y cometido</legend><div class="campos">
+     <div class="campo ancho"><label for="f-com">Cometido / objetivo del viaje</label><textarea id="f-com">${esc(b.cometido)}</textarea></div>
+     <div class="campo ancho"><span class="lbl">Destinos</span><div id="f-dest" class="grid" style="gap:var(--e-2)"></div><div><button class="btn sec chico" type="button" id="btn-dest">Agregar destino o parada</button></div></div>
+     <div class="campo"><label for="f-km">Kilómetros aproximados (ida, interno y regreso)</label><input type="number" id="f-km" min="0" step="10" value="${b.km}"></div>
+     <div class="campo"><label for="f-tipo">Tipo de vehículo requerido</label><select id="f-tipo">${["Indistinto","Camioneta doble cabina","SUV / Station wagon","Furgón","Camión","Automóvil sedán"].map(t=>`<option ${t===b.tipo?"selected":""}>${t}</option>`).join("")}</select></div>
+     <div class="campo ancho"><div class="opciones"><label><input type="checkbox" id="f-4x4" ${b.t4?"checked":""}> Requiere 4x4 (caminos forestales o rurales)</label><label><input type="checkbox" id="f-carga" ${b.carga?"checked":""}> Requiere espacio de carga</label></div></div>
+   </div></fieldset>
+   <fieldset><legend><span class="seccion-num">5</span>Conductores y pasajeros</legend><div class="campos">
+     <div class="campo ancho"><span class="lbl">¿Requiere conductor del pool?</span><div class="opciones" role="radiogroup"><label><input type="radio" name="f-rc" value="si" ${b.reqCond?"checked":""}> Sí, que Logística asigne un conductor</label><label><input type="radio" name="f-rc" value="no" ${!b.reqCond?"checked":""}> No, conduce un integrante con caución vigente</label></div></div>
+     <div class="campo" ${b.reqCond?"hidden":""} id="w-cond"><label for="f-cond">Conductor principal</label><select id="f-cond">${condOpts(b.cond)}</select><span class="ayuda">Los conductores con caución o licencia vencida aparecen bloqueados (DL 799).</span></div>
+     <div class="campo" id="w-rel"><label for="f-rel">Conductor de relevo</label><select id="f-rel">${condOpts(b.relevo)}</select></div>
+     <div class="campo ancho"><label for="f-pas-buscar">Acompañantes (nómina CONAF)</label><input type="search" id="f-pas-buscar" placeholder="Filtrar por nombre"><div class="lista-check" id="f-pas"></div></div>
+     <div class="campo"><label for="f-ext">Pasajeros externos (convenios)</label><input type="number" id="f-ext" min="0" max="6" value="${b.externos}"></div>
+     <div class="campo"><label for="f-extj">Justificación de externos</label><input type="text" id="f-extj" value="${esc(b.extJust)}" placeholder="Institución y motivo"></div>
+     <div class="campo ancho"><span class="lbl">Total de personas en el vehículo</span><span id="f-tot" class="num" style="font-size:var(--f-xl);font-weight:600"></span></div>
+   </div></fieldset>
+   <div class="acciones"><button class="btn" type="submit" id="btn-enviar">Enviar a jefatura</button><button class="btn sec" type="button" id="btn-borr">Guardar borrador</button></div>
+  </form>
+  <aside class="panel" style="position:sticky;top:120px"><header><h2>Revisión automática</h2><span class="sub">Se actualiza al escribir</span></header><div class="cuerpo"><div class="revision" id="revision"></div></div></aside></div>`;
+}
+post.nueva = ()=>{
+  const b=borrador;
+  const pintarDest=()=>{$("#f-dest").innerHTML=b.destinos.map((d,i)=>`<div class="destino"><div class="campo"><label for="d-reg-${i}">Región</label><select id="d-reg-${i}" data-d="${i}" data-k="reg">${REGIONES.map(x=>`<option ${x===d.reg?"selected":""}>${x}</option>`).join("")}</select></div><div class="campo"><label for="d-com-${i}">Comuna</label><input type="text" id="d-com-${i}" data-d="${i}" data-k="com" value="${esc(d.com)}"></div><div class="campo"><label for="d-lug-${i}">Localidad o unidad</label><input type="text" id="d-lug-${i}" data-d="${i}" data-k="lug" value="${esc(d.lug)}"></div>${b.destinos.length>1?`<button class="btn peligro chico" type="button" data-quitar="${i}" aria-label="Quitar destino ${i+1}">Quitar</button>`:"<span></span>"}</div>`).join("")};
+  const pintarCC=()=>{const q=($("#f-cc-buscar").value||"").toLowerCase(); const lista=CC.filter(c=>c.prog===b.prog||q).filter(c=>!q||(c.folio+" "+c.t).toLowerCase().includes(q)).slice(0,30);
+    $("#f-cc-res").innerHTML=lista.length?lista.map(c=>`<button type="button" role="option" data-cc="${c.folio}" aria-selected="${c.folio===b.cc}"><span class="mono">${c.folio}</span><span>${esc(c.t)}</span></button>`).join(""):`<p class="tenue peq" style="padding:var(--e-2)">Sin centros de costo para «${esc(q)}». Prueba con el folio (ej. 48006).</p>`;
+    const c=CCX[b.cc]; $("#f-cc-sel").innerHTML=c?`Seleccionado: <b class="mono">${c.folio}</b> · ${esc(c.t)}`:"Ningún centro de costo seleccionado"; };
+  const pintarPas=()=>{const q=($("#f-pas-buscar").value||"").toLowerCase(); $("#f-pas").innerHTML=PERS.filter(p=>p.id!==ROLES[rol].quien&&(!q||p.nom.toLowerCase().includes(q))).map(p=>`<label><input type="checkbox" value="${p.id}" ${b.pas.includes(p.id)?"checked":""}> ${esc(p.nom)} <span class="tenue peq">· ${esc(p.cargo)}</span></label>`).join("")};
+  const leer=()=>{b.jefe=$("#f-jefe").value;b.salida=$("#f-sal").value;b.regreso=$("#f-reg").value;b.prog=$("#f-prog").value;b.cometido=$("#f-com").value;b.km=+$("#f-km").value||0;b.tipo=$("#f-tipo").value;b.t4=$("#f-4x4").checked;b.carga=$("#f-carga").checked;b.reqCond=document.querySelector('input[name="f-rc"]:checked').value==="si";b.cond=b.reqCond?"":$("#f-cond").value;b.relevo=$("#f-rel").value;b.externos=+$("#f-ext").value||0;b.extJust=$("#f-extj").value;};
+  const revisar=()=>{
+    leer(); $("#w-cond").hidden=b.reqCond;
+    const r={...b,id:"tmp",req:{t4:b.t4,carga:b.carga}}; const tot=pasajeros(r);
+    const dur=(F(b.regreso)-F(b.salida))/36e5;
+    $("#f-dur").textContent = dur>0?`${Math.floor(dur/24)} ${Math.floor(dur/24)===1?"día":"días"} y ${Math.round(dur%24)} horas de ocupación del vehículo`:"—";
+    $("#f-tot").textContent = tot+" (conductores + acompañantes"+(b.externos?" + externos":"")+")";
+    const out=[]; const reg=(c,t,d)=>out.push(`<div class="regla ${c}"><span class="ico" aria-hidden="true">${{ok:"✓",av:"!",bl:"✕",inf:"i"}[c]}</span><div><b>${t}</b><span>${d}</span></div></div>`);
+    if(!(dur>0)) reg("bl","Fechas incoherentes","El regreso debe ser posterior a la salida."); else if(F(b.salida)<HOY) reg("bl","Salida en el pasado","La fecha de salida es anterior a hoy."); else reg("ok","Fechas válidas",`Salida ${fCorta(b.salida)} · regreso ${fCorta(b.regreso)}.`);
+    const inh=inhabiles(b.salida,b.regreso);
+    inh.length? reg("av","Día inhábil · Decreto Ley N° 799",`Abarca ${inh.join(", ")}. Se exigirá la autorización especial de circulación firmada por el Director Ejecutivo o Regional.`) : reg("ok","Sin días inhábiles","No requiere autorización especial (DL 799).");
+    const dias=Math.max(1,Math.ceil(dur/24)); const kmd=b.km/dias;
+    if(kmd>400 && !b.relevo) reg("av","Conductor de relevo sugerido",`${km(kmd)} km por día supera el umbral de 400 km diarios.`); else if(kmd>400) reg("ok","Relevo registrado",`${km(kmd)} km por día con conductor de relevo.`);
+    const maxCap=Math.max(...VEH.filter(v=>v.estado==="DISP").map(v=>v.cap));
+    tot>maxCap? reg("bl","Capacidad excedida",`${tot} personas superan la capacidad máxima del pool (${maxCap}).`) : reg("ok","Capacidad",`${tot} personas. Hay vehículos del pool con capacidad suficiente.`);
+    if(!b.reqCond){ if(!b.cond) reg("bl","Falta conductor","Selecciona un conductor con caución vigente o solicita uno del pool."); else { const a=condApto(b.cond,r); a.ok?reg("ok","Conductor habilitado",`${nom(b.cond)}: caución y licencia vigentes al regreso.`):reg("bl","Conductor no habilitado",a.motivos.join(" · ")); } }
+    else reg("inf","Conductor del pool","Logística asignará un conductor institucional disponible.");
+    if(!CCX[b.cc]) reg("bl","Falta imputación","Selecciona un centro de costo del catálogo vigente."); else if(CCX[b.cc].prog!==b.prog) reg("av","Programa distinto",`El folio ${b.cc} pertenece a ${PROGRAMAS[CCX[b.cc].prog]||CCX[b.cc].prog}.`); else reg("ok","Imputación",`Folio ${b.cc} · ${CCX[b.cc].t}`);
+    if(b.externos && !b.extJust.trim()) reg("bl","Justifica los externos","Indica institución y motivo de los pasajeros externos.");
+    if(b.cometido.trim().length<15) reg("bl","Cometido incompleto","Describe la labor institucional a realizar (mín. 15 caracteres).");
+    const disp=VEH.filter(v=>vehApto(v,{...r,pat:null}).ok).length;
+    disp? reg("inf","Disponibilidad referencial",`${disp} vehículos del pool cumplen hoy los requisitos para esas fechas.`) : reg("av","Sin vehículos aptos",`Ningún vehículo del pool cumple requisitos y fechas. La solicitud puede quedar «Sin disponibilidad».`);
+    $("#revision").innerHTML=out.join("");
+    $("#btn-enviar").disabled = out.some(x=>x.includes('regla bl'));
+    $("#f-sal").setAttribute("aria-invalid",!(dur>0)); $("#f-com").setAttribute("aria-invalid",b.cometido.trim().length<15);
+  };
+  pintarDest(); pintarCC(); pintarPas(); revisar();
+  const f=$("#form-sol");
+  f.addEventListener("input",e=>{ if(e.target.dataset.d!==undefined){b.destinos[+e.target.dataset.d][e.target.dataset.k]=e.target.value} if(e.target.id==="f-cc-buscar")pintarCC(); if(e.target.id==="f-pas-buscar")pintarPas(); if(e.target.closest("#f-pas")){b.pas=[...document.querySelectorAll("#f-pas input:checked")].map(i=>i.value)} b.ejemplo=false; revisar(); });
+  f.addEventListener("change",e=>{ if(e.target.id==="f-prog"){leer();pintarCC()} if(e.target.dataset.d!==undefined){b.destinos[+e.target.dataset.d][e.target.dataset.k]=e.target.value} revisar(); });
+  f.addEventListener("click",e=>{ const c=e.target.closest("[data-cc]"); if(c){b.cc=c.dataset.cc;pintarCC();revisar()} const q=e.target.closest("[data-quitar]"); if(q){b.destinos.splice(+q.dataset.quitar,1);pintarDest();revisar()} });
+  $("#btn-dest").onclick=()=>{b.destinos.push({reg:"Metropolitana",com:"",lug:""});pintarDest();};
+  const limpiar=$("#btn-limpiar"); if(limpiar) limpiar.onclick=()=>{borrador={jefe:PERS.find(p=>p.id===PX[ROLES[rol].quien].jefeDe)?.id||"p3",salida:"",regreso:"",prog:"P01",cc:"",cometido:"",destinos:[{reg:"Metropolitana",com:"",lug:""}],km:0,tipo:"Indistinto",t4:false,carga:false,reqCond:true,cond:"",relevo:"",pas:[],externos:0,extJust:"",ejemplo:false};render()};
+  $("#btn-borr").onclick=()=>{leer();tostada("Borrador guardado. Puedes retomarlo desde esta pantalla.")};
+  f.addEventListener("submit",e=>{e.preventDefault();leer();
+    const r=R({id:nuevoId(),est:"PEND_JEFE",fSol:iso(HOY),sol:ROLES[rol].quien,jefe:b.jefe,salida:b.salida,regreso:b.regreso,destinos:b.destinos.map(d=>({...d})),cometido:b.cometido,km:b.km,cc:b.cc,reqCond:b.reqCond,cond:b.cond||null,relevo:b.relevo||null,pas:[...b.pas],externos:b.externos,req:{t4:b.t4,carga:b.carga},tipoReq:b.tipo});
+    const inh=inhabiles(r.salida,r.regreso); if(inh.length) r.dl799={req:true,adj:null};
+    r.hist.push({t:r.fSol,quien:r.sol,acc:"Solicitud ingresada"}); RES.push(r); audit("Crea solicitud",r.id,"—","Pendiente jefatura");
+    borrador=null; tostada(`Solicitud ${r.id} enviada a ${nom(r.jefe)}.`); ir("mis");
+  });
+};
+
+/* ======================= JEFATURA ======================= */
+function vBandeja(){
+  const yo=ROLES[rol].quien, pend=RES.filter(r=>r.est==="PEND_JEFE"&&r.jefe===yo), res=RES.filter(r=>r.jefe===yo&&!["PEND_JEFE","BORRADOR"].includes(r.est));
+  if(!sel.bandeja||!pend.some(r=>r.id===sel.bandeja)) sel.bandeja=pend[0]?.id||null;
+  const r=RES.find(x=>x.id===sel.bandeja);
+  return cab("Bandeja de aprobación","Solicitudes de tu equipo directo. Revisa cometido, destino, ocupantes e imputación antes de que pasen al encargado de vehículos.","ERS §3.2 · Perfil 3")+
+  `<div class="grid g-2"><div class="grid"><section class="panel"><header><h2>Pendientes</h2><span class="sub num">${pend.length} por revisar</span></header><div class="cuerpo lista">${pend.length?pend.map(x=>tarjetaSol(x,{seleccion:x.id===sel.bandeja})).join(""):vacio("Bandeja al día","No hay solicitudes de tu equipo esperando visación.")}</div></section>
+  <section class="panel"><header><h2>Resueltas recientemente</h2></header><div class="tabla-env"><table><thead><tr><th>ID</th><th>Solicitante</th><th>Salida</th><th>Estado</th></tr></thead><tbody>${res.map(x=>`<tr><td class="mono">${x.id}</td><td>${esc(nom(x.sol))}</td><td class="num">${fFH(x.salida)}</td><td>${chipR(x.est)}</td></tr>`).join("")||`<tr><td colspan="4" class="tenue">Sin registros.</td></tr>`}</tbody></table></div></section></div>
+  <aside class="panel">${r?decisionHTML(r):`<div class="cuerpo">${vacio("Selecciona una solicitud","El detalle y la decisión aparecen aquí.")}</div>`}</aside></div>`;
+}
+function decisionHTML(r){
+  const cc=CCX[r.cc], inh=inhabiles(r.salida,r.regreso);
+  return `<header><h2>Decisión · <span class="mono">${r.id}</span></h2></header><div class="cuerpo grid">
+  <dl class="ficha"><dt>Solicitante</dt><dd>${esc(nom(r.sol))}<br><span class="tenue peq">${esc(PX[r.sol].cargo)}</span></dd>
+  <dt>Cometido</dt><dd>${esc(r.cometido)}</dd><dt>Destinos</dt><dd>${r.destinos.map(d=>esc(`${d.lug}, ${d.com} (${d.reg})`)).join("<br>")}</dd>
+  <dt>Periodo</dt><dd class="num">${fFH(r.salida)} → ${fFH(r.regreso)}</dd><dt>Distancia</dt><dd class="num">${km(r.km)} km aprox.</dd>
+  <dt>Ocupantes</dt><dd>${[r.cond?nom(r.cond)+" (conductor)":(r.reqCond?"Conductor del pool (por asignar)":""),...r.pas.map(nom)].filter(Boolean).map(esc).join("<br>")}</dd>
+  <dt>Imputación</dt><dd><span class="mono">${esc(r.cc)}</span> · ${cc?esc(cc.t):"<b>Folio no vigente</b>"}<br><span class="tenue peq">${cc?PROGRAMAS[cc.prog]:""}</span></dd></dl>
+  ${inh.length?`<div class="regla av"><span class="ico">!</span><div><b>Día inhábil · DL 799</b><span>${inh.join(", ")}. Al aprobar, se solicitará la autorización especial firmada por Dirección.</span></div></div>`:""}
+  <div class="campo"><label for="j-com">Comentario para el solicitante</label><textarea id="j-com" placeholder="Obligatorio al observar o rechazar"></textarea></div>
+  <div class="acciones"><button class="btn" type="button" data-dec="APROBADA">Aprobar</button><button class="btn aviso" type="button" data-dec="OBSERVADA">Observar</button><button class="btn peligro" type="button" data-dec="RECHAZADA">Rechazar</button></div>
+  <p class="tenue peq">La aprobación queda firmada digitalmente con fecha, hora e IP en el registro de auditoría.</p></div>`;
+}
+post.bandeja = ()=>{
+  $("#vista").addEventListener("click",e=>{
+    const s=e.target.closest("[data-sel]"); if(s){sel.bandeja=s.dataset.sel;render();return}
+    const d=e.target.closest("[data-dec]"); if(!d) return;
+    const r=RES.find(x=>x.id===sel.bandeja), com=$("#j-com").value.trim();
+    if(d.dataset.dec!=="APROBADA"&&!com){$("#j-com").setAttribute("aria-invalid","true");$("#j-com").focus();tostada("Escribe un comentario para observar o rechazar.");return}
+    const ant=EST[r.est][0]; r.est=d.dataset.dec; r.obsLog=com?(d.dataset.dec==="APROBADA"?"Jefatura: ":d.dataset.dec==="OBSERVADA"?"Observación de jefatura: ":"Rechazada: ")+com:"";
+    r.hist.push({t:iso(HOY),quien:ROLES[rol].quien,acc:EST[r.est][0]}); audit("Visación jefatura",r.id,ant,EST[r.est][0]);
+    tostada(`${r.id}: ${EST[r.est][0]}.`); sel.bandeja=null; render();
+  });
+  $("#vista").addEventListener("keydown",e=>{const s=e.target.closest("[data-sel]"); if(s&&(e.key==="Enter"||e.key===" ")){e.preventDefault();sel.bandeja=s.dataset.sel;render()}});
+};
+
+/* ======================= ENCARGADO: PANEL ======================= */
+function alertasFlota(){
+  const out=[];
+  VEH.forEach(v=>{
+    [["rt","Revisión técnica"],["soap","SOAP"],["perm","Permiso de circulación"],["gases","Revisión de gases"]].forEach(([k,n])=>{const e=docEstado(v[k]); if(e!=="OK") out.push({g:e==="POR"?1:2,pat:v.pat,t:n,d:e==="SIN"?"Sin fecha registrada en la planilla":(e==="VENC"?"Vencido el ":"Vence el ")+fF(v[k]),c:e==="POR"?"c-pend":"c-malo",i:e==="POR"?"!":"✕"})});
+  });
+  return out.sort((a,b)=>b.g-a.g);
+}
+function vPanel(){
+  const est=VEH.map(estadoHoy), cuenta=k=>est.filter(e=>e===k).length;
+  const alertas=alertasFlota(), mv=VEH.filter(v=>mant(v).est==="VENC").length;
+  const porAsignar=RES.filter(r=>r.est==="APROBADA"), hoySal=RES.filter(r=>r.est==="CONFIRMADA"&&diasEntre(iso(HOY).slice(0,10),r.salida.slice(0,10))<=1), enT=RES.filter(r=>r.est==="EN_TERRENO");
+  const novs=RES.filter(r=>r.bit?.nov&&r.bit.nov!=="Sin novedades");
+  const condAl=COND.map(c=>{const m=[];const dc=(F(c.cauHasta)-HOY)/DIA, dl=(F(c.licHasta)-HOY)/DIA; if(c.caucion!=="Vigente")m.push(["Caución "+c.caucion.toLowerCase(),"c-malo","✕"]); else if(dc<0)m.push(["Caución vencida","c-malo","✕"]); else if(dc<=30)m.push([`Caución vence en ${Math.ceil(dc)} días`,"c-pend","!"]); if(dl<0)m.push(["Licencia vencida","c-malo","✕"]); else if(dl<=30)m.push([`Licencia vence en ${Math.ceil(dl)} días`,"c-pend","!"]); return {c,m}}).filter(x=>x.m.length);
+  return cab("Panel de flota · Oficina Central","Estado operativo del día, tareas pendientes y vencimientos legales. Las alertas a 30 y 15 días se envían también por correo al encargado y al funcionario.","ERS §4.1, §4.2, §5.3")+
+  `<div class="grid g-kpi" style="margin-bottom:var(--e-4)">
+   <div class="kpi"><span class="k">Vehículos</span><span class="v">${VEH.length}</span><span class="d">Oficina Central · 1 arrendado</span></div>
+   <div class="kpi"><span class="k">Disponibles hoy</span><span class="v">${cuenta("DISP")}</span><span class="d">${chip("Disponible","c-disp","●")}</span></div>
+   <div class="kpi"><span class="k">En terreno</span><span class="v">${cuenta("TERR")}</span><span class="d">${chip("En terreno","c-terr","▶")}</span></div>
+   <div class="kpi"><span class="k">Taller o fuera de servicio</span><span class="v">${cuenta("TALL_P")+cuenta("TALL_C")+cuenta("MALO")}</span><span class="d">${chip("Taller","c-tall","⚙")} ${chip("Fuera","c-malo","✕")}</span></div>
+   <div class="kpi alerta"><span class="k">Mantención vencida</span><span class="v">${mv}</span><span class="d">de ${VEH.length} vehículos, por km</span></div>
+   <div class="kpi alerta"><span class="k">Documentos con alerta</span><span class="v">${alertas.length}</span><span class="d">vencidos, por vencer o sin fecha</span></div>
+  </div>
+  <div class="grid g-2"><div class="grid">
+   <section class="panel"><header><h2>Requiere tu acción</h2></header><div class="cuerpo">
+    ${porAsignar.map(r=>`<div class="alerta-fila">${chip("Asignar","c-pend","◑")}<div><b class="mono">${r.id}</b> · ${esc(r.cometido)}<br><span class="tenue peq">${fCorta(r.salida)} · ${pasajeros(r)} personas${r.req.carga?" · carga":""}${r.req.t4?" · 4x4":""}</span></div><button class="btn chico" type="button" data-asig="${r.id}">Asignar</button></div>`).join("")}
+    ${hoySal.map(r=>`<div class="alerta-fila">${chip("Salida próxima","c-res","■")}<div>${placa(r.pat)} <b class="mono">${r.id}</b><br><span class="tenue peq">${fCorta(r.salida)} · ${esc(nom(r.cond))}</span></div><button class="btn sec chico" type="button" data-ir="porteria">Despachar</button></div>`).join("")}
+    ${enT.map(r=>`<div class="alerta-fila">${chip("En terreno","c-terr","▶")}<div>${placa(r.pat)} <b class="mono">${r.id}</b><br><span class="tenue peq">Regreso ${fCorta(r.regreso)} · ${esc(r.destinos.map(d=>d.com).join(", "))}</span></div><button class="btn sec chico" type="button" data-ir="porteria">Recepción</button></div>`).join("")}
+    ${novs.map(r=>`<div class="alerta-fila">${chip("Novedad mecánica","c-tall","⚙")}<div>${placa(r.pat)} ${esc(r.bit.nov)}<br><span class="tenue peq">Reportada al cierre de ${r.id}</span></div><button class="btn sec chico" type="button" data-veh="${r.pat}">Ver ficha</button></div>`).join("")}
+   </div></section>
+   <section class="panel"><header><h2>Documentos legales del vehículo</h2><span class="sub">Revisión técnica, gases, SOAP y permiso de circulación</span></header><div class="tabla-env"><table><thead><tr><th>Patente</th><th>Documento</th><th>Estado</th><th></th></tr></thead><tbody>${alertas.map(a=>`<tr><td>${placa(a.pat)}</td><td>${a.t}</td><td>${chip(a.d,a.c,a.i)}</td><td><button class="btn sec chico" type="button" data-veh="${a.pat}">Ficha</button></td></tr>`).join("")}</tbody></table></div></section>
+  </div><div class="grid">
+   <section class="panel"><header><h2>Conductores con alertas</h2></header><div class="cuerpo">${condAl.map(x=>`<div class="alerta-fila"><span class="chip c-neu"><i>◎</i>${x.c.tipo==="POOL"?"Pool":"Habilitado"}</span><div><b>${esc(nom(x.c.id))}</b><br>${x.m.map(m=>chip(...m)).join(" ")}</div><span></span></div>`).join("")}</div></section>
+   <section class="panel"><header><h2>Mantención preventiva por kilometraje</h2><span class="sub">Ciclo de 10.000 km</span></header><div class="cuerpo"><div class="barras">${VEH.slice().sort((a,b)=>mant(a).resta-mant(b).resta).slice(0,8).map(v=>{const m=mant(v);const p=Math.min(100,Math.max(4,(v.km-(v.proxMant-10000))/10000*100));return `<div class="b"><span class="eti">${placa(v.pat)}</span><span class="pista"><span style="width:${Math.min(100,p)}%;background:var(${m.est==="VENC"?"--st-malo":m.est==="PROX"?"--st-pend":"--st-disp"})"></span></span><span class="num">${m.resta<0?"+"+km(-m.resta)+" km":km(m.resta)+" km"}</span></div>`}).join("")}</div><p class="tenue peq" style="margin-top:var(--e-3)">Barra llena: el vehículo superó su próxima mantención. Fuente: «Últ. Mant. Servicios» y «Kmtje. Actual» de la planilla al 28-09-2026.</p></div></section>
+  </div></div>`;
+}
+post.panel = ()=>{};
+
+/* ======================= ASIGNACIÓN ======================= */
+function vAsignacion(){
+  const pend=RES.filter(r=>r.est==="APROBADA");
+  if(!sel.asig||!pend.some(r=>r.id===sel.asig)) sel.asig=pend[0]?.id||null;
+  const r=RES.find(x=>x.id===sel.asig);
+  return cab("Asignación de vehículo y conductor","Solicitudes aprobadas por jefatura. El sistema filtra los vehículos y conductores que cumplen capacidad, tracción, documentos vigentes, caución y disponibilidad horaria.","ERS §4.3-A.6 · Perfil 2")+
+  `<div class="grid g-2"><section class="panel"><header><h2>Por asignar</h2><span class="sub num">${pend.length}</span></header><div class="cuerpo lista">${pend.length?pend.map(x=>tarjetaSol(x,{seleccion:x.id===sel.asig})).join(""):vacio("Sin solicitudes por asignar","Las solicitudes aprobadas por jefatura aparecerán aquí.")}</div></section>
+  <section class="panel">${r?asigHTML(r):`<div class="cuerpo">${vacio("Nada seleccionado","Elige una solicitud aprobada.")}</div>`}</section></div>`;
+}
+let asigPat=null, asigCond=null, asigRel=null;
+function asigHTML(r){
+  const cands=VEH.map(v=>({v,a:vehApto(v,r)})).sort((x,y)=>(y.a.ok-x.a.ok)||x.a.avisos.length-y.a.avisos.length);
+  const tmp={...r,pat:asigPat};
+  const conds=COND.map(c=>({c,a:condApto(c.id,tmp)}));
+  return `<header><h2>Asignar <span class="mono">${r.id}</span></h2><span class="sub">${pasajeros(r)} personas · ${r.req.t4?"4x4 · ":""}${r.req.carga?"carga · ":""}${fCorta(r.salida)} → ${fCorta(r.regreso)}</span></header>
+  <div class="cuerpo grid"><h3 style="font-size:var(--f-m)">1. Vehículo del pool</h3>
+  <div class="tabla-env"><table><thead><tr><th></th><th>Patente</th><th>Vehículo</th><th>Cap.</th><th>Tracción</th><th>Evaluación</th></tr></thead><tbody>${cands.map(({v,a})=>`<tr><td><input type="radio" name="a-pat" value="${v.pat}" id="ap-${v.pat}" ${a.ok?"":"disabled"} ${asigPat===v.pat?"checked":""} aria-label="Asignar ${v.pat}"></td><td><label for="ap-${v.pat}">${placa(v.pat)}</label></td><td>${esc(v.marca+" "+v.modelo)}<br><span class="tenue peq">${esc(v.tipo)} · ${km(v.km)} km</span></td><td class="d">${v.cap}</td><td>${v.trac}</td><td>${a.ok?chip("Apto","c-disp","✓"):""} ${a.motivos.map(m=>chip(m,"c-malo","✕")).join(" ")} ${a.avisos.map(m=>chip(m,"c-pend","!")).join(" ")}</td></tr>`).join("")}</tbody></table></div>
+  ${r.reqCond?`<h3 style="font-size:var(--f-m)">2. Conductor del pool${r.km/Math.max(1,Math.ceil((F(r.regreso)-F(r.salida))/DIA))>400?" y relevo":""}</h3>
+  <div class="tabla-env"><table><thead><tr><th>Principal</th><th>Relevo</th><th>Conductor</th><th>Licencia</th><th>Evaluación</th></tr></thead><tbody>${conds.filter(x=>x.c.tipo==="POOL"||x.c.id===r.cond).map(({c,a})=>`<tr><td><input type="radio" name="a-cond" value="${c.id}" ${a.ok?"":"disabled"} ${asigCond===c.id?"checked":""} aria-label="Principal ${esc(nom(c.id))}"></td><td><input type="radio" name="a-rel" value="${c.id}" ${a.ok&&asigCond!==c.id?"":"disabled"} ${asigRel===c.id?"checked":""} aria-label="Relevo ${esc(nom(c.id))}"></td><td>${esc(nom(c.id))}</td><td>${c.clases.join(", ")}<br><span class="tenue peq">vence ${fF(c.licHasta)}</span></td><td>${a.ok?chip("Habilitado","c-disp","✓"):a.motivos.map(m=>chip(m,"c-malo","✕")).join(" ")} ${a.ok&&(F(c.licHasta)-HOY)/DIA<=30?chip("Licencia vence "+fF(c.licHasta),"c-pend","!"):""}</td></tr>`).join("")}</tbody></table></div>`:`<p class="nota">Conduce ${esc(nom(r.cond))} (${CX[r.cond]?"caución vigente":"sin registro en padrón"}).</p>`}
+  <h3 style="font-size:var(--f-m)">${r.reqCond?"3":"2"}. Entrega</h3>
+  <div class="campos"><div class="campo"><span class="lbl">Tarjeta de combustible</span><span id="a-tarj" class="mono">${asigPat?esc(VX[asigPat].tarjeta)+" · "+esc(VX[asigPat].tarjetaEstado):"Se completa al elegir el vehículo"}</span></div>
+  <div class="campo"><label for="a-obs">Observaciones logísticas</label><textarea id="a-obs" placeholder="Instrucciones de entrega, novedades o justificación de reasignación"></textarea></div></div>
+  <div class="acciones"><button class="btn" type="button" id="a-ok" ${asigPat&&(!r.reqCond||asigCond)?"":"disabled"}>Confirmar asignación</button><button class="btn peligro" type="button" id="a-sd">Sin disponibilidad del pool</button></div>
+  <p class="tenue peq">Al confirmar se bloquea la patente y el conductor en ese rango horario, se notifica al solicitante y se genera la orden de salida con QR.</p></div>`;
+}
+post.asignacion = ()=>{
+  const V=$("#vista");
+  V.addEventListener("click",e=>{const s=e.target.closest("[data-sel]"); if(s){sel.asig=s.dataset.sel;asigPat=asigCond=asigRel=null;render()}});
+  V.addEventListener("change",e=>{ if(e.target.name==="a-pat"){asigPat=e.target.value;asigCond=asigRel=null;render()} if(e.target.name==="a-cond"){asigCond=e.target.value;if(asigRel===asigCond)asigRel=null;render()} if(e.target.name==="a-rel"){asigRel=e.target.value} });
+  const ok=$("#a-ok"); if(ok) ok.onclick=()=>{const r=RES.find(x=>x.id===sel.asig); r.pat=asigPat; if(r.reqCond){r.cond=asigCond; r.relevo=asigRel||r.relevo} r.est="CONFIRMADA"; const o=$("#a-obs").value.trim(); if(o) r.obsLog="Logística: "+o;
+    r.hist.push({t:iso(HOY),quien:ROLES[rol].quien,acc:"Vehículo y conductor asignados"}); audit("Asigna vehículo y conductor",r.id,"Aprobada",r.pat+" · "+nom(r.cond));
+    tostada(`${r.id} confirmada con ${r.pat}. Orden de salida generada.`); asigPat=asigCond=asigRel=null; sel.ganttSel=r.id; abrirOrden(r.id); render();};
+  const sd=$("#a-sd"); if(sd) sd.onclick=()=>{const r=RES.find(x=>x.id===sel.asig); r.est="SIN_DISP"; r.obsLog="Logística: sin vehículos del pool que cumplan requisitos para el periodo."; audit("Marca sin disponibilidad",r.id,"Aprobada","Sin disponibilidad"); tostada(`${r.id}: sin disponibilidad. Se notificó al solicitante.`); render();};
+  V.addEventListener("keydown",e=>{const s=e.target.closest("[data-sel]"); if(s&&(e.key==="Enter"||e.key===" ")){e.preventDefault();sel.asig=s.dataset.sel;render()}});
+};
+
+/* ======================= VISOR GANTT ======================= */
+function vVisor(){
+  const g=sel.gantt, ini=g.ini, fin=new Date(ini.getTime()+g.dias*DIA), tot=fin-ini;
+  const pos=(a,b)=>{const s=Math.max(F(a)-ini,0), e=Math.min(F(b)-ini,tot); return e<=s?null:{l:s/tot*100,w:(e-s)/tot*100}};
+  const dias=[...Array(g.dias)].map((_,i)=>new Date(ini.getTime()+i*DIA));
+  const cols=`grid-template-columns:repeat(${g.dias},minmax(0,1fr))`;
+  const esFin=d=>d.getDay()===0||d.getDay()===6||FERIADOS.includes(iso(d).slice(0,10));
+  const fondo=`<div class="g-fondo" style="${cols}">${dias.map(d=>`<div class="${esFin(d)?"fin":""}"></div>`).join("")}</div>`+((HOY>=ini&&HOY<fin)?`<div class="g-hoy" style="left:${(HOY-ini)/tot*100}%" title="Ahora"></div>`:"");
+  const lectura = rol==="solicitante"||rol==="jefatura";
+  const est2c = {PEND_JEFE:["c-pend","◔"],APROBADA:["c-pend","◑"],OBSERVADA:["c-pend","!"],CONFIRMADA:["c-res","■"],EN_TERRENO:["c-terr","▶"],FINALIZADA:["c-neu","✓"]};
+  const barra=(r,p)=>{const [c,i]=est2c[r.est]; const con=RES.some(o=>o!==r&&ACTIVAS.includes(o.est)&&ACTIVAS.includes(r.est)&&o.pat&&o.pat===r.pat&&solapa(o.salida,o.regreso,r.salida,r.regreso));
+    return `<button type="button" class="barra-g ${c} ${["PEND_JEFE","APROBADA","OBSERVADA"].includes(r.est)?"pend":""} ${con?"conflicto":""}" style="left:${p.l}%;width:${p.w}%" data-r="${r.id}" aria-label="${r.id} ${EST[r.est][0]} ${fCorta(r.salida)} a ${fCorta(r.regreso)}" ${sel.ganttSel===r.id?'aria-pressed="true"':""}><i aria-hidden="true">${i}</i>${lectura&&r.sol!==ROLES[rol].quien?"Reservado":esc(r.destinos[0]?.com||"")} · ${r.id.slice(-3)}</button>`};
+  const sinPat=RES.filter(r=>["PEND_JEFE","APROBADA","OBSERVADA"].includes(r.est)&&!r.pat);
+  const filas=VEH.filter(v=>sel.gantt.f!=="pool"||v.modalidad.startsWith("Pool")).map(v=>{
+    let bloques="";
+    if(["TALL_P","TALL_C","MALO","EXCL"].includes(v.estado)){const [t,c,i]=EST_V[v.estado]; bloques+=`<span class="barra-g ${c}" style="left:0;width:100%;cursor:default" aria-label="${t}"><i aria-hidden="true">${i}</i>${t}</span>`}
+    RES.filter(r=>r.pat===v.pat&&est2c[r.est]).forEach(r=>{const p=pos(r.salida,r.regreso); if(p) bloques+=barra(r,p)});
+    return `<div class="g-fila"><div class="g-et">${placa(v.pat)}<div class="txt"><b class="peq">${esc(v.marca)} ${esc(v.modelo)}</b><span>${v.trac} · ${v.cap} pas. · ${v.programa.slice(0,3)}</span></div></div><div class="g-pista">${fondo}${bloques}</div></div>`;
+  }).join("");
+  const filaPend=`<div class="g-fila"><div class="g-et"><div class="txt"><b class="peq">Sin patente asignada</b><span>${sinPat.length} solicitudes en curso</span></div></div><div class="g-pista">${fondo}${sinPat.map((r,i)=>{const p=pos(r.salida,r.regreso);return p?barra(r,p).replace('style="','style="top:'+(4+i%2*18)+'px;bottom:auto;height:18px;'):""}).join("")}</div></div>`;
+  const det=RES.find(r=>r.id===sel.ganttSel);
+  return cab("Visor de disponibilidad","Carta Gantt del pool. Selecciona una barra para ver el detalle. El sistema impide reservar la misma patente o el mismo conductor en horarios superpuestos.","ERS §4.4 · Prototipo V7 «Visor Disponibilidad»")+
+  `<section class="panel"><header><div class="gantt-ctl"><div class="seg" role="group" aria-label="Escala">${[[7,"Semana"],[14,"2 semanas"],[30,"Mes"]].map(([d,t])=>`<button type="button" data-dias="${d}" aria-pressed="${g.dias===d}">${t}</button>`).join("")}</div>
+   <div class="acciones"><button class="btn sec chico" type="button" data-mov="-1" aria-label="Periodo anterior">← Anterior</button><button class="btn sec chico" type="button" data-mov="0">Hoy</button><button class="btn sec chico" type="button" data-mov="1" aria-label="Periodo siguiente">Siguiente →</button></div>
+   <label class="opciones peq"><span><input type="checkbox" id="g-pool" ${sel.gantt.f==="pool"?"checked":""}> Sólo pool</span></label></div><span class="sub num">${fF(ini)} al ${fF(new Date(fin.getTime()-DIA))}</span></header>
+  <div class="gantt-env"><div class="gantt"><div class="g-fila cab"><div class="g-et"><b class="peq">Vehículo</b></div><div class="g-dias" style="${cols}">${dias.map(d=>`<div class="g-dia ${esFin(d)?"fin":""} ${iso(d).slice(0,10)===iso(HOY).slice(0,10)?"hoy":""}">${DS[d.getDay()]}<b>${d.getDate()}</b>${g.dias<=14?MS[d.getMonth()]:""}</div>`).join("")}</div></div>
+  ${lectura?"":filaPend}${filas}</div></div>
+  <div class="leyenda">${chip("Disponible (espacio libre)","c-disp","●")}${chip("Confirmada","c-res","■")}${chip("Pendiente","c-pend","◔")}${chip("En terreno","c-terr","▶")}${chip("Taller","c-tall","⚙")}${chip("Fuera de servicio","c-malo","✕")}${chip("Exclusiva Dirección","c-excl","◆")}${chip("Finalizada","c-neu","✓")}<span class="tenue peq">Achurado: sábado, domingo o festivo (DL 799). Línea roja: ahora.</span></div></section>
+  ${det?`<section class="panel" style="margin-top:var(--e-4)"><header><h2>Detalle <span class="mono">${det.id}</span></h2>${chipR(det.est)}</header><div class="cuerpo grid g-2b"><dl class="ficha">
+   <dt>Destino</dt><dd>${lectura&&det.sol!==ROLES[rol].quien?"Reservado (detalle visible para la unidad responsable)":esc(det.destinos.map(d=>d.lug+", "+d.com).join(" · "))}</dd>
+   <dt>Horario</dt><dd class="num">${fFH(det.salida)} → ${fFH(det.regreso)}</dd>
+   <dt>Conductor</dt><dd>${esc(det.cond?nom(det.cond):"Por asignar")}${det.relevo?" · relevo "+esc(nom(det.relevo)):""}</dd>
+   <dt>Solicitante</dt><dd>${esc(nom(det.sol))}</dd><dt>Autoriza</dt><dd>${esc(nom(det.jefe))}</dd></dl>
+   <div class="acciones" style="align-content:flex-start">${det.pat&&!lectura?`<button class="btn sec chico" type="button" data-veh="${det.pat}">Ficha del vehículo</button>`:""}${["CONFIRMADA","EN_TERRENO","FINALIZADA"].includes(det.est)&&!lectura?`<button class="btn sec chico" type="button" data-orden="${det.id}">Orden de salida</button>`:""}${det.est==="APROBADA"&&!lectura?`<button class="btn chico" type="button" data-asig="${det.id}">Asignar</button>`:""}</div></div></section>`:""}`;
+}
+post.visor = ()=>{
+  const V=$("#vista");
+  V.querySelectorAll("[data-dias]").forEach(b=>b.onclick=()=>{sel.gantt.dias=+b.dataset.dias;render()});
+  V.querySelectorAll("[data-mov]").forEach(b=>b.onclick=()=>{const m=+b.dataset.mov; if(m===0){const d=new Date(HOY);d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));sel.gantt.ini=d} else sel.gantt.ini=new Date(sel.gantt.ini.getTime()+m*sel.gantt.dias*DIA); render()});
+  $("#g-pool").onchange=e=>{sel.gantt.f=e.target.checked?"pool":"";render()};
+  V.addEventListener("click",e=>{const b=e.target.closest("[data-r]"); if(b){sel.ganttSel=b.dataset.r;render();}});
+};
+
+/* ======================= SALIDA Y REGRESO (BITÁCORA) ======================= */
+function vPorteria(){
+  let lista=RES.filter(r=>r.est==="CONFIRMADA"||r.est==="EN_TERRENO");
+  if(rol==="conductor") lista=lista.filter(r=>r.cond==="c1"||r.relevo==="c1");
+  lista.sort((a,b)=>(a.est==="EN_TERRENO"?a.regreso:a.salida).localeCompare(b.est==="EN_TERRENO"?b.regreso:b.salida));
+  if(!sel.port||!lista.some(r=>r.id===sel.port)) sel.port=lista[0]?.id||null;
+  const r=RES.find(x=>x.id===sel.port);
+  return cab("Salida y regreso","Formulario para portería, estacionamiento o base operativa. Pensado para usarse desde el teléfono al entregar y recibir el vehículo.","ERS §5.1 · Bitácora digital")+
+  `<div class="grid g-2"><section class="panel"><header><h2>Despachos y recepciones</h2></header><div class="cuerpo lista">${lista.length?lista.map(x=>`<article class="sol seleccionable" role="button" tabindex="0" data-sel="${x.id}" aria-pressed="${x.id===sel.port}"><div class="fila">${placa(x.pat)}${chipR(x.est)}</div><div class="meta"><span class="mono"><b>${x.id}</b></span><span>${x.est==="EN_TERRENO"?"Regreso "+fCorta(x.regreso):"Salida "+fCorta(x.salida)}</span><span>${esc(nom(x.cond))}</span></div></article>`).join(""):vacio("Nada que despachar","No hay salidas confirmadas ni vehículos en terreno.")}</div></section>
+  <section class="panel">${r?(r.est==="CONFIRMADA"?formSalida(r):formRegreso(r)):`<div class="cuerpo">${vacio("Selecciona un viaje","")}</div>`}</section></div>`;
+}
+const DOCS=["Padrón","Revisión técnica","SOAP","Permiso de circulación","Tarjeta de combustible"];
+function formSalida(r){const v=VX[r.pat]; const docAl=["rt","soap","perm"].filter(k=>docEstado(v[k],F(r.regreso))==="VENC");
+  return `<header><h2>Registrar salida · ${placa(r.pat)}</h2><span class="sub mono">${r.id}</span></header><form class="cuerpo grid" id="f-salida">
+  ${docAl.length?`<div class="regla bl"><span class="ico">✕</span><div><b>Documento vencido</b><span>No despachar: ${docAl.join(", ")}.</span></div></div>`:""}
+  <div class="campos"><div class="campo"><label for="s-hora">Hora real de salida</label><input type="datetime-local" id="s-hora" value="${r.salida}"></div>
+  <div class="campo"><label for="s-odo">Odómetro inicial (km)</label><input type="number" id="s-odo" value="${v.km}" min="${v.km}"><span class="ayuda">Último registrado: <span class="num">${km(v.km)}</span> km</span></div>
+  <div class="campo"><label for="s-comb">Nivel de estanque</label><select id="s-comb"><option>1/4</option><option>1/2</option><option>3/4</option><option selected>Lleno</option></select></div>
+  <div class="campo"><span class="lbl">Conductor que retira</span><span>${esc(nom(r.cond))}</span></div>
+  <fieldset class="ancho"><legend>Documentación entregada</legend><div class="opciones">${DOCS.map((d,i)=>`<label><input type="checkbox" class="s-doc" id="s-doc-${i}" checked> ${d}</label>`).join("")}</div></fieldset></div>
+  <div class="acciones"><button class="btn" type="submit">Registrar salida</button><button class="btn sec" type="button" data-orden="${r.id}">Ver orden de salida</button></div></form>`;}
+function formRegreso(r){const v=VX[r.pat];
+  return `<header><h2>Registrar regreso · ${placa(r.pat)}</h2><span class="sub mono">${r.id}</span></header><form class="cuerpo grid" id="f-regreso">
+  <p class="nota">Salida registrada ${fFH(r.bit.sal)} con odómetro <b class="num">${km(r.bit.odoS)}</b> km y estanque ${esc(r.bit.combS)}.</p>
+  <div class="campos"><div class="campo"><label for="g-hora">Hora real de llegada</label><input type="datetime-local" id="g-hora" value="${r.regreso}"></div>
+  <div class="campo"><label for="g-odo">Odómetro final (km)</label><input type="number" id="g-odo" value="${r.bit.odoS+r.km}" min="${r.bit.odoS+1}"><span class="ayuda" id="g-rec">Recorridos: <b class="num">${km(r.km)}</b> km</span></div>
+  <div class="campo"><label for="g-comb">Nivel de estanque</label><select id="g-comb"><option>1/4</option><option selected>1/2</option><option>3/4</option><option>Lleno</option></select><span class="ayuda">Debe quedar al menos en 1/4 (Nota 3 del formulario vigente).</span></div>
+  <div class="campo"><span class="lbl">Carga de combustible en ruta</span><div class="grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--e-2)"><input type="number" id="g-lt" placeholder="Litros" aria-label="Litros cargados" value="38"><input type="number" id="g-monto" placeholder="Monto CLP" aria-label="Monto en pesos" value="49400"></div><span class="ayuda" id="g-rend"></span></div>
+  <div class="campo ancho"><label for="g-nov">Novedades mecánicas (obligatorio)</label><textarea id="g-nov" placeholder="Ej.: luz quemada, piquete en parabrisas, ruido de suspensión, testigo encendido"></textarea><label class="peq" style="display:flex;gap:var(--e-2);align-items:center"><input type="checkbox" id="g-sin"> Sin novedades</label></div>
+  <div class="campo ancho"><label for="g-fotos">Fotografías de respaldo</label><input type="file" id="g-fotos" accept="image/*" multiple><span class="ayuda" id="g-nfotos">Opcional. Se adjuntan a la hoja de vida del vehículo.</span></div></div>
+  <div class="acciones"><button class="btn" type="submit">Registrar regreso y cerrar</button></div></form>`;}
+post.porteria = ()=>{
+  const V=$("#vista");
+  V.addEventListener("click",e=>{const s=e.target.closest("[data-sel]"); if(s){sel.port=s.dataset.sel;render()}});
+  V.addEventListener("keydown",e=>{const s=e.target.closest("[data-sel]"); if(s&&(e.key==="Enter"||e.key===" ")){e.preventDefault();sel.port=s.dataset.sel;render()}});
+  const fs=$("#f-salida"); if(fs) fs.onsubmit=e=>{e.preventDefault(); const r=RES.find(x=>x.id===sel.port), v=VX[r.pat], odo=+$("#s-odo").value;
+    if(odo<v.km){$("#s-odo").setAttribute("aria-invalid","true");tostada(`El odómetro no puede ser menor al último registro (${km(v.km)} km).`);return}
+    if([...document.querySelectorAll(".s-doc")].some(c=>!c.checked)){tostada("Faltan documentos: se registró con observación para el encargado.")}
+    r.bit={sal:$("#s-hora").value,odoS:odo,combS:$("#s-comb").value,docs:true}; r.est="EN_TERRENO"; r.hist.push({t:r.bit.sal,quien:ROLES[rol].quien,acc:"Salida registrada"});
+    audit("Registra salida",r.id+" · "+r.pat,"Confirmada","En terreno · odómetro "+km(odo)); tostada(`${r.pat} en terreno desde ${fCorta(r.bit.sal)}.`); render();};
+  const fr=$("#f-regreso"); if(fr){ const r=RES.find(x=>x.id===sel.port);
+    const calc=()=>{const rec=(+$("#g-odo").value)-r.bit.odoS; $("#g-rec").innerHTML=rec>0?`Recorridos: <b class="num">${km(rec)}</b> km`:`<b style="color:var(--st-malo)">El odómetro final debe superar ${km(r.bit.odoS)}</b>`; const lt=+$("#g-lt").value; $("#g-rend").textContent=lt>0&&rec>0?`Rendimiento referencial del tramo: ${(rec/lt).toFixed(1).replace(".",",")} km/L`:"";};
+    calc(); fr.addEventListener("input",e=>{calc(); if(e.target.id==="g-sin"){$("#g-nov").disabled=e.target.checked} if(e.target.id==="g-fotos"){$("#g-nfotos").textContent=e.target.files.length+" fotografía(s) adjunta(s)"}});
+    fr.onsubmit=e=>{e.preventDefault(); const odo=+$("#g-odo").value, sin=$("#g-sin").checked, nov=$("#g-nov").value.trim();
+      if(!(odo>r.bit.odoS)){$("#g-odo").setAttribute("aria-invalid","true");$("#g-odo").focus();return}
+      if(!sin&&!nov){$("#g-nov").setAttribute("aria-invalid","true");$("#g-nov").focus();tostada("Describe las novedades o marca «Sin novedades».");return}
+      Object.assign(r.bit,{reg:$("#g-hora").value,odoR:odo,combR:$("#g-comb").value,nov:sin?"Sin novedades":nov,lt:+$("#g-lt").value||0,monto:+$("#g-monto").value||0});
+      const v=VX[r.pat], ant=v.km; v.km=odo; r.est="FINALIZADA"; r.hist.push({t:r.bit.reg,quien:ROLES[rol].quien,acc:"Regreso registrado"});
+      audit("Registra regreso",r.id+" · "+r.pat,"En terreno","Finalizada · km "+km(ant)+" → "+km(odo)); if(!sin) audit("Alerta novedad mecánica",r.pat,"—",nov);
+      tostada(`${r.id} cerrada: ${km(odo-r.bit.odoS)} km reales. Kilometraje de ${r.pat} actualizado${sin?"":" y novedad enviada al encargado"}.`); render();};
+  }
+};
+
+/* ======================= CONDUCTOR ======================= */
+function vAgenda(){
+  const mias=RES.filter(r=>(r.cond==="c1"||r.relevo==="c1")&&["CONFIRMADA","EN_TERRENO","FINALIZADA"].includes(r.est)).sort((a,b)=>a.salida.localeCompare(b.salida));
+  const c=CX.c1;
+  return cab("Mi agenda de conducción","Cometidos asignados a tu RUT. Al retirar y devolver el vehículo registras odómetro, combustible y novedades.","ERS §3.2 · Perfil 5")+
+  `<div class="grid g-kpi" style="margin-bottom:var(--e-4)"><div class="kpi"><span class="k">Caución</span><span class="v" style="font-size:var(--f-xl)">${chip("Vigente","c-disp","✓")}</span><span class="d">Hasta ${fF(c.cauHasta)} · ${c.polCau}</span></div><div class="kpi"><span class="k">Licencia</span><span class="v" style="font-size:var(--f-xl)">${c.clases.join(" · ")}</span><span class="d">Vence ${fF(c.licHasta)}</span></div><div class="kpi"><span class="k">Próximos cometidos</span><span class="v">${mias.filter(r=>r.est!=="FINALIZADA").length}</span><span class="d">asignados</span></div></div>
+  <div class="lista">${mias.map(r=>tarjetaSol(r,{boton:`<div class="acciones">${r.est!=="FINALIZADA"?`<button class="btn chico" type="button" data-port="${r.id}">${r.est==="EN_TERRENO"?"Registrar regreso":"Registrar salida"}</button>`:""}<button class="btn sec chico" type="button" data-orden="${r.id}">Orden de salida</button></div>`})).join("")||vacio("Sin cometidos asignados","Cuando el encargado te asigne un viaje aparecerá aquí.")}</div>`;
+}
+post.agenda = ()=>{ $("#vista").addEventListener("click",e=>{const b=e.target.closest("[data-port]"); if(b){sel.port=b.dataset.port;ir("porteria")}}); };
+
+/* ======================= FLOTA ======================= */
+function vFlota(){
+  const f=sel.flotaFiltro;
+  const lista=VEH.filter(v=>f==="todos"||(f==="alerta"&&(mant(v).est!=="OK"||["rt","soap","perm","gases"].some(k=>docEstado(v[k])!=="OK")))||(f==="pool"&&v.modalidad.startsWith("Pool"))||(f==="fuera"&&["TALL_P","TALL_C","MALO"].includes(v.estado)));
+  return cab("Catastro de flota","Inventario técnico, legal y presupuestario. Patentes normalizadas al formato BBBB-10 / BB-1000. Selecciona un vehículo para abrir su hoja de vida.","ERS §4.1 · Módulo 1")+
+  `<section class="panel"><header><div class="seg" role="group" aria-label="Filtro">${[["todos","Todos"],["pool","Pool"],["alerta","Con alertas"],["fuera","Taller o fuera de servicio"]].map(([k,t])=>`<button type="button" data-ff="${k}" aria-pressed="${f===k}">${t}</button>`).join("")}</div><span class="sub num">${lista.length} vehículos</span></header>
+  <div class="tabla-env"><table><thead><tr><th>Patente</th><th>Vehículo</th><th>Año</th><th>Kilometraje</th><th>Mantención</th><th>Rev. técnica</th><th>SOAP</th><th>Permiso</th><th>Modalidad</th><th>Estado hoy</th></tr></thead>
+  <tbody>${lista.map(v=>`<tr class="clic" data-veh="${v.pat}" tabindex="0"><td>${placa(v.pat)}</td><td><b>${esc(v.marca)} ${esc(v.modelo)}</b><br><span class="tenue peq">${esc(v.tipo)} · ${v.trac} · ${v.cap} pas.</span></td><td class="num">${v.anio}</td><td class="d">${km(v.km)}</td><td>${chipMant(v)}</td><td>${chipDoc(v.rt)}</td><td>${chipDoc(v.soap)}</td><td>${chipDoc(v.perm)}</td><td class="peq">${esc(v.modalidad)}</td><td>${chipV(v)}</td></tr>`).join("")}</tbody></table></div></section>`;
+}
+post.flota = ()=>{ $("#vista").querySelectorAll("[data-ff]").forEach(b=>b.onclick=()=>{sel.flotaFiltro=b.dataset.ff;render()}); $("#vista").addEventListener("keydown",e=>{const t=e.target.closest("tr[data-veh]"); if(t&&e.key==="Enter") abrirFicha(t.dataset.veh)}); };
+
+let fichaTab="ficha";
+function abrirFicha(pat){
+  const v=VX[pat]; const encargado=["encargado","super"].includes(rol);
+  const salidas=RES.filter(r=>r.pat===pat).sort((a,b)=>b.salida.localeCompare(a.salida));
+  const cargas=[0,1,2,3].map(i=>{const k=v.km-180-i*460, lt=34+((i*7+v.anio)%12); return {f:new Date(HOY.getTime()-(4+i*11)*DIA),est:["Copec Av. Matta","Copec Ruta 5 km 150","Shell Rancagua","Copec Talca Norte"][i],lt,monto:lt*(v.comb.startsWith("Diésel")?1180:1320),km:k}});
+  const tabs=[["ficha","Ficha"],["docs","Documentos"],["mant","Mantención y taller"],["comb","Combustible"],["salidas","Salidas"]];
+  const m=mant(v);
+  const cont={
+   ficha:`<div class="grid g-2b"><dl class="ficha"><dt>Patente</dt><dd>${placa(v.pat)} <span class="tenue peq">Registrada como «${esc(v.raw)}» en la planilla</span></dd><dt>Marca / modelo</dt><dd>${esc(v.marca)} ${esc(v.modelo)}</dd><dt>Tipo</dt><dd>${esc(v.tipo)}</dd><dt>Año</dt><dd class="num">${v.anio}</dd><dt>N° motor</dt><dd class="mono">${esc(v.motor||"Sin registro")}</dd><dt>N° chasis (VIN)</dt><dd class="mono">${esc(v.chasis||"Sin registro")} ${""}</dd><dt>Tracción</dt><dd>${v.trac} <span class="tenue peq">(referencial)</span></dd><dt>Combustible</dt><dd>${v.comb} <span class="tenue peq">(referencial)</span></dd><dt>Capacidad</dt><dd>${v.cap} plazas con conductor · ${km(v.cargaKg)} kg</dd></dl>
+     <dl class="ficha"><dt>Tenencia</dt><dd>${esc(v.tenencia)}</dd><dt>Destinación</dt><dd>${esc(v.unidad)}</dd><dt>Programa</dt><dd>${esc(v.programa)}</dd><dt>Modalidad</dt><dd>${esc(v.modalidad)}</dd><dt>Kilometraje</dt><dd class="num">${km(v.km)} km</dd><dt>Estado hoy</dt><dd>${chipV(v)}</dd><dt>Póliza de seguro</dt><dd class="mono">${v.poliza} <span class="tenue peq">· vence ${fF(v.polizaVence)} · asistencia 22 826 1101</span></dd><dt>Tarjeta combustible</dt><dd class="mono">${esc(v.tarjeta)} · ${esc(v.tarjetaEstado)} · ${v.cupo}</dd><dt>PIN tarjeta</dt><dd>${encargado?`<span class="mono" id="pin">••••</span> <button type="button" class="pin-reveal" id="btn-pin">Mostrar</button>`:"Visible sólo para el encargado de vehículos"}</dd><dt>TAG</dt><dd class="mono">${v.tag} · habilitado</dd></dl></div>`,
+   docs:`<div class="tabla-env"><table><thead><tr><th>Documento</th><th>Vencimiento</th><th>Alerta</th></tr></thead><tbody>${[["rt","Revisión técnica"],["gases","Certificado de emisiones (gases)"],["soap","SOAP"],["perm","Permiso de circulación"]].map(([k,n])=>`<tr><td>${n}</td><td class="num">${v[k]?fF(v[k]):"—"}</td><td>${chipDoc(v[k])}</td></tr>`).join("")}<tr><td>Póliza de seguro (ejemplo)</td><td class="num">${fF(v.polizaVence)}</td><td>${chipDoc(v.polizaVence)}</td></tr></tbody></table></div><p class="tenue peq">Alertas automáticas al encargado 30 días antes del vencimiento (ERS §5.3).</p>`,
+   mant:`<div class="grid g-kpi"><div class="kpi"><span class="k">Última mantención</span><span class="v num" style="font-size:var(--f-xl)">${km(v.ultMant)} km</span></div><div class="kpi"><span class="k">Próxima</span><span class="v num" style="font-size:var(--f-xl)">${km(v.proxMant)} km</span></div><div class="kpi ${m.est==="VENC"?"alerta":""}"><span class="k">Semáforo</span><span class="v" style="font-size:var(--f-l)">${chipMant(v)}</span></div></div>
+     ${v.diag?`<div class="regla ${/CATASTR|CRÍTICO|URGENTE/.test(v.diag)?"bl":"av"}"><span class="ico">!</span><div><b>Diagnóstico registrado en la planilla de mantenciones</b><span>${esc(v.diag)}</span></div></div>`:""}
+     <h3 style="font-size:var(--f-m)">Historial de taller multimarca <span class="tenue peq">(estructura de ejemplo; se cargará desde el proveedor)</span></h3>
+     <div class="tabla-env"><table><thead><tr><th>Fecha</th><th>Taller</th><th>Tipo</th><th>Kilometraje</th><th>Detalle</th><th>Monto</th></tr></thead><tbody><tr><td class="num">—</td><td>Taller multimarca (por cargar)</td><td>${chip("Preventiva","c-res","■")}</td><td class="d">${km(v.ultMant)}</td><td>Mantención de servicios registrada en planilla</td><td class="d">—</td></tr><tr><td class="num">—</td><td>Taller multimarca (por cargar)</td><td>${chip("Correctiva","c-tall","⚙")}</td><td class="d">—</td><td>Se completará con órdenes de trabajo del proveedor</td><td class="d">—</td></tr></tbody></table></div>`,
+   comb:`<div class="tabla-env"><table><thead><tr><th>Fecha</th><th>Estación</th><th>Litros</th><th>Monto CLP</th><th>Odómetro</th><th>km/L</th></tr></thead><tbody>${cargas.map((c,i)=>{const sig=cargas[i-1]; const rend=sig?((sig.km-c.km)/sig.lt):null; return `<tr><td class="num">${fF(c.f)}</td><td>${c.est}</td><td class="d">${c.lt}</td><td class="d">$ ${km(c.monto)}</td><td class="d">${km(c.km)}</td><td class="d">${rend?rend.toFixed(1).replace(".",","):"—"}</td></tr>`}).join("")}</tbody></table></div><p class="nota">Cargas de ejemplo. En producción se importan desde el proveedor de tarjetas de flota y se cruzan con cada salida para detectar sobreconsumo o usos anómalos.</p>`,
+   salidas:salidas.length?`<div class="tabla-env"><table><thead><tr><th>ID</th><th>Salida</th><th>Destino</th><th>Conductor</th><th>Km reales</th><th>Estado</th><th>Novedad</th></tr></thead><tbody>${salidas.map(r=>`<tr><td class="mono">${r.id}</td><td class="num">${fFH(r.salida)}</td><td>${esc(r.destinos.map(d=>d.com).join(", "))}</td><td>${esc(nom(r.cond))}</td><td class="d">${r.bit?.odoR?km(r.bit.odoR-r.bit.odoS):"—"}</td><td>${chipR(r.est)}</td><td>${esc(r.bit?.nov||"")}</td></tr>`).join("")}</tbody></table></div>`:vacio("Sin salidas registradas","Las salidas de este vehículo aparecerán aquí.")
+  };
+  $("#capa").innerHTML=`<div class="velo" id="velo"><div class="cajon" role="dialog" aria-modal="true" aria-labelledby="t-ficha"><header><div style="display:flex;gap:var(--e-3);align-items:center;flex-wrap:wrap">${placa(v.pat)}<h2 id="t-ficha" style="font-size:var(--f-xl)">Hoja de vida · ${esc(v.marca)} ${esc(v.modelo)}</h2></div><button class="btn sec chico" type="button" id="cerrar">Cerrar</button></header>
+  <div class="cuerpo"><div class="pestanas" role="tablist">${tabs.map(([k,t])=>`<button type="button" role="tab" data-tab="${k}" aria-selected="${fichaTab===k}">${t}</button>`).join("")}</div><div id="tab-c">${cont[fichaTab]}</div></div></div></div>`;
+  const cerrar=()=>{$("#capa").innerHTML="";document.removeEventListener("keydown",esc_)}; const esc_=e=>{if(e.key==="Escape")cerrar()};
+  $("#cerrar").onclick=cerrar; $("#velo").onclick=e=>{if(e.target.id==="velo")cerrar()}; document.addEventListener("keydown",esc_);
+  $("#capa").querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{fichaTab=b.dataset.tab;abrirFicha(pat)});
+  const bp=$("#btn-pin"); if(bp) bp.onclick=()=>{$("#pin").textContent=v.pin; bp.remove(); audit("Consulta PIN de tarjeta",v.pat,"—","PIN visualizado")};
+  $("#cerrar").focus();
+}
+
+/* ======================= CONDUCTORES ======================= */
+function vConductores(){
+  const fil=sel.condFiltro;
+  const filas=COND.map(c=>{const a=condApto(c.id,{id:"x",salida:iso(HOY),regreso:iso(HOY),pas:[],req:{}}); const dc=(F(c.cauHasta)-HOY)/DIA, dl=(F(c.licHasta)-HOY)/DIA; const por=a.ok&&(dc<=30||dl<=30); return {c,a,por,est:a.ok?(por?"POR":"OK"):"BLOQ"}}).filter(x=>fil==="todos"||x.est===fil||(fil==="POOL"&&x.c.tipo==="POOL"));
+  return cab("Padrón de conductores","Funcionarios autorizados para conducir vehículos fiscales. Un conductor con caución o licencia vencida queda bloqueado en todas las listas de asignación.","ERS §4.2 · DL N° 799 de 1974")+
+  `<section class="panel"><header><div class="seg" role="group" aria-label="Filtro">${[["todos","Todos"],["POOL","Pool"],["POR","Por vencer"],["BLOQ","Bloqueados"]].map(([k,t])=>`<button type="button" data-cf="${k}" aria-pressed="${fil===k}">${t}</button>`).join("")}</div><span class="sub">Nómina de cauciones: 1.651 funcionarios a nivel nacional (julio 2026)</span></header>
+  <div class="tabla-env"><table><thead><tr><th>Funcionario</th><th>Tipo</th><th>Caución</th><th>Licencia</th><th>Resolución</th><th>Habilitación</th></tr></thead><tbody>${filas.map(({c,a,est})=>`<tr><td><b>${esc(nom(c.id))}</b><br><span class="tenue peq mono">${PX[c.id].rut}</span> <span class="tenue peq">· ${esc(PX[c.id].ger)}</span></td><td>${c.tipo==="POOL"?"Conductor de pool":"Funcionario habilitado"}</td><td>${c.caucion==="Vigente"?chipDoc(c.cauHasta):chip(c.caucion,"c-pend","◔")}<br><span class="tenue peq mono">${c.polCau}</span></td><td>${c.clases.join(", ")}<br>${chipDoc(c.licHasta)}</td><td class="peq">${c.resol}</td><td>${est==="OK"?chip("Habilitado","c-disp","✓"):est==="POR"?chip("Habilitado · por vencer","c-pend","!"):chip("Bloqueado","c-malo","✕")}${a.motivos.length?`<br><span class="peq tenue">${esc(a.motivos.join(" · "))}</span>`:""}</td></tr>`).join("")}</tbody></table></div>
+  <div class="leyenda"><span class="tenue peq">Repositorio digital por conductor: certificado de caución (PDF), resolución de habilitación y licencia por ambos lados. Alertas por correo a 30 y 15 días del vencimiento.</span></div></section>`;
+}
+post.conductores = ()=>{ $("#vista").querySelectorAll("[data-cf]").forEach(b=>b.onclick=()=>{sel.condFiltro=b.dataset.cf;render()}); };
+
+/* ======================= REPORTES ======================= */
+function vReportes(){
+  const viajes=[...RES.filter(r=>r.est==="FINALIZADA"&&r.bit?.odoR).map(r=>({pat:r.pat,cc:r.cc,km:r.bit.odoR-r.bit.odoS})),...HIST.map(([pat,cc,k])=>({pat,cc,km:k}))];
+  const tot=viajes.reduce((s,v)=>s+v.km,0);
+  const porCC={}, porProg={}, porVeh={};
+  viajes.forEach(v=>{porCC[v.cc]=(porCC[v.cc]||0)+v.km; const p=CCX[v.cc]?.prog||"—"; porProg[p]=(porProg[p]||0)+v.km; porVeh[v.pat]=(porVeh[v.pat]||0)+1;});
+  const maxP=Math.max(...Object.values(porProg)), maxC=Math.max(...Object.values(porCC));
+  const pool=VEH.filter(v=>v.modalidad.startsWith("Pool")), diasPer=30;
+  const ocup=Math.round(viajes.length*1.9/(pool.length*diasPer)*100);
+  const indisp=Math.round(VEH.filter(v=>["TALL_P","TALL_C","MALO"].includes(v.estado)).length/VEH.length*100);
+  const filasCC=Object.entries(porCC).sort((a,b)=>b[1]-a[1]);
+  window.__csv="folio;titulo;programa;km\n"+filasCC.map(([f,k])=>`${f};${CCX[f]?.t||""};${CCX[f]?.prog||""};${k}`).join("\n");
+  return cab("Resumen de salidas a terreno","Kilómetros por programa y centro de costo, para distribuir el costo operacional entre programas. Periodo de ejemplo: 22-09-2026 al 22-10-2026.","ERS §4.4-B")+
+  `<div class="grid g-kpi" style="margin-bottom:var(--e-4)"><div class="kpi"><span class="k">Salidas finalizadas</span><span class="v">${viajes.length}</span></div><div class="kpi"><span class="k">Kilómetros recorridos</span><span class="v num">${km(tot)}</span></div><div class="kpi"><span class="k">Ocupación del pool</span><span class="v">${ocup}%</span><span class="d">días en uso / días disponibles</span></div><div class="kpi"><span class="k">Indisponibilidad por taller</span><span class="v">${indisp}%</span><span class="d">de la flota hoy</span></div></div>
+  <div class="grid g-2b"><section class="panel"><header><h2>Kilómetros por programa presupuestario</h2></header><div class="cuerpo barras">${Object.entries(porProg).sort((a,b)=>b[1]-a[1]).map(([p,k])=>`<div class="b"><span class="eti">${PROGRAMAS[p]||p}</span><span class="pista"><span style="width:${k/maxP*100}%"></span></span><span class="num" style="text-align:right">${km(k)} km</span></div>`).join("")}</div></section>
+  <section class="panel"><header><h2>Salidas por vehículo</h2></header><div class="cuerpo barras">${Object.entries(porVeh).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([p,n])=>`<div class="b"><span class="eti">${placa(p)}</span><span class="pista"><span style="width:${n/Math.max(...Object.values(porVeh))*100}%"></span></span><span class="num" style="text-align:right">${n} salida${n>1?"s":""}</span></div>`).join("")}</div></section></div>
+  <section class="panel" style="margin-top:var(--e-4)"><header><h2>Por centro de costo</h2><div class="acciones"><button class="btn sec chico" type="button" id="btn-csv">Copiar tabla (CSV)</button></div></header><div class="tabla-env"><table><thead><tr><th>Folio</th><th>Imputación</th><th>Programa</th><th>Km</th><th>% del total</th></tr></thead><tbody>${filasCC.map(([f,k])=>`<tr><td class="mono">${f}</td><td>${esc(CCX[f]?.t||"")}</td><td>${CCX[f]?.prog||""}</td><td class="d">${km(k)}</td><td class="d">${(k/tot*100).toFixed(1).replace(".",",")}%</td></tr>`).join("")}</tbody></table></div>
+  <div class="leyenda"><span class="tenue peq">En producción: exportación a .xlsx, .csv y .pdf con filtros por fecha, región, gerencia y centro de costo. Datos de este periodo: históricos de ejemplo más las salidas cerradas en la maqueta.</span></div></section>`;
+}
+post.reportes = ()=>{ $("#btn-csv").onclick=()=>{ try{ navigator.clipboard.writeText(window.__csv).then(()=>tostada("Tabla copiada al portapapeles."),()=>tostada("No se pudo copiar automáticamente: selecciona la tabla y copia.")) }catch(e){tostada("No se pudo copiar automáticamente.")} }; };
+
+/* ======================= ADMINISTRACIÓN ======================= */
+function vAdmin(){
+  const hallazgos=[
+   ["Patentes con formatos distintos","Planilla de mantenciones: «CR BJ - 40», «WJ - 77 12». Inventario V7: «CRBJ-40», «WX-6622». Reservas V7: «CR BJ 40».","21 normalizadas a BBBB-10 / BB-1000","c-pend","!"],
+   ["Mismo N° de motor y chasis en dos vehículos","SZWY-98 y SZWZ-31 registran el mismo motor (K14C-138·····) y el mismo chasis (TSMYBA2S7RMB·····).","Bloquea la carga hasta corregir","c-malo","✕"],
+   ["Chasis con largo distinto de 17","CRBJ-40 «MR2069·····» (11), GVYR-53 (18), DRSY-45 (17 con letra O en vez de 0).","Revisar contra padrón","c-pend","!"],
+   ["Kilometraje del inventario desactualizado","El inventario V7 repite el km de la última mantención (ej. FXHB-90: 394.124) y la planilla informa 490.993.","Se toma «Kmtje. Actual» de la planilla","c-pend","!"],
+   ["Vehículo fuera del inventario","VGXF-75 (KIA Sorento 2026, arriendo MITTA) aparece en mantenciones pero no en el inventario.","Agregado como arriendo operativo","c-res","i"],
+   ["Documentos sin fecha","GVYR-53, VGXF-75 y WX-6622 no tienen fechas de revisión técnica, gases, SOAP ni permiso.","Quedan con alerta «Sin registro»","c-malo","✕"],
+   ["Reservas con errores de fórmula","Hoja «Reservas» del V7: celdas #REF!, años 31423 y 12132, y un conflicto de fechas para KBSW-97.","No se migran; se recargan validadas","c-malo","✕"],
+   ["Licencias de conducir ausentes","La nómina de pólizas de conducción (1.651 registros) no trae clase ni vencimiento de licencia.","Levantar con cada región en la fase 2","c-pend","!"],
+   ["Padrón sin mantención de 17 de 21 vehículos","La planilla marca «VENCIDO» en 17 vehículos; 3 superan 250.000 km sin cambio de distribución.","Alerta operativa, no de datos","c-tall","⚙"],
+  ];
+  return cab("Administración nacional","Tablas maestras, carga masiva inicial, cuentas y registro de auditoría. Sólo para el administrador nacional.","ERS §3.2 Perfil 1 · §7")+
+  `<section class="panel"><header><h2>Calidad de datos de la carga inicial</h2><span class="sub">Hallazgos reales en las planillas entregadas el 15-10-2026</span></header><div class="tabla-env"><table><thead><tr><th>Hallazgo</th><th>Evidencia</th><th>Tratamiento</th></tr></thead><tbody>${hallazgos.map(h=>`<tr><td><b>${h[0]}</b></td><td class="peq">${h[1]}</td><td>${chip(h[2],h[3],h[4])}</td></tr>`).join("")}</tbody></table></div></section>
+  <div class="grid g-2b" style="margin-top:var(--e-4)"><section class="panel"><header><h2>Tablas maestras</h2></header><div class="tabla-env"><table><tbody>
+   <tr><td>Vehículos</td><td class="d">${VEH.length}</td><td class="peq tenue">Oficina Central; 16 regiones en fase 2</td></tr>
+   <tr><td>Nómina base de funcionarios</td><td class="d">346</td><td class="peq tenue">NOMINA-GEFA, Oficina Central</td></tr>
+   <tr><td>Pólizas de conducción (caución)</td><td class="d">1.651</td><td class="peq tenue">DESC.-POLIZA-CONDUCCION jul-2026</td></tr>
+   <tr><td>Centros de costo e imputación</td><td class="d">${CC.length}</td><td class="peq tenue">Folios 48001 en adelante (muestra)</td></tr>
+   <tr><td>Programas presupuestarios</td><td class="d">${Object.keys(PROGRAMAS).length}</td><td class="peq tenue">P01, P03, P04, P05, P06</td></tr></tbody></table></div>
+   <div class="leyenda"><button class="btn sec chico" type="button" id="btn-carga">Simular carga masiva (.xlsx)</button></div></section>
+  <section class="panel"><header><h2>Traspaso entre regiones</h2></header><form class="cuerpo grid" id="f-trasp"><div class="campos"><div class="campo"><label for="t-pat">Vehículo</label><select id="t-pat">${VEH.map(v=>`<option>${v.pat}</option>`).join("")}</select></div><div class="campo"><label for="t-reg">Región de destino</label><select id="t-reg">${REGIONES.map(r=>`<option>${r}</option>`).join("")}</select></div><div class="campo ancho"><span class="lbl">Tipo</span><div class="opciones"><label><input type="radio" name="t-tipo" value="Temporal" checked> Temporal (comisión o emergencia)</label><label><input type="radio" name="t-tipo" value="Definitivo"> Definitivo</label></div></div></div><div class="acciones"><button class="btn" type="submit">Autorizar traspaso</button></div></form></section></div>
+  <section class="panel" style="margin-top:var(--e-4)"><header><h2>Registro de auditoría</h2><span class="sub">Inalterable: usuario, fecha y hora, IP, valor anterior y nuevo</span></header><div class="tabla-env"><table><thead><tr><th>Fecha y hora</th><th>Usuario</th><th>Acción</th><th>Objeto</th><th>Valor anterior</th><th>Valor nuevo</th><th>IP</th></tr></thead><tbody>${AUD.map(a=>`<tr><td class="num">${fFH(a.t)}</td><td>${esc(nom(a.u))}</td><td>${esc(a.acc)}</td><td class="mono peq">${esc(a.obj)}</td><td class="peq">${esc(a.ant)}</td><td class="peq">${esc(a.nue)}</td><td class="mono peq">${a.ip}</td></tr>`).join("")}</tbody></table></div></section>`;
+}
+post.admin = ()=>{
+  $("#btn-carga").onclick=()=>tostada("Validación de plantilla: 21 vehículos leídos · 21 patentes normalizadas · 1 duplicidad de motor/chasis bloqueante · 3 sin fechas de documentos.");
+  $("#f-trasp").onsubmit=e=>{e.preventDefault(); const p=$("#t-pat").value, rg=$("#t-reg").value, t=document.querySelector('input[name="t-tipo"]:checked').value; audit("Autoriza traspaso "+t.toLowerCase(),p,"Oficina Central",rg); tostada(`Traspaso ${t.toLowerCase()} de ${p} a ${rg} registrado.`); render();};
+};
+
+/* ======================= ORDEN DE SALIDA ======================= */
+function abrirOrden(id){
+  const r=RES.find(x=>x.id===id), v=VX[r.pat], cc=CCX[r.cc];
+  const inh=inhabiles(r.salida,r.regreso);
+  $("#capa").innerHTML=`<div class="velo" id="velo"><div class="cajon" role="dialog" aria-modal="true" aria-labelledby="t-orden"><header><h2 id="t-orden" style="font-size:var(--f-l)">Orden de salida · <span class="mono">${r.id}</span></h2><button class="btn sec chico" type="button" id="cerrar">Cerrar</button></header><div class="cuerpo">
+  <div class="orden"><div class="enc"><div><b>Corporación Nacional Forestal</b><br>Gerencia de Finanzas y Administración · Unidad de Vehículos<h3>Orden de salida de vehículo fiscal</h3><span class="mono">N° ${r.id}</span> · emitida ${fFH(HOY)}</div><div class="qr"><div id="qr"></div><span>Verificación en línea<br>Carabineros · auditoría</span></div></div>
+  <table><tbody>
+   <tr><td>Solicitado por</td><td>${esc(nom(r.sol))} · ${esc(PX[r.sol].ger)}</td></tr>
+   <tr><td>Autorizado por</td><td>${esc(nom(r.jefe))} · ${esc(PX[r.jefe].cargo)} <span class="sello">FIRMA ELECTRÓNICA</span></td></tr>
+   <tr><td>Cometido</td><td>${esc(r.cometido)}</td></tr>
+   <tr><td>Destino</td><td>${esc(r.destinos.map(d=>`${d.lug}, ${d.com}, Región de ${d.reg}`).join(" · "))}</td></tr>
+   <tr><td>Imputación</td><td>${esc(r.cc)} · ${esc(cc?.t||"")}</td></tr>
+   <tr><td>Vehículo</td><td><b>${esc(r.pat)}</b> · ${esc(v.tipo)} ${esc(v.marca)} ${esc(v.modelo)} ${v.anio}</td></tr>
+   <tr><td>Conductor</td><td>${esc(nom(r.cond))} · RUT ${PX[r.cond]?.rut||""} · caución ${CX[r.cond]?.polCau||"—"}${r.relevo?`<br>Relevo: ${esc(nom(r.relevo))}`:""}</td></tr>
+   <tr><td>Salida / regreso</td><td>${fFH(r.salida)} → ${fFH(r.regreso)} · ${Math.max(1,Math.ceil((F(r.regreso)-F(r.salida))/DIA))} día(s) · ${pasajeros(r)} personas</td></tr>
+   <tr><td>Acompañantes</td><td>${r.pas.map(nom).map(esc).join(", ")||"—"}</td></tr>
+   <tr><td>Km aproximados</td><td>${km(r.km)}</td></tr>
+   <tr><td>Lugar de guarda</td><td>${esc(v.unidad)}${r.destinos.length&&r.km>500?" · pernoctación autorizada en destino":""}</td></tr>
+   <tr><td>Día inhábil (DL 799)</td><td>${inh.length?esc(inh.join(", "))+" · "+esc(r.dl799?.adj||"Autorización pendiente de adjuntar"):"No aplica"}</td></tr>
+   <tr><td>Tarjeta combustible</td><td>${esc(v.tarjeta)}</td></tr>
+  </tbody></table>
+  <p style="margin-top:12px;font-size:12px">1. En caso de colisión o choque: dejar constancia en Carabineros indicando la póliza ${v.poliza}, vigente hasta ${fF(v.polizaVence)}.<br>2. Asistencia en viaje: 22 826 1101 · 22 797 6100, indicando patente ${esc(r.pat)} y RUT 61.313.000-4 CONAF.<br>3. Devolver con el estanque al menos en 1/4.</p>
+  <div class="pie"><div>Firma conductor</div><div>V°B° Unidad de Vehículos</div><div>Recepción conforme</div></div></div>
+  <p class="tenue peq">Formato basado en el comprobante «Salida Vehículo» de GESAD, con firma electrónica de la jefatura y código QR (ERS §5.2). La póliza indicada es ficticia.</p></div></div></div>`;
+  try{ new QRCode(document.getElementById("qr"),{text:"https://flota.conaf.cl/verificar/"+r.id,width:112,height:112,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M}); }catch(e){ document.getElementById("qr").textContent="QR no disponible"; }
+  const cerrar=()=>{$("#capa").innerHTML="";document.removeEventListener("keydown",esc_)}; const esc_=e=>{if(e.key==="Escape")cerrar()};
+  $("#cerrar").onclick=cerrar; $("#velo").onclick=e=>{if(e.target.id==="velo")cerrar()}; document.addEventListener("keydown",esc_); $("#cerrar").focus();
+}
+
+/* Delegación global */
+document.addEventListener("click",e=>{
+  const o=e.target.closest("[data-orden]"); if(o){abrirOrden(o.dataset.orden);return}
+  const v=e.target.closest("[data-veh]"); if(v&&!e.target.closest(".cajon")){fichaTab="ficha";abrirFicha(v.dataset.veh);return}
+  const a=e.target.closest("[data-asig]"); if(a){sel.asig=a.dataset.asig;asigPat=asigCond=asigRel=null;ir("asignacion");return}
+  const i=e.target.closest("[data-ir]"); if(i){ir(i.dataset.ir);return}
+  const an=e.target.closest("[data-anular]"); if(an){const r=RES.find(x=>x.id===an.dataset.anular); if(an.dataset.conf){const ant=EST[r.est][0]; r.est="ANULADA"; r.obsLog="Anulada por el solicitante."; audit("Anula solicitud",r.id,ant,"Anulada"); tostada(`${r.id} anulada. Se liberó el vehículo.`); render();} else {an.dataset.conf="1"; an.textContent="Confirmar anulación";} return}
+});
+const h=(location.hash||"").slice(1); if(h && ROLES[rol].nav.some(n=>n[0]===h)) vista=h;
+render();
+</script>
+
+</body></html>
