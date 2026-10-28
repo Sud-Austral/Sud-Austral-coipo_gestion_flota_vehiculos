@@ -56,7 +56,7 @@ Otras observaciones:
 
 ## 4. Dependencias que deben resolverse antes de apagar GESAD
 
-1. **Viáticos.** El menú tiene la opción «Consulta por pasajeros para viático», y el sistema de viáticos tiene permiso para leer las solicitudes, los acompañantes y los tipos de salida de GESAD. Si GESAD deja de operar sin un reemplazo de esa conexión, el cálculo de viáticos pierde su fuente de información sobre los cometidos. **Es el riesgo principal del cierre a fin de año.**
+1. **Viáticos.** El menú tiene la opción «Consulta por pasajeros para viático», y el sistema de viáticos tiene permiso para leer las solicitudes, los acompañantes y los tipos de salida de GESAD. **Decisión (28-10-2026, según lo indicado por la Unidad de Vehículos):** el nuevo sistema no se conectará con el sistema de pagos. Registrará en cada salida el folio de imputación presupuestaria y emitirá un reporte en Excel para Tesorería (ver punto 9). Antes del cierre de GESAD hay que confirmar con Finanzas que su sistema deja de consultar GESAD y pasa a usar ese reporte.
 2. **Catálogo de localidades.** La tabla de comunas, provincias y regiones de GESAD la leen otros diez sistemas institucionales. Hay que mantenerla o trasladarla.
 3. **Datos que GESAD toma de otros sistemas.** Los nombres de funcionarios, los programas presupuestarios, los centros financieros, los usuarios y las pólizas de seguro provienen de otros sistemas institucionales. Esos datos no vienen en el respaldo: conductores y solicitantes aparecen sólo con su número interno de funcionario.
 
@@ -102,6 +102,22 @@ Se solicitarán al Departamento de Informática:
 
 1. El catálogo de centros financieros y el significado de los códigos de estado.
 2. Los nombres de los funcionarios que aparecen en GESAD, limitados a los números internos presentes en el respaldo.
-3. La confirmación de qué información usa el sistema de viáticos y quién es su responsable.
+3. La confirmación, junto con Finanzas, de que el sistema de viáticos dejará de consultar GESAD y recibirá el reporte de Tesorería.
 4. El fuente del formulario `vehi007` (tipos de origen de vehículos), que el menú llama y no viene en la entrega.
 5. La documentación técnica o el manual de usuario, si existen.
+
+## 9. Reporte de cometidos para Tesorería (requerimiento agregado al ERS)
+
+El ERS INF-LOG-TI-2026-V1 pide imputar cada salida por programa presupuestario y centro de costo (§4.3-A.3), pero no menciona viáticos, Tesorería ni pagos. Su reportería (§4.4-B) apunta al costo operacional. Para cubrir lo que hoy GESAD entrega al sistema de viáticos se agrega este requerimiento, definido por la UIA el 28-10-2026:
+
+| Aspecto | Definición |
+|---|---|
+| Integración | Sin conexión con el sistema de pagos de Finanzas. El reporte se envía a Tesorería |
+| Imputación | Cada salida registra sólo el **folio** de imputación. La gerencia se deduce del folio |
+| Unidad del reporte | Una fila por **persona y salida**: conductor, conductor de relevo y acompañantes funcionarios. Los pasajeros externos no se informan |
+| Columnas | ID de salida, RUT, funcionario, rol en el viaje, fecha y hora de salida y de regreso, días, destino, cometido, folio y gerencia, jefatura que autorizó |
+| Alcance | Sólo salidas **finalizadas**, con las fechas y horas reales de la bitácora |
+| Emisor | Encargado de vehículos de Oficina Central y de cada región, para su jurisdicción |
+| Periodicidad y formato | **Mensual y anual**, en **Excel** |
+
+La maqueta incluye este reporte en «Reportes → Reporte para Tesorería», con descarga en Excel.

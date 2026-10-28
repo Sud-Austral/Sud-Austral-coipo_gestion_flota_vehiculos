@@ -23,7 +23,7 @@ perfil ve sus propios módulos:
 |---|---|
 | Funcionario solicitante | Nueva solicitud con revisión automática (días inhábiles DL 799, relevo sobre 400 km diarios, capacidad, conductor habilitado, imputación); seguimiento de sus solicitudes y orden de salida |
 | Jefatura directa | Bandeja de aprobación: aprobar, observar o rechazar con comentario |
-| Encargado de vehículos | Panel del día, asignación de patente y conductor con filtros de requisitos, visor Gantt, registro de salida y regreso, hoja de vida del vehículo, padrón de conductores y reportes por programa y centro de costo |
+| Encargado de vehículos | Panel del día, asignación de patente y conductor con filtros de requisitos, visor Gantt, registro de salida y regreso, hoja de vida del vehículo, padrón de conductores, reportes por programa y centro de costo, y **reporte mensual o anual para Tesorería** (Excel, una fila por persona y salida finalizada) |
 | Conductor | Agenda de cometidos y registro de odómetro, combustible y novedades mecánicas |
 | Administrador nacional | Todo lo anterior, más calidad de datos de la carga inicial, tablas maestras, traspaso entre regiones y registro de auditoría |
 
@@ -37,7 +37,7 @@ muestra cómo el sistema descarta un camión con la revisión técnica vencida.
 
 Antes de diseñar el nuevo sistema, la UIA analizó GESAD, el sistema que hoy registra las salidas de vehículos y que dejará de operar a fines de 2026. El análisis se hizo con la base de datos, el código fuente y el menú que entregó el Departamento de Informática en respuesta al Memorándum N° 5772/2026.
 
-- [Análisis de GESAD](docs/gesad/analisis-gesad.md): uso real del sistema, dependencias con otros sistemas (viáticos), datos sensibles, calidad de datos, funciones que el ERS no menciona y antecedentes pendientes.
+- [Análisis de GESAD](docs/gesad/analisis-gesad.md): uso real del sistema, dependencias con otros sistemas, datos sensibles, calidad de datos, funciones que el ERS no menciona, antecedentes pendientes y el reporte para Tesorería que reemplaza la conexión con viáticos.
 - [Diccionario de datos](docs/gesad/diccionario-datos.md): 77 tablas con columnas, tipos, claves y número de filas, sin registros.
 - [Inventario de programas](docs/gesad/inventario-programas.md): menú del sistema y los 108 formularios y reportes, con las tablas que usa cada uno.
 - [Lector del respaldo](herramientas/README.md): script que convierte el respaldo Oracle a CSV.
@@ -47,7 +47,7 @@ Antes de diseñar el nuevo sistema, la UIA analizó GESAD, el sistema que hoy re
 ## Contenido del repositorio
 
 - `index.html`: la maqueta completa en un solo archivo (código y estilos incluidos). Es
-  la versión publicada en GitHub Pages (v0.1).
+  la versión publicada en GitHub Pages (v0.2, con reporte para Tesorería).
 - `banner-gefa.jpg` y `banner-gefa-corto.jpg`: banners de la Gerencia de Finanzas y
   Administración, tomados de `identidad/` de coipo_master_produccion.
 - `.nojekyll`: indica a GitHub Pages que publique los archivos sin procesarlos.

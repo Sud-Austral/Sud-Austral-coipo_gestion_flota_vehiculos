@@ -151,6 +151,7 @@ td{padding:var(--e-2) var(--e-3);border-bottom:1px solid var(--linea);vertical-a
 tr.clic{cursor:pointer;transition:background var(--t-micro) var(--curva)}
 tr.clic:hover{background:var(--sup-2)}
 td.d{text-align:right;font-variant-numeric:tabular-nums}
+td.mono,td.num{white-space:nowrap}
 .tenue{color:var(--tinta-3)}
 .peq{font-size:var(--f-xs)}
 
@@ -335,6 +336,7 @@ footer.pie-app{padding-block:var(--e-5);padding-left:var(--gutter-l);padding-rig
 <div id="capa"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 "use strict";
 /* ======================= DATOS ======================= */
@@ -427,12 +429,18 @@ const CC = [
  ["48067","P06 UD 1301 CC 126 GESTION GCEBX DEPTO ARBOLADO URBANO","P06"]
 ].map(([folio,t,prog])=>({folio,t,prog}));
 const CCX = Object.fromEntries(CC.map(c=>[c.folio,c]));
+const GER_PROG = {P01:"GEFA · Gerencia de Finanzas y Administración",P03:"GEPRIF · Gerencia de Protección contra Incendios Forestales",P04:"GASP · Gerencia de Áreas Silvestres Protegidas",P05:"GEF · Gerencia de Fiscalización y Evaluación Ambiental",P06:"GEBCC · Gerencia de Bosques y Cambio Climático"};
+const gerenciaFolio = f=>GER_PROG[CCX[f]?.prog]||"—";
 const PROGRAMAS = {P01:"P01 Gestión Institucional",P03:"P03 Manejo del Fuego (GEPRIF)",P04:"P04 Áreas Silvestres Protegidas",P05:"P05 Fiscalización y Evaluación Ambiental",P06:"P06 Bosques y Cambio Climático"};
 const REGIONES = ["Arica y Parinacota","Tarapacá","Antofagasta","Atacama","Coquimbo","Valparaíso","Metropolitana","O'Higgins","Maule","Ñuble","Biobío","La Araucanía","Los Ríos","Los Lagos","Aysén","Magallanes"];
 
 /* Reservas (ejemplo) */
 const R = (o)=>({pas:[],destinos:[],req:{t4:false,carga:false},reqCond:false,cond:null,relevo:null,pat:null,hist:[],bit:null,dl799:null,obsLog:"",...o});
 let RES = [
+ R({id:"OC-2026-000372",est:"FINALIZADA",fSol:"2026-09-08T10:20",sol:"p7",jefe:"p8",salida:"2026-09-14T07:30",regreso:"2026-09-15T19:00",destinos:[{reg:"Maule",com:"Constitución",lug:"Predio sector Putú"}],cometido:"Fiscalización de plan de manejo en plantación forestal.",km:760,cc:"48046",cond:"p7",pas:["p12"],pat:"FHWT-20",req:{t4:true},bit:{sal:"2026-09-14T07:42",odoS:244980,combS:"Lleno",docs:true,reg:"2026-09-15T18:51",odoR:245746,combR:"1/4",nov:"Sin novedades"}}),
+ R({id:"OC-2026-000388",est:"FINALIZADA",fSol:"2026-09-21T15:05",sol:"p6",jefe:"p5",salida:"2026-09-28T08:00",regreso:"2026-09-30T18:30",destinos:[{reg:"Biobío",com:"Concepción",lug:"Dirección Regional del Biobío"},{reg:"Biobío",com:"Florida",lug:"Sede comunitaria sector Copiulemu"}],cometido:"Talleres de prevención social de incendios forestales con comunidades de interfaz.",km:1180,cc:"48010",reqCond:true,cond:"c2",relevo:"c3",pas:["p13","p11"],pat:"SFHW-60",bit:{sal:"2026-09-28T08:05",odoS:60790,combS:"Lleno",docs:true,reg:"2026-09-30T18:20",odoR:61972,combR:"1/2",nov:"Sin novedades"}}),
+ R({id:"OC-2026-000395",est:"FINALIZADA",fSol:"2026-10-01T09:40",sol:"p4",jefe:"p3",salida:"2026-10-06T08:00",regreso:"2026-10-07T19:30",destinos:[{reg:"Valparaíso",com:"Viña del Mar",lug:"Oficina Provincial Marga Marga"}],cometido:"Capacitación en uso de convenio marco a equipos provinciales de abastecimiento.",km:290,cc:"P01-601",reqCond:true,cond:"c1",pas:["p15","p16"],pat:"SHPY-15",bit:{sal:"2026-10-06T08:12",odoS:90421,combS:"Lleno",docs:true,reg:"2026-10-07T19:02",odoR:90713,combR:"3/4",nov:"Sin novedades"}}),
+ R({id:"OC-2026-000398",est:"FINALIZADA",fSol:"2026-10-07T12:00",sol:"p6",jefe:"p5",salida:"2026-10-13T07:00",regreso:"2026-10-15T20:00",destinos:[{reg:"La Araucanía",com:"Lonquimay",lug:"Sector Malalcahuello"}],cometido:"Supervisión de faenas de silvicultura preventiva en cortafuegos comunales.",km:1340,cc:"48011",reqCond:true,cond:"c3",pas:["p11"],pat:"SZCK-83",req:{t4:true},bit:{sal:"2026-10-13T07:08",odoS:51062,combS:"Lleno",docs:true,reg:"2026-10-15T19:47",odoR:52410,combR:"1/2",nov:"Sin novedades"}}),
  R({id:"OC-2026-000401",est:"FINALIZADA",fSol:"2026-10-14T09:12",sol:"p6",jefe:"p5",salida:"2026-10-19T08:00",regreso:"2026-10-20T19:00",destinos:[{reg:"Ñuble",com:"Quillón",lug:"Oficina Provincial Diguillín"}],cometido:"Reunión técnica de análisis de causalidad con equipo provincial, previo a la temporada 2026-2027.",km:860,cc:"48006",cond:"p6",pas:["p11"],pat:"SZWY-98",bit:{sal:"2026-10-19T08:10",odoS:79952,combS:"Lleno",docs:true,reg:"2026-10-20T18:42",odoR:80812,combR:"1/2",nov:"Sin novedades"}}),
  R({id:"OC-2026-000407",est:"FINALIZADA",fSol:"2026-10-09T11:40",sol:"p9",jefe:"p10",salida:"2026-10-15T07:30",regreso:"2026-10-16T18:00",destinos:[{reg:"Valparaíso",com:"Limache",lug:"Vivero Limache"}],cometido:"Retiro de material vegetal para el Programa de Arborización.",km:380,cc:"48067",cond:"p9",pas:["p14"],pat:"PLLH-76",req:{carga:true},bit:{sal:"2026-10-15T07:41",odoS:71010,combS:"3/4",docs:true,reg:"2026-10-16T17:55",odoR:71390,combR:"1/4",nov:"Luz de patente trasera quemada"}}),
  R({id:"OC-2026-000403",est:"RECHAZADA",fSol:"2026-10-13T10:02",sol:"p6",jefe:"p5",salida:"2026-10-21T09:00",regreso:"2026-10-21T14:00",destinos:[{reg:"Metropolitana",com:"Santiago",lug:"Oficina Regional RM"}],cometido:"Reunión de coordinación de pronóstico.",km:30,cc:"48015",obsLog:"Rechazada: la reunión puede realizarse por videoconferencia."}),
@@ -546,7 +554,7 @@ let corr=415; const nuevoId=()=>"OC-2026-"+String(corr++).padStart(6,"0");
 
 /* ======================= ESTADO DE VISTA ======================= */
 let rol = "encargado", vista = "panel";
-let sel = {asig:null, bandeja:null, port:null, gantt:{ini:F("2026-10-19"),dias:14}, ganttSel:null, flotaFiltro:"todos", condFiltro:"todos"};
+let sel = {repTab:"km", tes:{modo:"mes",mes:10,anio:2026}, asig:null, bandeja:null, port:null, gantt:{ini:F("2026-10-19"),dias:14}, ganttSel:null, flotaFiltro:"todos", condFiltro:"todos"};
 try{ const g=localStorage.getItem("flota-rol"); if(g&&ROLES[g]) rol=g; }catch(e){}
 document.getElementById("sel-rol").value=rol;
 
@@ -957,7 +965,7 @@ function vConductores(){
 post.conductores = ()=>{ $("#vista").querySelectorAll("[data-cf]").forEach(b=>b.onclick=()=>{sel.condFiltro=b.dataset.cf;render()}); };
 
 /* ======================= REPORTES ======================= */
-function vReportes(){
+function vReportesKm(){
   const viajes=[...RES.filter(r=>r.est==="FINALIZADA"&&r.bit?.odoR).map(r=>({pat:r.pat,cc:r.cc,km:r.bit.odoR-r.bit.odoS})),...HIST.map(([pat,cc,k])=>({pat,cc,km:k}))];
   const tot=viajes.reduce((s,v)=>s+v.km,0);
   const porCC={}, porProg={}, porVeh={};
@@ -968,14 +976,62 @@ function vReportes(){
   const indisp=Math.round(VEH.filter(v=>["TALL_P","TALL_C","MALO"].includes(v.estado)).length/VEH.length*100);
   const filasCC=Object.entries(porCC).sort((a,b)=>b[1]-a[1]);
   window.__csv="folio;titulo;programa;km\n"+filasCC.map(([f,k])=>`${f};${CCX[f]?.t||""};${CCX[f]?.prog||""};${k}`).join("\n");
-  return cab("Resumen de salidas a terreno","Kilómetros por programa y centro de costo, para distribuir el costo operacional entre programas. Periodo de ejemplo: 22-09-2026 al 22-10-2026.","ERS §4.4-B")+
-  `<div class="grid g-kpi" style="margin-bottom:var(--e-4)"><div class="kpi"><span class="k">Salidas finalizadas</span><span class="v">${viajes.length}</span></div><div class="kpi"><span class="k">Kilómetros recorridos</span><span class="v num">${km(tot)}</span></div><div class="kpi"><span class="k">Ocupación del pool</span><span class="v">${ocup}%</span><span class="d">días en uso / días disponibles</span></div><div class="kpi"><span class="k">Indisponibilidad por taller</span><span class="v">${indisp}%</span><span class="d">de la flota hoy</span></div></div>
+  return `<div class="grid g-kpi" style="margin-bottom:var(--e-4)"><div class="kpi"><span class="k">Salidas finalizadas</span><span class="v">${viajes.length}</span></div><div class="kpi"><span class="k">Kilómetros recorridos</span><span class="v num">${km(tot)}</span></div><div class="kpi"><span class="k">Ocupación del pool</span><span class="v">${ocup}%</span><span class="d">días en uso / días disponibles</span></div><div class="kpi"><span class="k">Indisponibilidad por taller</span><span class="v">${indisp}%</span><span class="d">de la flota hoy</span></div></div>
   <div class="grid g-2b"><section class="panel"><header><h2>Kilómetros por programa presupuestario</h2></header><div class="cuerpo barras">${Object.entries(porProg).sort((a,b)=>b[1]-a[1]).map(([p,k])=>`<div class="b"><span class="eti">${PROGRAMAS[p]||p}</span><span class="pista"><span style="width:${k/maxP*100}%"></span></span><span class="num" style="text-align:right">${km(k)} km</span></div>`).join("")}</div></section>
   <section class="panel"><header><h2>Salidas por vehículo</h2></header><div class="cuerpo barras">${Object.entries(porVeh).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([p,n])=>`<div class="b"><span class="eti">${placa(p)}</span><span class="pista"><span style="width:${n/Math.max(...Object.values(porVeh))*100}%"></span></span><span class="num" style="text-align:right">${n} salida${n>1?"s":""}</span></div>`).join("")}</div></section></div>
   <section class="panel" style="margin-top:var(--e-4)"><header><h2>Por centro de costo</h2><div class="acciones"><button class="btn sec chico" type="button" id="btn-csv">Copiar tabla (CSV)</button></div></header><div class="tabla-env"><table><thead><tr><th>Folio</th><th>Imputación</th><th>Programa</th><th>Km</th><th>% del total</th></tr></thead><tbody>${filasCC.map(([f,k])=>`<tr><td class="mono">${f}</td><td>${esc(CCX[f]?.t||"")}</td><td>${CCX[f]?.prog||""}</td><td class="d">${km(k)}</td><td class="d">${(k/tot*100).toFixed(1).replace(".",",")}%</td></tr>`).join("")}</tbody></table></div>
   <div class="leyenda"><span class="tenue peq">En producción: exportación a .xlsx, .csv y .pdf con filtros por fecha, región, gerencia y centro de costo. Datos de este periodo: históricos de ejemplo más las salidas cerradas en la maqueta.</span></div></section>`;
 }
-post.reportes = ()=>{ $("#btn-csv").onclick=()=>{ try{ navigator.clipboard.writeText(window.__csv).then(()=>tostada("Tabla copiada al portapapeles."),()=>tostada("No se pudo copiar automáticamente: selecciona la tabla y copia.")) }catch(e){tostada("No se pudo copiar automáticamente.")} }; };
+const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+function filasTesoreria(){
+  const t=sel.tes, out=[];
+  RES.filter(r=>r.est==="FINALIZADA"&&r.bit?.reg).forEach(r=>{
+    const sal=F(r.bit.sal); if(sal.getFullYear()!==t.anio || (t.modo==="mes" && sal.getMonth()+1!==t.mes)) return;
+    const dias=diasEntre(r.bit.sal.slice(0,10),r.bit.reg.slice(0,10))+1;
+    const personas=[[r.cond,"Conductor"],[r.relevo,"Conductor de relevo"],...r.pas.map(x=>[x,"Acompañante"])].filter(x=>x[0]);
+    const vistos=new Set();
+    personas.forEach(([id,rolv])=>{ if(vistos.has(id)) return; vistos.add(id); const p=PX[id];
+      out.push({id:r.id,rut:p.rut,nom:p.nom,rol:rolv,sal:r.bit.sal,reg:r.bit.reg,dias,destino:r.destinos.map(d=>`${d.lug}, ${d.com} (${d.reg})`).join(" · "),cometido:r.cometido,folio:r.cc,ger:gerenciaFolio(r.cc),jefe:nom(r.jefe)}); });
+  });
+  return out.sort((a,b)=>a.sal.localeCompare(b.sal)||a.nom.localeCompare(b.nom));
+}
+function vReportesTes(){
+  const t=sel.tes, filas=filasTesoreria(), salidas=new Set(filas.map(f=>f.id)).size, personas=new Set(filas.map(f=>f.rut)).size;
+  const per=t.modo==="mes"?`${MESES[t.mes-1]} de ${t.anio}`:`año ${t.anio}`;
+  return `<section class="panel"><header><div><h2>Reporte de cometidos para Tesorería</h2><span class="sub">Una fila por persona y salida finalizada · ${per}</span></div>
+   <div class="gantt-ctl"><div class="seg" role="group" aria-label="Periodo"><button type="button" data-tm="mes" aria-pressed="${t.modo==="mes"}">Mensual</button><button type="button" data-tm="anio" aria-pressed="${t.modo==="anio"}">Anual</button></div>
+   ${t.modo==="mes"?`<label class="sr" for="t-mes">Mes</label><select id="t-mes" style="width:auto">${MESES.map((m,i)=>`<option value="${i+1}" ${i+1===t.mes?"selected":""}>${m[0].toUpperCase()+m.slice(1)}</option>`).join("")}</select>`:""}
+   <label class="sr" for="t-anio">Año</label><select id="t-anio" style="width:auto"><option ${t.anio===2026?"selected":""}>2026</option><option ${t.anio===2025?"selected":""}>2025</option></select>
+   <button class="btn chico" type="button" id="btn-xlsx" ${filas.length?"":"disabled"}>Descargar Excel</button></div></header>
+   <div class="cuerpo grid" style="gap:var(--e-2)"><div class="meta"><span>Emite: <b>Encargado de Vehículos · Oficina Central</b> (en regiones, cada encargado regional emite el de su jurisdicción)</span><span>Salidas: <b>${salidas}</b></span><span>Personas: <b>${personas}</b></span><span>Filas: <b>${filas.length}</b></span></div>
+   <p class="nota">Sin conexión con el sistema de pagos: el Excel se envía a Tesorería. La gerencia se deduce del folio de imputación registrado en la salida. Incluye conductores y acompañantes funcionarios; los pasajeros externos no se informan.</p></div>
+   <div class="tabla-env">${filas.length?`<table><thead><tr><th>ID salida</th><th>RUT</th><th>Funcionario</th><th>Rol</th><th>Salida</th><th>Regreso</th><th>Días</th><th>Destino</th><th>Cometido</th><th>Folio</th><th>Gerencia</th><th>Jefatura que autorizó</th></tr></thead><tbody>${filas.map(f=>`<tr><td class="mono">${f.id}</td><td class="mono peq">${f.rut}</td><td>${esc(f.nom)}</td><td class="peq">${f.rol}</td><td class="num">${fFH(f.sal)}</td><td class="num">${fFH(f.reg)}</td><td class="d">${f.dias}</td><td class="peq">${esc(f.destino)}</td><td class="peq">${esc(f.cometido)}</td><td class="mono">${esc(f.folio)}</td><td class="peq">${esc(f.ger.split(" · ")[0])}</td><td class="peq">${esc(f.jefe)}</td></tr>`).join("")}</tbody></table>`:vacio("Sin salidas finalizadas en el periodo","Elige otro mes o el reporte anual.")}</div>
+   <div class="leyenda"><span class="tenue peq">Días: días calendario entre la salida y el regreso reales registrados en la bitácora. Si la descarga no se inicia en esta vista previa, ábrela desde GitHub Pages. RUT y nombres ficticios.</span></div></section>`;
+}
+function vReportes(){
+  const tab=sel.repTab;
+  return cab(tab==="km"?"Resumen de salidas a terreno":"Reporte para Tesorería",tab==="km"?"Kilómetros por programa y centro de costo, para distribuir el costo operacional entre programas. Periodo de ejemplo: 22-09-2026 al 22-10-2026.":"Cometidos realizados por cada funcionario, con su imputación presupuestaria, para enviar a Tesorería en forma mensual o anual.",tab==="km"?"ERS §4.4-B":"Requerimiento UIA · 28-10-2026")+
+  `<div class="seg" role="group" aria-label="Tipo de reporte" style="margin-bottom:var(--e-4)"><button type="button" data-rt="km" aria-pressed="${tab==="km"}">Kilómetros y costos</button><button type="button" data-rt="tes" aria-pressed="${tab==="tes"}">Reporte para Tesorería</button></div>`+
+  (tab==="km"?vReportesKm():vReportesTes());
+}
+post.reportes = ()=>{
+  const V=$("#vista");
+  V.querySelectorAll("[data-rt]").forEach(b=>b.onclick=()=>{sel.repTab=b.dataset.rt;render()});
+  V.querySelectorAll("[data-tm]").forEach(b=>b.onclick=()=>{sel.tes.modo=b.dataset.tm;render()});
+  const tm=$("#t-mes"); if(tm) tm.onchange=e=>{sel.tes.mes=+e.target.value;render()};
+  const ta=$("#t-anio"); if(ta) ta.onchange=e=>{sel.tes.anio=+e.target.value;render()};
+  const bx=$("#btn-xlsx"); if(bx) bx.onclick=()=>{
+    const t=sel.tes, filas=filasTesoreria();
+    if(typeof XLSX==="undefined"){tostada("No se pudo cargar el generador de Excel. Revisa tu conexión.");return}
+    const aoa=[["Reporte de cometidos para Tesorería · CONAF · Unidad de Vehículos"],[`Periodo: ${t.modo==="mes"?MESES[t.mes-1]+" de "+t.anio:"año "+t.anio}`,"","Emitido: "+fFH(HOY),"","Emisor: Encargado de Vehículos Oficina Central"],[],
+      ["ID salida","RUT","Funcionario","Rol en el viaje","Fecha y hora de salida","Fecha y hora de regreso","Días","Destino","Cometido","Folio de imputación","Gerencia","Jefatura que autorizó"],
+      ...filas.map(f=>[f.id,f.rut,f.nom,f.rol,fFH(f.sal),fFH(f.reg),f.dias,f.destino,f.cometido,f.folio,f.ger,f.jefe])];
+    const ws=XLSX.utils.aoa_to_sheet(aoa); ws["!cols"]=[16,13,28,18,17,17,6,44,50,12,46,28].map(w=>({wch:w}));
+    const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Cometidos");
+    const nombre=`cometidos_tesoreria_${t.anio}${t.modo==="mes"?"_"+String(t.mes).padStart(2,"0"):""}.xlsx`;
+    try{ XLSX.writeFile(wb,nombre); audit("Emite reporte para Tesorería",nombre,"—",filas.length+" filas"); tostada(`Excel generado: ${nombre} (${filas.length} filas).`); }catch(e){ tostada("La descarga fue bloqueada en esta vista. Ábrela desde GitHub Pages."); }
+  };
+  const bc=$("#btn-csv"); if(bc) bc.onclick=()=>{ try{ navigator.clipboard.writeText(window.__csv).then(()=>tostada("Tabla copiada al portapapeles."),()=>tostada("No se pudo copiar automáticamente: selecciona la tabla y copia.")) }catch(e){tostada("No se pudo copiar automáticamente.")} }; };
 
 /* ======================= ADMINISTRACIÓN ======================= */
 function vAdmin(){
