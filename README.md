@@ -33,6 +33,17 @@ vehículos**, asígnele vehículo y conductor en «Asignación» (se abre la ord
 código QR) y revísela en el «Visor Gantt». La solicitud de ejemplo **OC-2026-000410**
 muestra cómo el sistema descarta un camión con la revisión técnica vencida.
 
+## Análisis de GESAD
+
+Antes de diseñar el nuevo sistema, la UIA analizó GESAD, el sistema que hoy registra las salidas de vehículos y que dejará de operar a fines de 2026. El análisis se hizo con la base de datos, el código fuente y el menú que entregó el Departamento de Informática en respuesta al Memorándum N° 5772/2026.
+
+- [Análisis de GESAD](docs/gesad/analisis-gesad.md): uso real del sistema, dependencias con otros sistemas (viáticos), datos sensibles, calidad de datos, funciones que el ERS no menciona y antecedentes pendientes.
+- [Diccionario de datos](docs/gesad/diccionario-datos.md): 77 tablas con columnas, tipos, claves y número de filas, sin registros.
+- [Inventario de programas](docs/gesad/inventario-programas.md): menú del sistema y los 108 formularios y reportes, con las tablas que usa cada uno.
+- [Lector del respaldo](herramientas/README.md): script que convierte el respaldo Oracle a CSV.
+
+> El respaldo de la base de datos y los datos extraídos contienen datos personales y no se publican en este repositorio.
+
 ## Contenido del repositorio
 
 - `index.html`: la maqueta completa en un solo archivo (código y estilos incluidos). Es
@@ -40,6 +51,9 @@ muestra cómo el sistema descarta un camión con la revisión técnica vencida.
 - `banner-gefa.jpg` y `banner-gefa-corto.jpg`: banners de la Gerencia de Finanzas y
   Administración, tomados de `identidad/` de coipo_master_produccion.
 - `.nojekyll`: indica a GitHub Pages que publique los archivos sin procesarlos.
+- `docs/gesad/`: análisis de GESAD (ver sección anterior).
+- `herramientas/`: script lector del respaldo de GESAD.
+- `.gitignore`: impide versionar el respaldo y los CSV con datos personales.
 
 Documento de referencia: Informe Técnico y Especificación de Requerimientos de Software
 INF-LOG-TI-2026-V1 (Departamento de Servicios y Logística, 15-10-2026), con el Prototipo

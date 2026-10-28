@@ -1,0 +1,1398 @@
+# Diccionario de datos de GESAD
+
+Estructura del esquema de GESAD según el respaldo entregado por el Departamento de Informática (export Oracle 9.2 del 22-10-2026). Incluye tablas, columnas, tipos, claves y número de filas. **No contiene ningún registro.**
+
+Se omitieron dos columnas con datos sensibles (un dato de salud de los conductores y una credencial de las tarjetas de combustible). Las referencias a esquemas de otros sistemas institucionales tampoco se publican.
+
+Notación: **PK** = clave primaria; *NN* = obligatorio. Las tablas sin claves foráneas declaradas son la mayoría: la integridad la controlaban los formularios.
+
+## Índice
+
+| Módulo | Tablas | Filas |
+|---|---:|---:|
+| Flota | 18 | 11.915 |
+| Conductores | 13 | 8.325 |
+| Solicitudes y salidas | 10 | 883.114 |
+| Combustible | 8 | 347.500 |
+| Mantenciones y gastos | 11 | 13.862 |
+| Modelo anterior (2000-2005. sin uso) | 12 | 27.249 |
+| Parámetros y control | 5 | 220 |
+| **Total** | **77** | **1.292.185** |
+
+## Flota
+
+### VEHICULOS
+3.608 filas · PK: PATENTE · FK: MAR_CODIGO → MARCA_VEHI; MAR_CODIGO, MOD_CODIGO → MODELO_MARCA; COD_ORIGEN → TIPO_ORIGEN; TIPO_VEHICULO → TIPOS_VEHICULOS; COD_UBICACION → UBICACION
+
+| Columna | Tipo | |
+|---|---|---|
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| NO_CIA | VARCHAR2(2) | *NN* |
+| TIPO_VEHICULO | VARCHAR2(2) |  |
+| ANO | NUMBER(4, 0) |  |
+| NRO_MOTOR | VARCHAR2(20) |  |
+| NRO_CHASIS | VARCHAR2(20) |  |
+| COLOR | VARCHAR2(30) |  |
+| INVENTARIO | VARCHAR2(10) |  |
+| NO_CIA_RESPONS | VARCHAR2(2) |  |
+| NO_EMPLE_RESPONS | NUMBER(10, 0) |  |
+| IRVM | VARCHAR2(10) |  |
+| COD_UBICACION | VARCHAR2(2) |  |
+| NRO_POLIZA | VARCHAR2(15) |  |
+| DESC_COMP_SEGURO | VARCHAR2(100) |  |
+| VENCIM_POLIZA | DATE |  |
+| VENCIM_SEG_OBLIGA | DATE |  |
+| VENCIM_PER_CIRC | DATE |  |
+| MES_REV_TECNICA | NUMBER(2, 0) |  |
+| VENCIM_EXTINTOR | DATE |  |
+| COD_ORIGEN | VARCHAR2(2) |  |
+| IND_ACTIVO | VARCHAR2(1) |  |
+| IND_GASTOS_RECH | VARCHAR2(1) |  |
+| IND_DISPONIBLE | VARCHAR2(1) |  |
+| PROGRAMA | VARCHAR2(2) |  |
+| SUBPROG | VARCHAR2(2) |  |
+| ACTIVIDAD | VARCHAR2(2) |  |
+| TAREA | VARCHAR2(2) |  |
+| RUT_COND_RESP | NUMBER(10, 0) |  |
+| MAR_CODIGO | NUMBER(2, 0) |  |
+| MOD_CODIGO | NUMBER(2, 0) |  |
+| IND_ASIGNADO | VARCHAR2(1) |  |
+| CAP_NRO_PERSONA | NUMBER(2, 0) |  |
+| CAP_CARGA | NUMBER(12, 2) |  |
+| ROL_ASIGNADO | NUMBER(10, 0) |  |
+| FEC_ESTADO | DATE |  |
+| NO_CIA_TRA | VARCHAR2(2) |  |
+| FEC_REV_TECNICA | DATE |  |
+| COD_SECCION | VARCHAR2(6) |  |
+| COD_UNIDAD | VARCHAR2(6) |  |
+| DOM_ID_MARCA | NUMBER(3, 0) |  |
+| VALOR_CODIGO_MARCA | NUMBER(3, 0) |  |
+| DOM_ID_MODELO | NUMBER(3, 0) |  |
+| VALOR_CODIGO_MODELO | NUMBER(3, 0) |  |
+| VEH_USER | VARCHAR2(30) |  |
+| VEH_PC | VARCHAR2(30) |  |
+| VEH_FECHA_MOV | DATE |  |
+| CODIGO_PROPIEDAD | VARCHAR2(5) |  |
+| NO_ACTI | NUMBER(6, 0) |  |
+| VEHI_IND_OPE | NUMBER(1, 0) |  |
+| VEHI_IND_DISCO | NUMBER(1, 0) |  |
+| VEHI_IND_RESOLUCION | NUMBER(1, 0) |  |
+| VEHI_NUM_RESOLUCION | NUMBER(10, 0) |  |
+| VEHI_FEC_RES_DESDE | DATE |  |
+| VEHI_FEC_RES_HASTA | DATE |  |
+| VEHI_COD_RESOLUCION | VARCHAR2(20) |  |
+| DOM_ID_ESTADO | NUMBER(3, 0) |  |
+| VALOR_CODIGO_ESTADO | NUMBER(3, 0) |  |
+
+### VEHI_DETALLE
+3.647 filas · PK: PATENTE, DET_CORR
+
+| Columna | Tipo | |
+|---|---|---|
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| DET_CORR **PK** | NUMBER(4, 0) | *NN* |
+| DOM_ID | NUMBER(3, 0) | *NN* |
+| VAL_CODIGO | NUMBER(3, 0) | *NN* |
+| DET_FEC_DES | DATE | *NN* |
+| DET_FEC_HAS | DATE |  |
+| DET_USER | VARCHAR2(30) |  |
+| DET_PC | VARCHAR2(30) |  |
+| DET_FECHA_MOV | DATE |  |
+| DET_OBSERVACION | VARCHAR2(250) |  |
+
+### TIPOS_VEHICULOS
+15 filas · PK: TIPO_VEHICULO
+
+| Columna | Tipo | |
+|---|---|---|
+| TIPO_VEHICULO **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(50) |  |
+| TIPO_CLASE | VARCHAR2(1) |  |
+| TIPO_ANA_GASES | VARCHAR2(1) |  |
+
+### MARCA_VEHI
+51 filas · PK: MAR_CODIGO
+
+| Columna | Tipo | |
+|---|---|---|
+| MAR_CODIGO **PK** | NUMBER(2, 0) | *NN* |
+| MAR_DESCRIP | VARCHAR2(100) | *NN* |
+
+### MODELO_MARCA
+184 filas · PK: MAR_CODIGO, MOD_CODIGO
+
+| Columna | Tipo | |
+|---|---|---|
+| MAR_CODIGO **PK** | NUMBER(2, 0) | *NN* |
+| MOD_CODIGO **PK** | NUMBER(2, 0) | *NN* |
+| MOD_DESCRIP | VARCHAR2(100) | *NN* |
+
+### TIPO_ORIGEN
+7 filas · PK: COD_ORIGEN
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_ORIGEN **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(100) |  |
+| IND_DETALLE | VARCHAR2(1) |  |
+
+### DET_ORIGEN
+435 filas · PK: ORI_CORRELATIVO
+
+| Columna | Tipo | |
+|---|---|---|
+| ORI_CORRELATIVO **PK** | NUMBER(3, 0) | *NN* |
+| PATENTE | VARCHAR2(6) |  |
+| COD_ORIGEN | VARCHAR2(2) |  |
+| NO_CIA | CHAR(2) |  |
+| ORI_NRO_CONTRATO | VARCHAR2(10) |  |
+| ORI_RUT_PROP | NUMBER(10, 0) |  |
+| ORI_DV_PROP | VARCHAR2(1) |  |
+| ORI_NOM_PROP | VARCHAR2(100) |  |
+| ORI_FEC_INICIO | DATE |  |
+| ORI_FEC_TERMINO | DATE |  |
+| ORI_COSTO | NUMBER(10, 0) |  |
+| ORI_IND_CHOFER | NUMBER(1, 0) |  |
+| ORI_IND_COMBUSTIBLE | NUMBER(1, 0) |  |
+| ORI_USER | VARCHAR2(30) |  |
+| ORI_PC | VARCHAR2(30) |  |
+| ORI_FECHA_MOV | DATE |  |
+
+### UBICACION
+27 filas · PK: COD_UBICACION
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_UBICACION **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(50) |  |
+
+### INV_VEHICULO
+1.625 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| PATENTE | VARCHAR2(6) | *NN* |
+| COD_TIPO_INVEN | VARCHAR2(2) |  |
+| COD_DET_INV | VARCHAR2(2) |  |
+| NO_CIA | VARCHAR2(2) |  |
+| DOM_ID_TIPO | NUMBER(3, 0) |  |
+| DOM_ID_INVE | NUMBER(3, 0) |  |
+| VAL_CODIGO_TIPO | NUMBER(2, 0) |  |
+| VAL_CODIGO_INVE | NUMBER(3, 0) |  |
+
+### TIPO_INVENTARIO
+4 filas · PK: COD_TIPO_INVEN
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO_INVEN **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(100) |  |
+| IND_REP_INV | VARCHAR2(1) |  |
+| IND_REP_ACT | VARCHAR2(1) |  |
+| IND_REP_SAL | VARCHAR2(1) |  |
+
+### DET_INVENTARIO
+43 filas · PK: COD_TIPO_INVEN, COD_DET_INV · FK: COD_TIPO_INVEN → TIPO_INVENTARIO
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO_INVEN **PK** | VARCHAR2(2) | *NN* |
+| COD_DET_INV **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(100) |  |
+| IND_REP_INV | VARCHAR2(1) |  |
+| IND_REP_ACT | VARCHAR2(1) |  |
+| IND_REP_SAL | VARCHAR2(1) |  |
+
+### DOC_VEHICULO
+0 filas · PK: PATENTE, COD_DET_DOC, COD_TIPO_DOC · FK: COD_TIPO_DOC, COD_DET_DOC → DET_DOCTOS
+
+| Columna | Tipo | |
+|---|---|---|
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| COD_DET_DOC **PK** | VARCHAR2(2) | *NN* |
+| COD_TIPO_DOC **PK** | VARCHAR2(2) | *NN* |
+
+### TIPO_DOCTOS
+0 filas · PK: COD_TIPO_DOC
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO_DOC **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(100) |  |
+| IND_REP_INV | VARCHAR2(1) |  |
+| IND_REP_ACT | VARCHAR2(1) |  |
+| IND_REP_SAL | VARCHAR2(1) |  |
+
+### DET_DOCTOS
+0 filas · PK: COD_TIPO_DOC, COD_DET_DOC · FK: COD_TIPO_DOC → TIPO_DOCTOS
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO_DOC **PK** | VARCHAR2(2) | *NN* |
+| COD_DET_DOC **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(100) |  |
+| IND_REP_INV | VARCHAR2(1) |  |
+| IND_REP_ACT | VARCHAR2(1) |  |
+| IND_REP_SAL | VARCHAR2(1) |  |
+
+### VEHI_SEGURO
+2.025 filas · PK: PATENTE, CSE_RUT, SEG_NRO_POLIZA
+
+| Columna | Tipo | |
+|---|---|---|
+| PATENTE **PK** | VARCHAR2(6) |  |
+| CSE_RUT **PK** | NUMBER(10, 0) |  |
+| SEG_NRO_POLIZA **PK** | VARCHAR2(20) |  |
+| SEG_FEC_INICIO | DATE |  |
+| SEG_FEC_TERMINO | DATE |  |
+| SEG_USER | VARCHAR2(30) |  |
+| SEG_PC | VARCHAR2(30) |  |
+| SEG_FECHA_MOV | DATE |  |
+
+### VEHI_ACCIDENTE
+130 filas · PK: PATENTE, ACC_FECHA, ACC_ROL_CONDUCTOR
+
+| Columna | Tipo | |
+|---|---|---|
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| ACC_FECHA **PK** | DATE | *NN* |
+| ACC_ROL_CONDUCTOR **PK** | NUMBER(10, 0) | *NN* |
+| DOM_ID_TIPO | NUMBER(3, 0) |  |
+| VAL_CODIGO_TIPO | NUMBER(3, 0) |  |
+| ACC_OBSERVACION | VARCHAR2(500) |  |
+| DOM_ID_ACCI | NUMBER(3, 0) |  |
+| VAL_CODIGO_ACCI | NUMBER(3, 0) |  |
+| ACC_USER | VARCHAR2(30) |  |
+| ACC_PC | CHAR(30) |  |
+| ACC_FECHA_MOV | DATE |  |
+
+### VEHI_BITACORA
+3 filas · PK: BIT_CODIGO
+
+| Columna | Tipo | |
+|---|---|---|
+| BIT_CODIGO **PK** | NUMBER(10, 0) | *NN* |
+| BIT_USER | VARCHAR2(30) |  |
+| BIT_PC | VARCHAR2(10) |  |
+| BIT_FECHA_MOV | DATE |  |
+| BIT_HORA_MOV | DATE |  |
+| BIT_GLOSA | VARCHAR2(250) |  |
+| NO_CIA | VARCHAR2(2) |  |
+| MTV_TP_DOCTO | VARCHAR2(10) |  |
+| MTV_NRO_DOCTO | VARCHAR2(15) |  |
+| PROGRAMA_ANT | VARCHAR2(2) |  |
+| SUBPROG_ANT | VARCHAR2(2) |  |
+| ACTIVIDAD_ANT | VARCHAR2(2) |  |
+| PROGRAMA_ACT | VARCHAR2(2) |  |
+| SUBPROG_ACT | VARCHAR2(2) |  |
+| ACTIVIDAD_ACT | VARCHAR2(2) |  |
+
+### DEPARTAMENTO
+111 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| DPT_CODIGO | VARCHAR2(3) | *NN* |
+| DPT_DESCRIP | VARCHAR2(100) |  |
+| NO_CIA | VARCHAR2(2) |  |
+| DPT_USER | VARCHAR2(30) |  |
+| DPT_PC | VARCHAR2(30) |  |
+| DPT_FECHA_MOV | DATE |  |
+| DPT_USER_MOD | CHAR(30) |  |
+| DPT_PC_MOD | CHAR(30) |  |
+| DPT_FECHA_MOV_MOD | DATE |  |
+
+
+## Conductores
+
+### CONDUCTORES
+2.363 filas · PK: ROL_EMP · FK: COD_TIPO → TIPO_CONDUCTOR
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO | VARCHAR2(2) | *NN* |
+| NO_CIA | VARCHAR2(2) |  |
+| ROL_EMP **PK** | NUMBER(10, 0) | *NN* |
+| COD_SECCION | VARCHAR2(6) |  |
+| COD_UNIDAD | VARCHAR2(6) |  |
+| CON_CLASE | VARCHAR2(2) |  |
+| CON_FEC_VEN_LIC | DATE |  |
+| CON_ESTADO | VARCHAR2(1) |  |
+| CON_FEC_VEN_CONAF | DATE |  |
+| CON_RESTRICCION | VARCHAR2(250) |  |
+| CON_CAR_CONAF | VARCHAR2(1) |  |
+| CON_POL_CAU | VARCHAR2(1) |  |
+| CON_OBSERVACION | VARCHAR2(250) |  |
+| CON_ACCIDENTES | VARCHAR2(250) |  |
+| CON_FEC_EVENTO | DATE |  |
+| NO_CIA_TRA | VARCHAR2(2) |  |
+| CON_TRASLADO | VARCHAR2(1) |  |
+| DOM_ID_TIPO | NUMBER(3, 0) |  |
+| VAL_CODIGO_TIPO | NUMBER(3, 0) |  |
+| CON_USER | VARCHAR2(30) |  |
+| CON_PC | VARCHAR2(30) |  |
+| CON_FECHA_MOV | DATE |  |
+| CON_IND_SELLO | NUMBER(1, 0) |  |
+| CON_NRO_SELLO | NUMBER(10, 0) |  |
+| CON_FECHA_SELLO | DATE |  |
+| CON_MOTIVO_SELLO | VARCHAR2(500) |  |
+| CON_NRO_POLIZA | NUMBER(10, 0) |  |
+
+### TIPO_CONDUCTOR
+3 filas · PK: COD_TIPO
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(100) |  |
+
+### VEHI_CLASE_LICENCIA
+2.143 filas · PK: ROL_EMP, CLA_LIC_CONDUCIR
+
+| Columna | Tipo | |
+|---|---|---|
+| ROL_EMP **PK** | NUMBER(10, 0) | *NN* |
+| CON_FEC_VEN_CLASE | DATE |  |
+| DOM_ID | NUMBER(3, 0) |  |
+| VAL_CODIGO | NUMBER(3, 0) |  |
+| CON_FEC_OTORGAMIENTO | DATE |  |
+| CLA_PRIMERA | VARCHAR2(1) |  |
+| CLA_LIC_CONDUCIR **PK** | VARCHAR2(2) | *NN* |
+
+### CURSOS
+8 filas · PK: COD_CURSO
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_CURSO **PK** | VARCHAR2(2) |  |
+| DESCRIPCION | VARCHAR2(40) |  |
+
+### CURSOS_CONDUCTORES
+1.722 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| CUR_CORRELATIVO | NUMBER(3, 0) | *NN* |
+| ROL_EMP | NUMBER(10, 0) | *NN* |
+| DOM_ID | NUMBER(3, 0) | *NN* |
+| VAL_CODIGO | NUMBER(3, 0) | *NN* |
+| CUR_FEC_INI | DATE | *NN* |
+| CUR_FEC_TER | DATE | *NN* |
+| CUR_USER | VARCHAR2(30) |  |
+| CUR_PC | VARCHAR2(30) |  |
+| CUR_FECHA_MOV | DATE |  |
+
+### INFRAC_CONDUCTORES
+15 filas · PK: INF_CORRELATIVO, ROL_EMP
+
+| Columna | Tipo | |
+|---|---|---|
+| INF_CORRELATIVO **PK** | NUMBER(3, 0) | *NN* |
+| ROL_EMP **PK** | NUMBER(10, 0) | *NN* |
+| DOM_ID_TIPO | NUMBER(3, 0) | *NN* |
+| VAL_CODIGO_TIPO | NUMBER(3, 0) | *NN* |
+| INF_FECHA | DATE | *NN* |
+| INF_HORA | DATE |  |
+| DOM_ID_INFR | NUMBER(3, 0) |  |
+| VAL_CODIGO_INFR | NUMBER(3, 0) |  |
+| INF_USER | VARCHAR2(30) |  |
+| INF_PC | VARCHAR2(30) |  |
+| INF_FECHA_MOV | DATE |  |
+
+### SINIE_CONDUCTORES
+0 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| ROL_EMP | NUMBER(10, 0) | *NN* |
+| DOM_ID | NUMBER(3, 0) |  |
+| VAL_CODIGO | NUMBER(3, 0) |  |
+| SIN_FECHA | DATE |  |
+| SIN_OBSERVACION | VARCHAR2(250) |  |
+
+### VEHI_HIST_CONDUCTOR
+2.059 filas · PK: ROL_EMP, HCD_FECHA_CAMBIO
+
+| Columna | Tipo | |
+|---|---|---|
+| ROL_EMP **PK** | NUMBER(10, 0) | *NN* |
+| HCD_FECHA_CAMBIO **PK** | DATE | *NN* |
+| CON_IND_SELLO | NUMBER(1, 0) | *NN* |
+| CON_NRO_SELLO | NUMBER(4, 0) |  |
+| CON_FECHA_SELLO | DATE | *NN* |
+| CON_MOTIVO_SELLO | VARCHAR2(500) |  |
+| HCD_USER | VARCHAR2(30) |  |
+| HCD_PC | VARCHAR2(30) |  |
+| HCD_FECHA_MOV | DATE |  |
+
+### AUSENCIAS
+0 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| ANO | NUMBER(4, 0) |  |
+| NUMERO | NUMBER(4, 0) |  |
+| MOTIVO | VARCHAR2(100) |  |
+| ROL_EMP | VARCHAR2(10) |  |
+
+### VEHI_ENC_CONEXT
+5 filas · PK: CEX_RUT
+
+| Columna | Tipo | |
+|---|---|---|
+| CEX_RUT **PK** | NUMBER(10, 0) | *NN* |
+| CEX_DV | VARCHAR2(1) |  |
+| CEX_NOMBRE | VARCHAR2(25) |  |
+| CEX_APE_PATERNO | VARCHAR2(25) |  |
+| CEX_APE_MATERNO | VARCHAR2(25) |  |
+| CEX_TELEFONO | VARCHAR2(60) |  |
+| CEX_FAX | VARCHAR2(60) |  |
+| CEX_EMAIL | VARCHAR2(100) |  |
+| CEX_DIRECCION | VARCHAR2(100) |  |
+| LOCA_CODIGO | VARCHAR2(6) |  |
+| LOCA_TIPO | VARCHAR2(1) |  |
+| CEX_PC | VARCHAR2(30) |  |
+| CEX_USER | VARCHAR2(30) |  |
+| CEX_FECHA_MOV | DATE |  |
+| LOCA_CODIGO_OLD | VARCHAR2(6) |  |
+| LOCA_TIPO_OLD | VARCHAR2(1) |  |
+
+### VEHI_DET_CONEXT
+7 filas · PK: CEX_RUT, DEX_FEC_INI · FK: CEX_RUT → VEHI_ENC_CONEXT
+
+| Columna | Tipo | |
+|---|---|---|
+| CEX_RUT **PK** | NUMBER(10, 0) | *NN* |
+| DEX_FEC_INI **PK** | DATE | *NN* |
+| DEX_FEC_TER | DATE |  |
+| DEX_USER | VARCHAR2(30) |  |
+| DEX_PC | VARCHAR2(30) |  |
+| DEX_FECHA_MOV | DATE |  |
+
+### VEHI_EMPRESA_CONV
+0 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| EMP_ID | NUMBER(10, 0) | *NN* |
+| EMP_RUT | NUMBER(10, 0) |  |
+| EMP_DV | VARCHAR2(1) |  |
+| EMP_NOMBRE_RAZON_SOCIAL | VARCHAR2(200) |  |
+| EMP_NOMBRE_RELACIONADOR | VARCHAR2(25) |  |
+| EMP_APE_PATERNO_RELACIONADOR | VARCHAR2(25) |  |
+| EMP_APE_MATERNO_RELACIONADOR | VARCHAR2(25) |  |
+| EMP_DIRECCION | VARCHAR2(200) |  |
+| EMP_COD_POSTAL | VARCHAR2(10) |  |
+| EMP_TELEFONO | VARCHAR2(60) |  |
+| LOCA_CODIGO | VARCHAR2(6) |  |
+| LOCA_TIPO | VARCHAR2(1) |  |
+| EMP_FAX | VARCHAR2(60) |  |
+| EMP_EMAIL | VARCHAR2(100) |  |
+| EMP_PAGINA_WEB | VARCHAR2(212) |  |
+| DOM_ID_SECTOR | NUMBER(3, 0) |  |
+| VAL_CODIGO_SECTOR | NUMBER(3, 0) |  |
+| EMP_TELEFONO_RELACIONADOR | VARCHAR2(60) |  |
+| EMP_MAIL_RELACIONADOR | VARCHAR2(100) |  |
+| EMP_SIGLA | VARCHAR2(100) |  |
+| EMP_USER | VARCHAR2(30) |  |
+| EMP_PC | VARCHAR2(30) |  |
+| EMP_FECHA_MOV | DATE |  |
+| LOCA_CODIGO_OLD | VARCHAR2(6) |  |
+| LOCA_TIPO_OLD | VARCHAR2(1) |  |
+
+### VEHI_REPRESENTANTE_EMPRESA
+0 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| EMP_ID | NUMBER(10, 0) | *NN* |
+| REP_ID | NUMBER(10, 0) | *NN* |
+| REP_RUT | NUMBER(10, 0) |  |
+| REP_DV | VARCHAR2(1) |  |
+| REP_NOMBRE | VARCHAR2(30) |  |
+| REP_APE_PATERNO | VARCHAR2(30) |  |
+| REP_APE_MATERNO | VARCHAR2(30) |  |
+| REP_FEC_DESDE | DATE |  |
+| REP_FEC_HASTA | DATE |  |
+| REP_TELEFONO | VARCHAR2(60) |  |
+| REP_FAX | VARCHAR2(60) |  |
+| REP_EMAIL | VARCHAR2(100) |  |
+| REP_USER | VARCHAR2(30) |  |
+| REP_PC | VARCHAR2(30) |  |
+| REP_FECHA_MOV | DATE |  |
+
+
+## Solicitudes y salidas
+
+### SOLICITUD_VEHICULO
+137.020 filas · PK: NO_CIA, SOL_ANO_DOCTO, COD_TIPO_SALIDA, SOL_NRO_DOCTO · FK: SOL_ROL_CONDUCTOR → CONDUCTORES; COD_TIPO_SALIDA → TIPO_SALIDA
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| SOL_ANO_DOCTO **PK** | NUMBER(4, 0) | *NN* |
+| SOL_NRO_DOCTO **PK** | NUMBER(5, 0) | *NN* |
+| SOL_FEC_SOLICITUD | DATE |  |
+| COD_TIPO_SALIDA **PK** | VARCHAR2(2) | *NN* |
+| SOL_VIA_SOLICITUD | VARCHAR2(1) |  |
+| SOL_NRO_MEMO | VARCHAR2(15) |  |
+| SOL_ROL_SOLICITA | NUMBER(10, 0) |  |
+| COD_SECCION | VARCHAR2(6) |  |
+| COD_UNIDAD | VARCHAR2(6) |  |
+| PROGRAMA | VARCHAR2(2) |  |
+| SUBPROG | VARCHAR2(2) |  |
+| ACTIVIDAD | VARCHAR2(2) |  |
+| SOL_FEC_SALIDA | DATE |  |
+| SOL_HORA_SALIDA | DATE |  |
+| SOL_FEC_REGRESO | DATE |  |
+| SOL_HORA_REGRESO | DATE |  |
+| SOL_NRO_DIA | NUMBER(2, 0) |  |
+| SOL_NRO_PERSONAS | NUMBER(2, 0) |  |
+| SOL_KMS_APROX | NUMBER(6, 2) |  |
+| SOL_COMETIDO | VARCHAR2(100) |  |
+| LOCA_CODIGO | VARCHAR2(6) |  |
+| LOCA_TIPO | VARCHAR2(1) |  |
+| SOL_IND_CHOFER | VARCHAR2(1) |  |
+| SOL_ROL_CONDUCTOR | NUMBER(10, 0) |  |
+| PATENTE | VARCHAR2(6) |  |
+| SOL_OBSERVACION | VARCHAR2(250) |  |
+| SOL_DIA_VIATICO | NUMBER(5, 2) |  |
+| DOM_ID_SALIDA | NUMBER(3, 0) |  |
+| VAL_CODIGO_SALIDA | NUMBER(3, 0) |  |
+| SOL_KM_INI | NUMBER(6, 2) |  |
+| SOL_KM_FIN | NUMBER(6, 2) |  |
+| REQ_APROBADO | VARCHAR2(6) |  |
+| REQ_ANO | NUMBER(4, 0) |  |
+| SOL_USER | VARCHAR2(30) |  |
+| SOL_PC | VARCHAR2(30) |  |
+| SOL_FECHA_MOV | DATE |  |
+| LOCA_CODIGO_OLD | VARCHAR2(6) |  |
+| LOCA_TIPO_OLD | VARCHAR2(1) |  |
+
+### VEHI_PASAJERO
+78.596 filas · PK: NO_CIA, SOL_ANO_DOCTO, COD_TIPO_SALIDA, SOL_NRO_DOCTO, PAS_ROL_PASAJERO
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| SOL_ANO_DOCTO **PK** | NUMBER(4, 0) | *NN* |
+| COD_TIPO_SALIDA **PK** | VARCHAR2(2) | *NN* |
+| SOL_NRO_DOCTO **PK** | NUMBER(5, 0) | *NN* |
+| PAS_ROL_PASAJERO **PK** | NUMBER(10, 0) | *NN* |
+
+### TIPO_SALIDA
+4 filas · PK: COD_TIPO_SALIDA
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO_SALIDA **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(100) |  |
+
+### GUARDE_VEHICULO
+666.239 filas · PK: NO_CIA, PATENTE, GUA_FECHA
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| GUA_FECHA **PK** | DATE | *NN* |
+| GUA_HORA | DATE |  |
+| GUA_KM | NUMBER(10, 0) |  |
+| GUA_UBICACION | VARCHAR2(2) |  |
+| GUA_COMBUSTIBLE | VARCHAR2(20) |  |
+| GUA_OBSERVACION | VARCHAR2(100) |  |
+| GUA_PC | VARCHAR2(30) |  |
+| GUA_USER | VARCHAR2(30) |  |
+| GUA_FECHA_MOV | DATE |  |
+| DOM_ID_ESTADO | NUMBER(3, 0) |  |
+| VALOR_CODIGO_ESTADO | NUMBER(3, 0) |  |
+
+### VEHI_GUARDIA
+0 filas · PK: NO_CIA, GRD_RUT
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| GRD_RUT **PK** | NUMBER(10, 0) | *NN* |
+| GRD_DV | VARCHAR2(1) |  |
+| GRD_NOMBRE | VARCHAR2(60) |  |
+| GRD_APE_PATERNO | VARCHAR2(60) |  |
+| GRD_APE_MATERNO | VARCHAR2(60) |  |
+| GRD_USER | VARCHAR2(30) |  |
+| GRD_PC | VARCHAR2(30) |  |
+| GRD_FECHA_MOV | DATE |  |
+
+### MOVIMIENTO_DIARIO_VEHICULO
+0 filas · PK: NO_CIA, MDV_ANO, MDV_NRO
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| MDV_ANO **PK** | NUMBER(4, 0) | *NN* |
+| MDV_NRO **PK** | NUMBER(8, 0) | *NN* |
+| MDV_FECHA_SALIDA | DATE | *NN* |
+| NO_CIA_GRD | VARCHAR2(2) | *NN* |
+| GRD_RUT | NUMBER(10, 0) | *NN* |
+| ROL_EMP | NUMBER(10, 0) | *NN* |
+| PATENTE | VARCHAR2(6) | *NN* |
+| MDV_HORA_SALIDA | DATE | *NN* |
+| MDV_KMJE_SALIDA | NUMBER(10, 0) | *NN* |
+| MDV_KMJE_REGRESO | NUMBER(10, 0) | *NN* |
+| MDV_HORA_REGRESO | DATE | *NN* |
+| MDV_USER | VARCHAR2(30) | *NN* |
+| MDV_PC | VARCHAR2(30) | *NN* |
+| MDV_FECHA_MOV | DATE | *NN* |
+
+### VEHI_MOV_GPS
+0 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| PATENTE | VARCHAR2(6) | *NN* |
+| GPS_FECHA | DATE |  |
+| GPS_HORA | DATE |  |
+| GPS_ADDRESS | VARCHAR2(100) |  |
+| GPS_LATITUD | NUMBER(20, 15) |  |
+| GPS_LONGITUD | NUMBER(20, 15) |  |
+| GPS_VELOCIDAD | NUMBER(5, 3) |  |
+| GPS_USER | VARCHAR2(30) |  |
+| GPS_PC | VARCHAR2(30) |  |
+| GPS_FECHA_MOV | DATE |  |
+
+### LOCALIDAD
+420 filas · PK: LOCA_CODIGO, LOCA_TIPO
+
+| Columna | Tipo | |
+|---|---|---|
+| LOCA_CODIGO **PK** | VARCHAR2(6) | *NN* |
+| LOCA_CODIGO_AGRUPA | VARCHAR2(6) |  |
+| LOCA_DESCRIPCION | VARCHAR2(60) | *NN* |
+| LOCA_TIPO **PK** | VARCHAR2(1) | *NN* |
+| LOCA_CODIGO_ANT | VARCHAR2(6) |  |
+| NO_CIA | VARCHAR2(2) |  |
+| NRO_ROMANO | VARCHAR2(4) |  |
+| ORD_REGION | NUMBER(2, 0) |  |
+
+### LOCALIDAD_NEW
+419 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| LOCA_CODIGO | VARCHAR2(6) | *NN* |
+| LOCA_CODIGO_AGRUPA | VARCHAR2(6) |  |
+| LOCA_DESCRIPCION | VARCHAR2(60) | *NN* |
+| LOCA_TIPO | VARCHAR2(1) | *NN* |
+| LOCA_CODIGO_ANT | VARCHAR2(6) |  |
+| NO_CIA | VARCHAR2(2) |  |
+| NRO_ROMANO | VARCHAR2(4) |  |
+| ORD_REGION | NUMBER(2, 0) |  |
+
+### LOCALIDAD_OLD
+416 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| LOCA_CODIGO | VARCHAR2(6) | *NN* |
+| LOCA_CODIGO_AGRUPA | VARCHAR2(6) |  |
+| LOCA_DESCRIPCION | VARCHAR2(60) | *NN* |
+| LOCA_TIPO | VARCHAR2(1) | *NN* |
+| NO_CIA | VARCHAR2(2) |  |
+| NRO_ROMANO | VARCHAR2(4) |  |
+
+
+## Combustible
+
+### TARJETA_VEHICULO
+4.007 filas · PK: PATENTE, TVE_TARJETA
+
+| Columna | Tipo | |
+|---|---|---|
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| TVE_TARJETA **PK** | VARCHAR2(10) | *NN* |
+| TVE_PRODUCTO | VARCHAR2(4) | *NN* |
+| TVE_FEC_EMI | DATE | *NN* |
+| TVE_FEC_EST | DATE |  |
+| TVE_ESTADO | VARCHAR2(1) | *NN* |
+| TVE_OBS | VARCHAR2(200) |  |
+| DPT_CODIGO | VARCHAR2(3) |  |
+| NO_CIA | VARCHAR2(2) |  |
+| TVE_USER | VARCHAR2(30) |  |
+| TVE_PC | VARCHAR2(30) |  |
+| TVE_FECHA_MOV | DATE |  |
+| TVE_IND_GRANEL | VARCHAR2(1) |  |
+| TVE_USER_MOD | CHAR(30) |  |
+| TVE_PC_MOD | CHAR(30) |  |
+| TVE_FECHA_MOV_MOD | DATE |  |
+
+### MOVIMIENTO_TARJETA_VEHICULO
+334.225 filas · PK: MTV_TP_DOCTO, MTV_NRO_DOCTO, PATENTE, MTV_FEC_CAR, MTV_HORA_CAR · FK: ROL_EMP → CONDUCTORES; CBE_CODIGO, ESE_CODIGO → ESTACION_SERVICIO; PATENTE, TVE_TARJETA → TARJETA_VEHICULO
+
+| Columna | Tipo | |
+|---|---|---|
+| MTV_TP_DOCTO **PK** | VARCHAR2(10) | *NN* |
+| MTV_NRO_DOCTO **PK** | VARCHAR2(15) | *NN* |
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| TVE_TARJETA | VARCHAR2(10) |  |
+| CBE_CODIGO | VARCHAR2(3) | *NN* |
+| ESE_CODIGO | VARCHAR2(4) |  |
+| MTV_FEC_CAR **PK** | DATE | *NN* |
+| MTV_HORA_CAR **PK** | DATE | *NN* |
+| MTV_TIPO_TRAN | VARCHAR2(1) | *NN* |
+| MTV_PREC_UNI | NUMBER(12, 3) | *NN* |
+| MTV_LITROS | NUMBER(6, 2) | *NN* |
+| MTV_MTO_TRAN | NUMBER(12, 0) | *NN* |
+| MTV_KM_ACTUAL | NUMBER(10, 0) |  |
+| ROL_EMP | NUMBER(10, 0) |  |
+| MTV_PRODUCTO | VARCHAR2(4) |  |
+| MTV_DPT_ACTUAL | VARCHAR2(3) |  |
+| PROGRAMA | VARCHAR2(2) |  |
+| SUBPROG | VARCHAR2(2) |  |
+| ACTIVIDAD | VARCHAR2(2) |  |
+| NO_CIA | VARCHAR2(2) |  |
+| SOL_ANO_DOCTO | NUMBER(4, 0) |  |
+| SOL_NRO_DOCTO | NUMBER(5, 0) |  |
+| COD_TIPO_SALIDA | CHAR(2) |  |
+| SOL_COMETIDO | VARCHAR2(100) |  |
+| DOM_ID_SALIDA | NUMBER(3, 0) |  |
+| VAL_CODIGO_SALIDA | NUMBER(3, 0) |  |
+| MTV_USER | VARCHAR2(30) |  |
+| MTV_PC | VARCHAR2(30) |  |
+| MTV_FECHA_MOV | DATE |  |
+| MTV_IND_GRANEL | VARCHAR2(1) |  |
+| REQ_APROBADO | VARCHAR2(6) |  |
+| REQ_ANO | NUMBER(4, 0) |  |
+| MTV_USER_MOD | CHAR(30) |  |
+| MTV_PC_MOD | CHAR(30) |  |
+| MTV_FECHA_MOV_MOD | DATE |  |
+| MTV_REND_COPEC | NUMBER(14, 4) |  |
+
+### COMPANIA_BENCINA
+22 filas · PK: CBE_CODIGO
+
+| Columna | Tipo | |
+|---|---|---|
+| CBE_CODIGO **PK** | VARCHAR2(3) | *NN* |
+| CBE_DESCRIP | VARCHAR2(30) | *NN* |
+| RUT | NUMBER(10, 0) |  |
+| DV | VARCHAR2(1) |  |
+| CBE_RAZON_SOCIAL | VARCHAR2(100) |  |
+| CBE_USER | CHAR(30) |  |
+| CBE_PC | CHAR(30) |  |
+| CBE_FECHA_MOV | DATE |  |
+| CBE_USER_MOD | CHAR(30) |  |
+| CBE_PC_MOD | CHAR(30) |  |
+| CBE_FECHA_MOV_MOD | DATE |  |
+
+### ESTACION_SERVICIO
+977 filas · PK: CBE_CODIGO, ESE_CODIGO
+
+| Columna | Tipo | |
+|---|---|---|
+| CBE_CODIGO **PK** | VARCHAR2(4) | *NN* |
+| ESE_CODIGO **PK** | VARCHAR2(4) | *NN* |
+| ESE_DIRECCION | VARCHAR2(100) | *NN* |
+| LOCA_CODIGO | VARCHAR2(6) | *NN* |
+| ESE_USER | VARCHAR2(30) |  |
+| ESE_PC | VARCHAR2(30) |  |
+| ESE_FECHA_MOV | DATE |  |
+| LOCA_CODIGO_OLD | VARCHAR2(6) |  |
+| ESE_USER_MOD | VARCHAR2(30) |  |
+| ESE_PC_MOD | VARCHAR2(30) |  |
+| ESE_FECHA_MOV_MOD | DATE |  |
+| ESE_DIRECCION_LIMPIA | VARCHAR2(100) |  |
+| LOCA_TIPO | VARCHAR2(1) |  |
+
+### VALES_COMBUST
+5.292 filas · PK: SERIE, NRO_VALE
+
+| Columna | Tipo | |
+|---|---|---|
+| SERIE **PK** | VARCHAR2(2) | *NN* |
+| NRO_VALE **PK** | NUMBER | *NN* |
+| VALOR | NUMBER |  |
+| FECHA_RETIRO | DATE |  |
+| NO_CIA_RET | VARCHAR2(2) |  |
+| NO_EMPLE | VARCHAR2(10) |  |
+| PATENTE | VARCHAR2(6) |  |
+| NUM_MEMO | NUMBER(5, 0) |  |
+| ANO | NUMBER(4, 0) |  |
+| FECHA_RENDIC | DATE |  |
+| NO_CIA_RENDIC | VARCHAR2(2) |  |
+| NO_EMPLE_RENDIC | VARCHAR2(50) |  |
+| NO_CIA | VARCHAR2(2) |  |
+| CC_1 | VARCHAR2(3) |  |
+| CC_2 | VARCHAR2(3) |  |
+| CC_3 | VARCHAR2(3) |  |
+| PROGRAMA | VARCHAR2(2) |  |
+| SUBPROG | VARCHAR2(2) |  |
+| ACTIVIDAD | VARCHAR2(2) |  |
+| TAREA | VARCHAR2(2) |  |
+| ESTADO | VARCHAR2(1) |  |
+| CORRELATIVO | VARCHAR2(1) |  |
+
+### BITACORA
+2.971 filas · PK: FECHA, PATENTE, NO_CIA, NUM_MEMO, ANO, LINEA
+
+| Columna | Tipo | |
+|---|---|---|
+| FECHA **PK** | DATE | *NN* |
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| NUM_MEMO **PK** | NUMBER(5, 0) | *NN* |
+| ANO **PK** | NUMBER(4, 0) | *NN* |
+| LINEA **PK** | NUMBER | *NN* |
+| KM_INI | NUMBER |  |
+| KM_FIN | NUMBER |  |
+| NRO_VALES | NUMBER |  |
+| SERIE_DESDE | VARCHAR2(2) |  |
+| VALE_DESDE | NUMBER |  |
+| SERIE_HASTA | VARCHAR2(2) |  |
+| VALE_HASTA | NUMBER |  |
+| LTRS_BENCINA | NUMBER |  |
+| MONTO | NUMBER(10, 0) |  |
+| ESTADO | VARCHAR2(1) |  |
+| CONDUCTOR | VARCHAR2(50) |  |
+| CIUDAD | VARCHAR2(50) |  |
+| IND_CORRELATIVO | VARCHAR2(1) |  |
+
+### VEHI_COMPRA_GRANEL
+0 filas · PK: NO_CIA, CGR_ANO, CGR_ID
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| CGR_ANO **PK** | NUMBER(4, 0) | *NN* |
+| CGR_ID **PK** | NUMBER(5, 0) | *NN* |
+| CGR_TIPO_COMPRA | NUMBER(1, 0) | *NN* |
+| CGR_TIPO_ID | VARCHAR2(10) | *NN* |
+| CGR_FEC_COMPRA | DATE | *NN* |
+| CGR_DOCTO_COMPRA | VARCHAR2(15) |  |
+| CGR_PRODUCTO | VARCHAR2(4) |  |
+| CGR_MTO_COMPRA | NUMBER(12, 0) |  |
+| CGR_LITROS | NUMBER(5, 2) |  |
+| CGR_PREC_UNI | NUMBER(12, 3) |  |
+| CGR_ROL_RESPONSABLE | NUMBER(10, 0) |  |
+| NO_CIA_CGR | VARCHAR2(2) |  |
+| DOM_ID_TIPO_ASP | NUMBER(3, 0) |  |
+| VAL_CODIGO_TIPO_ASP | NUMBER(3, 0) |  |
+| UAP_ID | NUMBER(4, 0) |  |
+| CGR_USER | VARCHAR2(30) |  |
+| CGR_PC | VARCHAR2(30) |  |
+| CGR_FECHA_MOV | DATE |  |
+
+### VEHI_DIST_GRANEL
+6 filas · PK: MTV_TP_DOCTO, MTV_NRO_DOCTO, PATENTE, MTV_FEC_CAR, MTV_HORA_CAR, DGR_ID
+
+| Columna | Tipo | |
+|---|---|---|
+| MTV_TP_DOCTO **PK** | VARCHAR2(10) | *NN* |
+| MTV_NRO_DOCTO **PK** | VARCHAR2(15) | *NN* |
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| MTV_FEC_CAR **PK** | DATE | *NN* |
+| MTV_HORA_CAR **PK** | DATE | *NN* |
+| DGR_ID **PK** | NUMBER(5, 0) | *NN* |
+| NO_CIA | VARCHAR2(2) |  |
+| TIPO_VEHICULO | VARCHAR2(2) |  |
+| DGR_PATENTE | VARCHAR2(6) |  |
+| CODIGO_PROPIEDAD | VARCHAR2(5) |  |
+| NO_ACTI | NUMBER(6, 0) |  |
+| CODIGO_ANTIGUO | VARCHAR2(8) |  |
+| DGR_CAN_LITROS | NUMBER(12, 3) |  |
+| DGR_FEC_CARGA | DATE |  |
+| REQ_APROBADO | VARCHAR2(6) |  |
+| REQ_ANO | NUMBER(4, 0) |  |
+| UNI_CODIGO | VARCHAR2(6) |  |
+| DGR_KM_HORA | NUMBER(12, 0) |  |
+| DGR_USER | VARCHAR2(30) |  |
+| DGR_PC | VARCHAR2(30) |  |
+| DGR_FECHA_MOV | DATE |  |
+
+
+## Mantenciones y gastos
+
+### VEHI_ENC_MANTENCION
+335 filas · PK: EMA_ANO, NO_CIA, EMA_NRO_TRABAJO
+
+| Columna | Tipo | |
+|---|---|---|
+| EMA_ANO **PK** | NUMBER(4, 0) | *NN* |
+| NO_CIA **PK** | CHAR(2) | *NN* |
+| EMA_NRO_TRABAJO **PK** | NUMBER(10, 0) | *NN* |
+| PATENTE | VARCHAR2(6) | *NN* |
+| EMA_FECHA | DATE | *NN* |
+| EMA_KM_ACTUAL | NUMBER(10, 0) | *NN* |
+| NO_CIA_TAL | VARCHAR2(2) |  |
+| TAL_RUT | NUMBER |  |
+| DOM_ID | NUMBER(3, 0) |  |
+| VAL_CODIGO | NUMBER(3, 0) |  |
+| EMA_OBSERVACION | VARCHAR2(250) |  |
+| ROL_EMP_ADMI | VARCHAR2(10) |  |
+| ROL_EMP_VEHI | VARCHAR2(10) |  |
+| EMA_USADO | NUMBER(1, 0) |  |
+| EMA_PC | VARCHAR2(30) |  |
+| EMA_USER | VARCHAR2(30) |  |
+| EMA_FECHA_MOV | DATE |  |
+
+### VEHI_DET_MANTENCION
+443 filas · PK: EMA_ANO, NO_CIA, EMA_NRO_TRABAJO, DOM_ID, VAL_CODIGO
+
+| Columna | Tipo | |
+|---|---|---|
+| EMA_ANO **PK** | NUMBER(4, 0) |  |
+| NO_CIA **PK** | VARCHAR2(2) |  |
+| EMA_NRO_TRABAJO **PK** | NUMBER(10, 0) |  |
+| DOM_ID **PK** | NUMBER(3, 0) |  |
+| VAL_CODIGO **PK** | NUMBER(3, 0) |  |
+| DMA_USER | VARCHAR2(30) |  |
+| DMA_PC | VARCHAR2(30) |  |
+| DMA_FECHA_MOV | DATE |  |
+
+### VEHI_TALLER
+55 filas · PK: NO_CIA, TAL_RUT
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| TAL_RUT **PK** | NUMBER(12, 0) | *NN* |
+| TAL_DV | VARCHAR2(1) |  |
+| TAL_RUBRO | VARCHAR2(6) | *NN* |
+| TAL_NOMBRE | VARCHAR2(100) |  |
+| TAL_DIRECCION | VARCHAR2(100) |  |
+| TAL_COMUNA | VARCHAR2(6) |  |
+| TAL_CIUDAD | VARCHAR2(6) |  |
+| TAL_FONO | VARCHAR2(15) |  |
+| TAL_FAX | VARCHAR2(15) |  |
+| TAL_EMAIL | VARCHAR2(30) |  |
+| TAL_NOMBRE_CONTACTO | VARCHAR2(100) |  |
+| TAL_FONO_CONTACTO | VARCHAR2(15) |  |
+| TAL_CELULAR_CONTACTO | VARCHAR2(15) |  |
+| TAL_EMAIL_CONTACTO | VARCHAR2(30) |  |
+| TAL_OBSERV | VARCHAR2(500) |  |
+| TAL_BLOQUEADO | VARCHAR2(1) |  |
+| TAL_FECHA_BLOQUEO | DATE |  |
+| TAL_MOTIVO_BLOQUEO | VARCHAR2(200) |  |
+| TAL_ELECTRICIDAD_AUTO | VARCHAR2(1) |  |
+| TAL_MECANICA_DIESEL | VARCHAR2(1) |  |
+| TAL_MECANICA_GRAL | VARCHAR2(1) |  |
+| TAL_HORNO_SECADO | VARCHAR2(1) |  |
+| TAL_DESABOLLA_PINTA | VARCHAR2(1) |  |
+| TAL_PERS_JEFE | VARCHAR2(1) |  |
+| TAL_CANT_JEFE | NUMBER(5, 0) |  |
+| TAL_PERS_TECNICO | VARCHAR2(1) |  |
+| TAL_CANT_TECNICO | NUMBER(5, 0) |  |
+| TAL_PERS_MECANICO | VARCHAR2(1) |  |
+| TAL_CANT_MECANICO | NUMBER(5, 0) |  |
+| TAL_PERS_AYUDANTE | VARCHAR2(1) |  |
+| TAL_CANT_AYUDANTE | NUMBER(5, 0) |  |
+| TAL_PERS_ALUMNO | VARCHAR2(1) |  |
+| TAL_CANT_ALUMNO | NUMBER(5, 0) |  |
+| TAL_REG_MANUAL | VARCHAR2(1) |  |
+| TAL_REG_COMPUTARIZADO | VARCHAR2(1) |  |
+| TAL_REG_MIXTO | VARCHAR2(1) |  |
+| TAL_NRO_POZOS | NUMBER(3, 0) |  |
+| TAL_NRO_TECLES | NUMBER(3, 0) |  |
+| TAL_NRO_RAMPLAS | NUMBER(3, 0) |  |
+| TAL_SENSOR_ELECT | VARCHAR2(1) |  |
+| TAL_SCANER | VARCHAR2(1) |  |
+| TAL_MONITORES | VARCHAR2(1) |  |
+| TAL_HERRAM_INSTRU | VARCHAR2(1) |  |
+| TAL_SUP_OPERACIONAL | NUMBER(10, 2) |  |
+| TAL_SUP_ESTACIONAMIENTO | NUMBER(10, 2) |  |
+| TAL_SERVICIO_GRUA | VARCHAR2(1) |  |
+| TAL_STOCK_RESPTO | VARCHAR2(1) |  |
+| TAL_CIA_SEGURO | VARCHAR2(1) |  |
+| TAL_SEGURO_RIESGO_VEHI | VARCHAR2(1) |  |
+| TAL_VIGILANCIA_NOCT | VARCHAR2(1) |  |
+| TAL_EMERGENCIA_FUERA | VARCHAR2(1) |  |
+| TAL_PERMITE_FISCAL_JOB | VARCHAR2(1) |  |
+| TAL_USER | VARCHAR2(30) |  |
+| TAL_PC | VARCHAR2(30) |  |
+| TAL_FECHA_MOV | DATE |  |
+| LOCA_CODIGO | VARCHAR2(6) |  |
+| LOCA_TIPO | VARCHAR2(1) |  |
+| LOCA_CODIGO_OLD | VARCHAR2(6) |  |
+| LOCA_TIPO_OLD | VARCHAR2(1) |  |
+| DOM_ID | NUMBER(3, 0) |  |
+| VAL_CODIGO | NUMBER(3, 0) |  |
+
+### VEHI_DET_TALLER
+369 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA | VARCHAR2(2) | *NN* |
+| TAL_RUT | NUMBER(12, 0) | *NN* |
+| DOM_ID | NUMBER(3, 0) | *NN* |
+| VAL_CODIGO | NUMBER(3, 0) | *NN* |
+| DTL_VALOR_LIVIANO | NUMBER(10, 0) |  |
+| DTL_VALOR_MEDIANO | NUMBER(10, 0) |  |
+| DTL_VALOR_GRANDE | NUMBER(10, 0) |  |
+| VIG_DESDE | DATE | *NN* |
+| VIG_HASTA | DATE | *NN* |
+| DTL_USER | VARCHAR2(30) |  |
+| DTL_PC | VARCHAR2(30) |  |
+| DTL_FECHA_MOV | DATE |  |
+
+### VEHI_ENC_DCTO
+5 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA_TAL | VARCHAR2(2) | *NN* |
+| TAL_RUT | NUMBER | *NN* |
+| EDC_NRO_DCTO | NUMBER(4, 0) | *NN* |
+| DOM_ID | NUMBER(3, 0) |  |
+| VAL_CODIGO | NUMBER(3, 0) |  |
+| EDC_FECHA | DATE | *NN* |
+| PATENTE | VARCHAR2(6) | *NN* |
+| EMA_ANO | NUMBER(4, 0) | *NN* |
+| NO_CIA_EMA | CHAR(2) | *NN* |
+| EMA_NRO_TRABAJO | NUMBER(10, 0) | *NN* |
+| EDC_ORD_COMPRA | CHAR(10) |  |
+| EDC_OBSERVACION | VARCHAR2(250) |  |
+| EDC_PC | VARCHAR2(30) |  |
+| EDC_USER | VARCHAR2(30) |  |
+| EDC_FECHA_MOV | DATE |  |
+
+### VEHI_DET_DCTO
+5 filas · PK: NO_CIA_TAL, TAL_RUT, DOM_ID, VAL_CODIGO
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA_TAL **PK** | VARCHAR2(2) | *NN* |
+| TAL_RUT **PK** | NUMBER | *NN* |
+| EDC_NRO_DCTO | NUMBER(4, 0) | *NN* |
+| DOM_ID **PK** | NUMBER(3, 0) | *NN* |
+| VAL_CODIGO **PK** | NUMBER(3, 0) | *NN* |
+| DDC_VALOR_UNITARIO | NUMBER(10, 0) | *NN* |
+| DDC_CANTIDAD | NUMBER(8, 0) | *NN* |
+| DDC_USER | VARCHAR2(30) |  |
+| DDC_PC | VARCHAR2(30) |  |
+| DDC_FECHA_MOV | DATE |  |
+
+### INGRESO_GASTO
+12.560 filas · PK: ING_CORRELATIVO
+
+| Columna | Tipo | |
+|---|---|---|
+| ING_CORRELATIVO **PK** | NUMBER | *NN* |
+| NO_CIA | VARCHAR2(2) | *NN* |
+| PATENTE | VARCHAR2(6) | *NN* |
+| ING_FECHA | DATE | *NN* |
+| ING_GLOSA | VARCHAR2(400) |  |
+| ING_MONTO | NUMBER(12, 0) |  |
+| ING_KM | NUMBER(10, 0) |  |
+| ING_DCTO | VARCHAR2(6) |  |
+| ING_CIA_SEGURO | VARCHAR2(1) |  |
+| PROGRAMA | VARCHAR2(2) |  |
+| SUBPROG | VARCHAR2(2) |  |
+| ACTIVIDAD | VARCHAR2(2) |  |
+| REQ_APROBADO | VARCHAR2(6) |  |
+| REQ_ANO | NUMBER(4, 0) |  |
+| ING_USER | VARCHAR2(30) |  |
+| ING_PC | VARCHAR2(30) |  |
+| ING_FECHA_MOV | DATE |  |
+
+### TIPO_GASTO
+8 filas · PK: COD_TIPO_GASTO
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO_GASTO **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(100) |  |
+
+### SUBTIPO_GASTO
+10 filas · PK: COD_TIPO_GASTO, COD_SUBTIPO_GASTO · FK: COD_TIPO_GASTO → TIPO_GASTO
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO_GASTO **PK** | VARCHAR2(2) | *NN* |
+| COD_SUBTIPO_GASTO **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(100) |  |
+
+### DETALLE_GASTO
+71 filas · PK: COD_TIPO_GASTO, COD_SUBTIPO_GASTO, COD_DETALLE · FK: COD_TIPO_GASTO, COD_SUBTIPO_GASTO → SUBTIPO_GASTO
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO_GASTO **PK** | VARCHAR2(2) | *NN* |
+| COD_SUBTIPO_GASTO **PK** | VARCHAR2(2) | *NN* |
+| COD_DETALLE **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(100) |  |
+| COSTO | NUMBER |  |
+
+### MANT_POR_KM
+1 filas · PK: COD_TIPO_MANTENCION
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO_MANTENCION **PK** | VARCHAR2(2) | *NN* |
+| DESC_MANT | VARCHAR2(50) |  |
+| NRO_KMTS | NUMBER |  |
+
+
+## Modelo anterior (2000-2005, sin uso)
+
+### MEMORAMDUM
+1.405 filas · PK: NO_CIA, ANO, NUM_MEMO · FK: COD_TIPO_SALIDA → TIPO_SALIDA
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| ANO **PK** | NUMBER(4, 0) | *NN* |
+| NUM_MEMO **PK** | NUMBER(5, 0) | *NN* |
+| COD_TIPO_SALIDA | VARCHAR2(2) |  |
+| FECHA_DOCTO | DATE |  |
+| HORA_DOCTO | DATE |  |
+| FECHA_SALIDA | DATE |  |
+| HORA_SALIDA | DATE |  |
+| FECHA_REGRESO | DATE |  |
+| HORA_REGRESO | DATE |  |
+| NRO_DIAS | NUMBER(3, 0) |  |
+| DESTINO | VARCHAR2(100) |  |
+| REGION | VARCHAR2(2) |  |
+| KM_APROX | NUMBER |  |
+| OBSERVACION | VARCHAR2(100) |  |
+| ESTADO | VARCHAR2(1) |  |
+
+### DET_MEMO
+1.425 filas · PK: NO_CIA, ANO, NUM_MEMO, LINEA · FK: NO_CIA, ANO, NUM_MEMO → MEMORAMDUM; TIPO_VEHICULO → TIPOS_VEHICULOS
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| ANO **PK** | NUMBER(4, 0) | *NN* |
+| NUM_MEMO **PK** | NUMBER(5, 0) | *NN* |
+| LINEA **PK** | NUMBER | *NN* |
+| COD_TIPO | VARCHAR2(2) |  |
+| TIPO_VEHICULO | VARCHAR2(2) |  |
+| IND_CONDUCTOR | VARCHAR2(1) |  |
+| SPORT_WAGON | VARCHAR2(1) |  |
+| TRACCION | VARCHAR2(1) |  |
+| CAPACIDAD | VARCHAR2(1) |  |
+| CC_1 | VARCHAR2(3) |  |
+| CC_2 | VARCHAR2(3) |  |
+| CC_3 | VARCHAR2(3) |  |
+| PROGRAMA | VARCHAR2(2) |  |
+| SUBPROG | VARCHAR2(2) |  |
+| ACTIVIDAD | VARCHAR2(2) |  |
+| TAREA | VARCHAR2(2) |  |
+| NOM_COND | VARCHAR2(50) |  |
+| ROL_EMP | VARCHAR2(10) |  |
+
+### DET_MEMO_ACOMP
+7 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA | VARCHAR2(2) |  |
+| ANO | NUMBER(4, 0) |  |
+| NUM_MEMO | NUMBER(5, 0) |  |
+| LINEA | NUMBER |  |
+| NO_CIA_EMPLE | VARCHAR2(2) |  |
+| NO_EMPLE | VARCHAR2(10) |  |
+| OBSERVACION | VARCHAR2(100) |  |
+| ROL_EMP | VARCHAR2(10) |  |
+
+### DET_OTROS_ACOMP
+0 filas · FK: NO_CIA, ANO, NUM_MEMO, LINEA → DET_MEMO
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA | VARCHAR2(2) |  |
+| ANO | NUMBER(4, 0) |  |
+| NUM_MEMO | NUMBER(5, 0) |  |
+| LINEA | NUMBER |  |
+| NOMBRE | VARCHAR2(50) |  |
+| OBSERVACION | VARCHAR2(100) |  |
+
+### SALIDAS_VEHICULO
+2.899 filas · PK: NO_CIA, PATENTE, ANO, NUM_MEMO, LINEA
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| ANO **PK** | NUMBER(4, 0) | *NN* |
+| NUM_MEMO **PK** | NUMBER(5, 0) | *NN* |
+| LINEA **PK** | NUMBER(3, 0) | *NN* |
+| OBSERVACIONES | VARCHAR2(100) |  |
+| FECHA_LLEGADA | DATE |  |
+| HORA_LLEGADA | DATE |  |
+| KM_INI | NUMBER(7, 0) |  |
+| KM_FIN | NUMBER(7, 0) |  |
+| NRO_VALES_ENT | NUMBER(10, 0) |  |
+| SERIE_DESDE_ENT | VARCHAR2(2) |  |
+| VALE_DESDE_ENT | NUMBER(10, 0) |  |
+| SERIE_HASTA | VARCHAR2(2) |  |
+| VALE_HASTA_ENT | NUMBER(10, 0) |  |
+| NRO_VALES_DEV | NUMBER(10, 0) |  |
+| SERIE_DESDE_DEV | VARCHAR2(2) |  |
+| VALE_DESDE_DEV | NUMBER(10, 0) |  |
+| SERIE_HASTA_DEV | VARCHAR2(2) |  |
+| VALE_HASTA_DEV | NUMBER(10, 0) |  |
+| IND_CORRELATIVO | VARCHAR2(1) |  |
+
+### MANTENCION_VEHIC
+985 filas · PK: NRO_ORDEN, PATENTE
+
+| Columna | Tipo | |
+|---|---|---|
+| NRO_ORDEN **PK** | NUMBER | *NN* |
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| FECHA | DATE |  |
+| NO_CIA_PROVE | VARCHAR2(2) |  |
+| NO_PROVE | VARCHAR2(9) |  |
+| TIPO_DOC | VARCHAR2(2) |  |
+| NO_DOCU | VARCHAR2(12) |  |
+| OBSERVACION | VARCHAR2(100) |  |
+| KILOMETRAJE | NUMBER |  |
+
+### DET_MANTENCION
+0 filas · PK: NRO_ORDEN, PATENTE, COD_TIPO_GASTO, COD_SUBTIPO_GASTO, COD_DETALLE · FK: NRO_ORDEN, PATENTE → MANTENCION_VEHIC; COD_TIPO_GASTO, COD_SUBTIPO_GASTO, COD_DETALLE → DETALLE_GASTO
+
+| Columna | Tipo | |
+|---|---|---|
+| NRO_ORDEN **PK** | NUMBER | *NN* |
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| COD_TIPO_GASTO **PK** | VARCHAR2(2) | *NN* |
+| COD_SUBTIPO_GASTO **PK** | VARCHAR2(2) | *NN* |
+| COD_DETALLE **PK** | VARCHAR2(2) | *NN* |
+| MONTO | NUMBER |  |
+
+### MANTENCION_VEHICULO
+4 filas · PK: MVE_NRO_ORDEN, PATENTE
+
+| Columna | Tipo | |
+|---|---|---|
+| MVE_NRO_ORDEN **PK** | NUMBER(10, 0) | *NN* |
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| MVE_FECHA | DATE | *NN* |
+| MVE_NO_PROVE | NUMBER(10, 0) |  |
+| MVE_NO_PROVE_DV | CHAR(1) |  |
+| MVE_NO_PROVE_NOM | VARCHAR2(100) |  |
+| MVE_TIPO_DOCU | VARCHAR2(2) |  |
+| MVE_NRO_DOCU | NUMBER(10, 0) |  |
+| MVE_OBS | VARCHAR2(250) |  |
+| MVE_KM_ACTUAL | NUMBER(8, 0) | *NN* |
+
+### DETALLE_MANTENCION
+4 filas · PK: MVE_NRO_ORDEN, PATENTE, COD_TIPO_GASTO, COD_SUBTIPO_GASTO, COD_DETALLE · FK: COD_TIPO_GASTO, COD_SUBTIPO_GASTO, COD_DETALLE → DETALLE_GASTO
+
+| Columna | Tipo | |
+|---|---|---|
+| MVE_NRO_ORDEN **PK** | NUMBER(10, 0) | *NN* |
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| COD_TIPO_GASTO **PK** | VARCHAR2(2) | *NN* |
+| COD_SUBTIPO_GASTO **PK** | VARCHAR2(2) | *NN* |
+| COD_DETALLE **PK** | VARCHAR2(2) | *NN* |
+
+### ESTADO_VEHIC_DIA
+18.995 filas · PK: PATENTE, FECHA, TURNO · FK: COD_UBICACION → UBICACION
+
+| Columna | Tipo | |
+|---|---|---|
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| FECHA **PK** | DATE | *NN* |
+| TURNO **PK** | VARCHAR2(1) | *NN* |
+| COD_UBICACION | VARCHAR2(2) |  |
+| HORA | DATE |  |
+| OBSERVACION | VARCHAR2(100) |  |
+| KILOMETRAJE | NUMBER |  |
+| COMBUSTIBLE | VARCHAR2(20) |  |
+| NO_CIA | VARCHAR2(2) |  |
+
+### DET_ESTADO_DIA
+1.506 filas · PK: PATENTE, FECHA, TURNO, COD_TIPO_REVISION · FK: PATENTE, FECHA, TURNO → ESTADO_VEHIC_DIA; COD_TIPO_REVISION → TIPO_REVISION
+
+| Columna | Tipo | |
+|---|---|---|
+| PATENTE **PK** | VARCHAR2(6) | *NN* |
+| FECHA **PK** | DATE | *NN* |
+| TURNO **PK** | VARCHAR2(1) | *NN* |
+| COD_TIPO_REVISION **PK** | VARCHAR2(2) | *NN* |
+| ESTADO | VARCHAR2(30) |  |
+| OBS | VARCHAR2(30) |  |
+
+### TIPO_REVISION
+19 filas · PK: COD_TIPO_REVISION
+
+| Columna | Tipo | |
+|---|---|---|
+| COD_TIPO_REVISION **PK** | VARCHAR2(2) | *NN* |
+| DESCRIPCION | VARCHAR2(50) |  |
+
+
+## Parámetros y control
+
+### VEHI_PARAMETROS
+1 filas
+
+| Columna | Tipo | |
+|---|---|---|
+| PAR_DIG_REV_ABR | NUMBER(2, 0) |  |
+| PAR_DIG_REV_MAY | NUMBER(2, 0) |  |
+| PAR_DIG_REV_JUN | NUMBER(2, 0) |  |
+| PAR_DIG_REV_JUL | NUMBER(2, 0) |  |
+| PAR_DIG_REV_AGO | NUMBER(2, 0) |  |
+| PAR_DIG_REV_SEP | NUMBER(2, 0) |  |
+| PAR_DIG_REV_OCT | NUMBER(2, 0) |  |
+| PAR_DIG_REV_NOV | NUMBER(2, 0) |  |
+| PAR_DIG_REV_DIC | NUMBER(2, 0) |  |
+| PAR_DIG_REV_ENE | NUMBER(2, 0) |  |
+| CIA_SEG_VEHI_MEDIANO | VARCHAR2(60) |  |
+| POL_SEG_VEHI_MEDIANO | VARCHAR2(15) |  |
+| FEC_INI_VEHI_MEDIANO | DATE |  |
+| FEC_FIN_VEHI_MEDIANO | DATE |  |
+| CIA_SEG_VEHI_GRANDE | VARCHAR2(60) |  |
+| POL_SEG_VEHI_GRANDE | VARCHAR2(15) |  |
+| FEC_INI_VEHI_GRANDE | DATE |  |
+| FEC_FIN_VEHI_GRANDE | DATE |  |
+| VENCIM_PER_CIRC | DATE |  |
+| FONO_ASIST_MEDIANO | VARCHAR2(15) |  |
+| FONO_ASIST_GRANDE | VARCHAR2(15) |  |
+
+### VEHI_DOMINIO
+15 filas · PK: DOM_ID
+
+| Columna | Tipo | |
+|---|---|---|
+| DOM_ID **PK** | NUMBER(3, 0) | *NN* |
+| DOM_DESCRIPCION | VARCHAR2(250) | *NN* |
+| DOM_ID_REF | NUMBER(3, 0) |  |
+| DOM_USER | CHAR(30) |  |
+| DOM_PC | VARCHAR2(30) |  |
+| DOM_FECHA_MOV | DATE |  |
+
+### VEHI_VALOR_DOMINIO
+177 filas · PK: DOM_ID, VAL_CODIGO
+
+| Columna | Tipo | |
+|---|---|---|
+| DOM_ID **PK** | NUMBER(3, 0) | *NN* |
+| VAL_CODIGO **PK** | NUMBER(3, 0) | *NN* |
+| VAL_DESCRIPCION | VARCHAR2(250) |  |
+| DOM_ID_REF | NUMBER(3, 0) |  |
+| VAL_COD_REF | NUMBER(3, 0) |  |
+| VAL_USER | VARCHAR2(30) |  |
+| VAL_PC | VARCHAR2(30) |  |
+| VAL_FECHA_MOV | DATE |  |
+
+### VEHI_CIERRE
+15 filas · PK: NO_CIA, CIE_ULTIMO
+
+| Columna | Tipo | |
+|---|---|---|
+| NO_CIA **PK** | VARCHAR2(2) | *NN* |
+| CIE_ULTIMO **PK** | DATE | *NN* |
+| CIE_USER | VARCHAR2(30) |  |
+| CIE_PC | VARCHAR2(30) |  |
+| CIE_FECHA | DATE |  |
+
+### MESES
+12 filas · PK: NRO_MES
+
+| Columna | Tipo | |
+|---|---|---|
+| NRO_MES **PK** | NUMBER(2, 0) | *NN* |
+| NOMBRE_MES | VARCHAR2(20) |  |

@@ -1,0 +1,5 @@
+# Respaldo de GESAD y datos extraídos: contienen datos personales (Ley N° 21.719)
+*.dmp
+*.csv
+datos/
+_resumen.json
