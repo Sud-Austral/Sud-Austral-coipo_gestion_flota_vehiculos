@@ -16,22 +16,28 @@ vencimientos legales y combustible. Requerimiento de la Sección Servicios Gener
 
 ## Cómo probarla
 
-El selector **«Ver como»** de la cabecera cambia entre los cinco perfiles del ERS. Cada
-perfil ve sus propios módulos:
+El selector **«Ver como»** de la cabecera cambia entre los cinco perfiles del ERS. Desde la versión 0.3 la navegación se ordena por tareas y no por las pantallas de GESAD: cada perfil ve sólo lo que usa, y el detalle de una salida, un vehículo o un conductor se abre en un panel lateral.
 
-| Perfil | Qué se puede probar |
-|---|---|
-| Funcionario solicitante | Nueva solicitud con revisión automática (días inhábiles DL 799, relevo sobre 400 km diarios, capacidad, conductor habilitado, imputación); seguimiento de sus solicitudes y orden de salida |
-| Jefatura directa | Bandeja de aprobación: aprobar, observar o rechazar con comentario |
-| Encargado de vehículos | Panel del día, asignación de patente y conductor con filtros de requisitos, visor Gantt, registro de salida y regreso, hoja de vida del vehículo, padrón de conductores, reportes por programa y centro de costo, y **reporte mensual o anual para Tesorería** (Excel, una fila por persona y salida finalizada) |
-| Conductor | Agenda de cometidos y registro de odómetro, combustible y novedades mecánicas |
-| Administrador nacional | Todo lo anterior, más calidad de datos de la carga inicial, tablas maestras, traspaso entre regiones y registro de auditoría |
+| Perfil | Menú | Qué se puede probar |
+|---|---|---|
+| Funcionario solicitante | Mis salidas · Nueva solicitud · Disponibilidad | Solicitud con revisión automática (días inhábiles DL 799, relevo sobre 400 km diarios, capacidad, conductor habilitado, imputación) y seguimiento |
+| Jefatura directa | Por aprobar · Salidas de mi equipo | Aprobar, observar o rechazar con comentario; historial del equipo |
+| Encargado de vehículos | Hoy · Salidas · Flota · Conductores · Combustible y gastos · Reportes | Ver detalle abajo |
+| Conductor | Mis viajes | Registrar la salida y el regreso del vehículo, con odómetro, combustible e inventario |
+| Administrador nacional | Lo mismo que el encargado, más Configuración | Catálogos, usuarios y accesos, cierre mensual, calidad de datos, traspasos y auditoría |
 
-Para ver el flujo completo: como **Funcionario solicitante**, envíe la solicitud de
-ejemplo desde «Nueva solicitud»; como **Jefatura directa**, apruébela; como **Encargado de
-vehículos**, asígnele vehículo y conductor en «Asignación» (se abre la orden de salida con
-código QR) y revísela en el «Visor Gantt». La solicitud de ejemplo **OC-2026-000410**
-muestra cómo el sistema descarta un camión con la revisión técnica vencida.
+Lo que ve el encargado de vehículos, y qué función de GESAD reemplaza cada parte:
+
+| Menú | Contenido | Reemplaza en GESAD |
+|---|---|---|
+| Hoy | Pendientes del día (asignar, entregar, recibir, novedades mecánicas), próximos vencimientos y **cierre de jornada del libro de guardia** | Salidas del día, Guarde de vehículos, Movimiento diario |
+| Salidas | Lista única con filtros (por asignar, próximas, en terreno, finalizadas) o vista de calendario. Desde el detalle se asigna, se entrega y se recibe el vehículo, con **inventario de accesorios** al entregar y al recibir | Ingreso de solicitudes, Consulta de salidas, Consulta por conductor y por pasajeros |
+| Flota | **Hoja de vida** de cada vehículo: documentos, mantención (órdenes de trabajo y cierre con factura), combustible, gastos, **accidentes**, inventario, libro de guardia y salidas | Ficha de vehículos, Seguros, Accidentes de tránsito, Ubicación, Mantenciones, Ficha de taller, Orden de trabajo |
+| Conductores | Padrón con caución y licencia; los bloqueados no aparecen en las asignaciones | Conductores, Ficha de conductores |
+| Combustible y gastos | Cargas, **importación validada del archivo COPEC**, compras a granel y gastos por documento (factura o boleta) | Carga archivo Copec, Ingreso combustible en efectivo, Compra a granel, Ingreso de gastos |
+| Reportes | Kilómetros y costos, **Tesorería** (Excel mensual o anual), operatividad mensual, rendimiento de combustible y gastos por vehículo | Reportes de consumo, rendimiento, gastos y operatividad mensual |
+
+Para ver el flujo completo: en **Hoy**, asigne la solicitud **OC-2026-000410** (el camión FXHB-90 queda descartado por su revisión técnica vencida). Luego entregue **OC-2026-000408** en «Salidas → Próximas» desmarcando un accesorio y recíbala marcando «Hubo un accidente»: se abre el registro del accidente en la hoja de vida del vehículo.
 
 ## Análisis de GESAD
 
@@ -47,7 +53,7 @@ Antes de diseñar el nuevo sistema, la UIA analizó GESAD, el sistema que hoy re
 ## Contenido del repositorio
 
 - `index.html`: la maqueta completa en un solo archivo (código y estilos incluidos). Es
-  la versión publicada en GitHub Pages (v0.2, con reporte para Tesorería).
+  la versión publicada en GitHub Pages (v0.3, navegación por tareas).
 - `banner-gefa.jpg` y `banner-gefa-corto.jpg`: banners de la Gerencia de Finanzas y
   Administración, tomados de `identidad/` de coipo_master_produccion.
 - `.nojekyll`: indica a GitHub Pages que publique los archivos sin procesarlos.
