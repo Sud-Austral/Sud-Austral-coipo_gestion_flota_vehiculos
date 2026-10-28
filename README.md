@@ -8,8 +8,6 @@ vencimientos legales y combustible. Requerimiento de la Sección Servicios Gener
 
 **Ver la maqueta:** https://sud-austral.github.io/Sud-Austral-coipo_gestion_flota_vehiculos/
 
-Copia institucional del repositorio de trabajo [alvarozvjac/coipo_gestion_flota_vehiculos](https://github.com/alvarozvjac/coipo_gestion_flota_vehiculos).
-
 > Demostración no operacional. Los vehículos y sus vencimientos son datos reales de
 > Oficina Central (planilla de mantenciones al 28-09-2026), con los números de motor y
 > chasis enmascarados. Personas, RUT, pólizas y cargas de combustible son ficticios
