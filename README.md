@@ -6,7 +6,9 @@ y conductor, control de caución y licencia (Decreto Ley N° 799), mantenciones,
 vencimientos legales y combustible. Requerimiento de la Sección Servicios Generales
 (GEFA), elaborado por la Unidad de Información y Análisis (UIA).
 
-**Ver la maqueta:** https://alvarozvjac.github.io/coipo_gestion_flota_vehiculos/
+**Ver la maqueta:** https://sud-austral.github.io/Sud-Austral-coipo_gestion_flota_vehiculos/
+
+Copia institucional del repositorio de trabajo [alvarozvjac/coipo_gestion_flota_vehiculos](https://github.com/alvarozvjac/coipo_gestion_flota_vehiculos).
 
 > Demostración no operacional. Los vehículos y sus vencimientos son datos reales de
 > Oficina Central (planilla de mantenciones al 28-09-2026), con los números de motor y
