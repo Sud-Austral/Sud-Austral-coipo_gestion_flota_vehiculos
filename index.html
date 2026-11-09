@@ -1612,7 +1612,6 @@ VEH.filter(v=>v.modalidad.startsWith("Pool")&&v.estado==="DISP").forEach((v,i)=>
     CARGAS.push({id:nCarga++,fecha:iso(f).slice(0,10),pat:v.pat,origen:j===3&&i%4===0?"Efectivo":"Tarjeta COPEC",est:ESTACIONES[(i+j)%ESTACIONES.length],lt:lts[j],monto:lts[j]*(v.comb.startsWith("Diésel")?1180:1320),km:kms[j],cond:["c1","c2","c3","p6","p7"][(i+j)%5]});
   }
 });
-let GRANEL = {compras:[{fecha:"2026-09-02",lt:1000,prov:"Copec · compra a granel",doc:"Factura 884512",monto:1180000}],dist:[{fecha:"2026-09-18",pat:"FXHB-90",lt:120},{fecha:"2026-10-02",pat:"JXZS-29",lt:80}]};
 const COPEC_ARCHIVO = [
  {fecha:"2026-10-19",pat:"SZWY-98",tarjeta:"TCT ···· 4366",lt:41,monto:54120,km:80790,est:"Copec Ruta 5 Sur km 150"},
  {fecha:"2026-10-20",pat:"SZWY-98",tarjeta:"TCT ···· 4366",lt:38,monto:50160,km:80420,est:"Petrobras Chillán"},
@@ -1819,7 +1818,7 @@ function accesosGestion(){
    {v:"flota",ico:"car",t:"Flota",d:`Hoy: ${ne("DISP")} disponibles de ${VEH.length}, ${ne("TERR")} en terreno, ${ne("TALL_P")+ne("TALL_C")} en taller y ${ne("MALO")+ne("EXCL")+ne("BAJA")} fuera de servicio o exclusivos.`,cta:"Ver vehículos"},
    {v:"taller",ico:"taller",t:"Taller y documentos",d:(()=>{const T=tallerLista(), c=k=>T.filter(x=>x.it.some(i=>i.k===k)).length; return `${c("nov")} con novedad, ${c("mant")} con mantención, ${c("ot")} en taller y ${c("doc")} con documentos por renovar.`;})(),cta:"Atender pendientes",n:tallerLista().length,nl:"vehículos con pendientes",aviso:tallerLista().some(x=>x.it.some(i=>i.urg>=3))},
    {v:"conductores",ico:"licencia",t:"Conductores",d:"Caución y licencia de cada conductor. Los bloqueados no se pueden asignar.",cta:"Ver padrón",n:porVencer,nl:"por vencer o bloqueados",aviso:porVencer>0},
-   {v:"combustible",ico:"combustible",t:"Combustible y gastos",d:"Cargas, archivo COPEC, compras a granel y gastos por factura o boleta.",cta:"Ver combustible y gastos"},
+   {v:"combustible",ico:"combustible",t:"Combustible y gastos",d:"Cargas, archivo COPEC y gastos por factura o boleta.",cta:"Ver combustible y gastos"},
    {v:"reportes",ico:"grafico",t:"Reportes",d:"Excel mensual o anual de kilómetros y costos, cometidos y gastos por vehículo; operatividad y rendimiento.",cta:"Ver reportes"}];
   if(rol==="super") ACCESOS.push({v:"config",ico:"config",t:"Configuración",d:"Catálogos, usuarios y accesos, cierre mensual y auditoría.",cta:"Configurar"});
   return ACCESOS;
@@ -2223,7 +2222,7 @@ function abrirConductor(id){
 /* ======================= COMBUSTIBLE Y GASTOS ======================= */
 function rendimientos(){ const out=[]; VEH.forEach(v=>{const cs=CARGAS.filter(c=>c.pat===v.pat).sort((a,b)=>a.km-b.km); cs.forEach((c,i)=>{ if(i){ out.push({...c,rend:(c.km-cs[i-1].km)/c.lt}); } })}); return out; }
 function vCombustible(){
-  const t=sel.combTab, tabs=[["cargas","Cargas"],["copec","Importar archivo COPEC"],["granel","Compras a granel"],["gastos","Gastos por documento"]];
+  const t=sel.combTab, tabs=[["cargas","Cargas"],["copec","Importar archivo COPEC"],["gastos","Gastos por documento"]];
   let c="";
   if(t==="cargas"){ const lista=CARGAS.slice().sort((a,b)=>b.fecha.localeCompare(a.fecha)); const rd=Object.fromEntries(rendimientos().map(r=>[r.id,r.rend]));
     c=`<section class="panel"><div class="tabla-env"><table><thead><tr><th>Fecha</th><th>Patente</th><th>Origen</th><th>Estación</th><th>Litros</th><th>Monto</th><th>Odómetro</th><th>km/L</th><th>Conductor</th></tr></thead><tbody>${lista.map(x=>`<tr class="clic" data-veh="${x.pat}"><td class="num">${fF(x.fecha)}</td><td>${placa(x.pat)}</td><td class="peq">${x.origen}</td><td class="peq">${esc(x.est)}</td><td class="d">${x.lt}</td><td class="d">${clp(x.monto)}</td><td class="d">${km(x.km)}</td><td class="d">${rd[x.id]?(rd[x.id]<6?chip(rd[x.id].toFixed(1).replace(".",",")+" bajo","c-pend","!"):rd[x.id].toFixed(1).replace(".",",")):"—"}</td><td class="peq">${esc(nom(x.cond))}</td></tr>`).join("")}</tbody></table></div><div class="pie-tabla"><span>${lista.length} cargas · ${lista.reduce((s,x)=>s+x.lt,0)} litros</span><span class="total">${clp(lista.reduce((s,x)=>s+x.monto,0))}</span></div></section>`; }
@@ -2231,14 +2230,9 @@ function vCombustible(){
     c=`<section class="panel"><header><div><h2>Archivo de transacciones COPEC</h2><span class="sub">copec_transacciones_octubre_2026.csv · ${COPEC_ARCHIVO.length} filas (ejemplo)</span></div>${copecImportado?chip("Importado","c-disp","✓"):`<button class="btn" type="button" id="btn-copec">Importar ${ok.length} filas válidas</button>`}</header>
     <div class="cuerpo"><p class="tenue peq">Reemplaza la «Carga archivo Copec» de GESAD. Antes de importar se valida cada fila: patente registrada, kilometraje mayor que la carga anterior, rendimiento razonable y filas duplicadas.</p></div>
     <div class="tabla-env"><table><thead><tr><th>Fecha</th><th>Patente</th><th>Tarjeta</th><th>Estación</th><th>Litros</th><th>Monto</th><th>Odómetro</th><th>Validación</th></tr></thead><tbody>${val.map(x=>`<tr><td class="num">${fF(x.fecha)}</td><td>${placa(x.pat)}</td><td class="mono peq">${x.tarjeta}</td><td class="peq">${esc(x.est)}</td><td class="d">${x.lt}</td><td class="d">${clp(x.monto)}</td><td class="d">${km(x.km)}</td><td>${x.err.length?x.err.map(e=>chip(e,"c-malo","✕")).join(" "):x.av.length?x.av.map(e=>chip(e,"c-pend","!")).join(" "):chip("Válida","c-disp","✓")}</td></tr>`).join("")}</tbody></table></div></section>`; }
-  if(t==="granel"){ const comp=GRANEL.compras.reduce((s,x)=>s+x.lt,0), dist=GRANEL.dist.reduce((s,x)=>s+x.lt,0);
-    c=`<div class="contadores"><div class="contador"><b>${km(comp)}</b><span>litros comprados</span></div><div class="contador"><b>${km(dist)}</b><span>litros distribuidos</span></div><div class="contador"><b>${km(comp-dist)}</b><span>litros en estanque</span></div></div>
-    <div class="grid g-2b"><section class="panel"><header><h2>Compras</h2></header><div class="tabla-env"><table><thead><tr><th>Fecha</th><th>Proveedor</th><th>Documento</th><th>Litros</th><th>Monto</th></tr></thead><tbody>${GRANEL.compras.map(x=>`<tr><td class="num">${fF(x.fecha)}</td><td>${esc(x.prov)}</td><td class="peq">${esc(x.doc)}</td><td class="d">${km(x.lt)}</td><td class="d">${clp(x.monto)}</td></tr>`).join("")}</tbody></table></div></section>
-    <section class="panel"><header><h2>Distribución a vehículos</h2></header><div class="tabla-env"><table><thead><tr><th>Fecha</th><th>Patente</th><th>Litros</th></tr></thead><tbody>${GRANEL.dist.map(x=>`<tr><td class="num">${fF(x.fecha)}</td><td>${placa(x.pat)}</td><td class="d">${x.lt}</td></tr>`).join("")}</tbody></table></div>
-    <form class="cuerpo grid" id="f-granel"><div class="campos"><div class="campo"><label for="gr-pat">Vehículo</label><select id="gr-pat">${VEH.map(v=>`<option>${v.pat}</option>`).join("")}</select></div><div class="campo"><label for="gr-lt">Litros</label><input type="number" id="gr-lt" min="1" max="${comp-dist}"></div></div><div class="acciones"><button class="btn" type="submit">Registrar distribución</button></div></form></section></div>`; }
   if(t==="gastos"){ const lista=GASTOS.slice().sort((a,b)=>b.fecha.localeCompare(a.fecha));
     c=`<p class="tenue peq" style="margin-bottom:var(--e-3)">Cada gasto se registra con su factura o boleta desde la ficha del vehículo. Las órdenes de trabajo cerradas generan su gasto automáticamente.</p><section class="panel"><div class="tabla-env"><table><thead><tr><th>Fecha</th><th>Patente</th><th>Documento</th><th>Proveedor</th><th>Tipo</th><th>Folio</th><th>Monto</th></tr></thead><tbody>${lista.map(x=>`<tr class="clic" data-veh="${x.pat}"><td class="num">${fF(x.fecha)}</td><td>${placa(x.pat)}</td><td class="peq">${x.doc} ${esc(x.n)}${x.ot?`<br><span class="tenue">${x.ot}</span>`:""}</td><td class="peq">${esc(x.prov)}</td><td class="peq">${TGX[x.tipo]}</td><td class="mono">${x.folio}</td><td class="d">${clp(x.monto)}</td></tr>`).join("")}</tbody></table></div><div class="pie-tabla"><span>${lista.length} documentos</span><span class="total">${clp(lista.reduce((s,x)=>s+x.monto,0))}</span></div></section>`; }
-  return cab("Combustible y gastos","Cargas con tarjeta o en efectivo, importación del archivo COPEC, compras a granel y gastos de cada vehículo.","GESAD «Combustible» · ERS §5.4")+tabsHTML(tabs,t,"data-ct")+c;
+  return cab("Combustible y gastos","Cargas con tarjeta o en efectivo, importación del archivo COPEC y gastos de cada vehículo.","GESAD «Combustible» · ERS §5.4")+tabsHTML(tabs,t,"data-ct")+c;
 }
 function validarCopec(){
   const vistos=new Set();
@@ -2254,7 +2248,6 @@ function validarCopec(){
 }
 post.combustible = ()=>{ const V=$("#vista"); V.querySelectorAll("[data-ct]").forEach(b=>b.onclick=()=>{sel.combTab=b.dataset.ct;render()});
   const bc=$("#btn-copec"); if(bc) bc.onclick=()=>{ const ok=validarCopec().filter(x=>!x.err.length); ok.forEach(x=>CARGAS.push({id:nCarga++,fecha:x.fecha,pat:x.pat,origen:"Tarjeta COPEC",est:x.est,lt:x.lt,monto:x.monto,km:x.km,cond:null})); copecImportado=true; audit("Importa archivo COPEC","octubre 2026","—",ok.length+" cargas"); tostada(`${ok.length} cargas importadas. ${COPEC_ARCHIVO.length-ok.length} filas rechazadas.`); render(); };
-  const fg=$("#f-granel"); if(fg) fg.onsubmit=e=>{e.preventDefault(); const lt=+$("#gr-lt").value; const disp=GRANEL.compras.reduce((s,x)=>s+x.lt,0)-GRANEL.dist.reduce((s,x)=>s+x.lt,0); if(!lt||lt>disp){tostada(`Ingresa entre 1 y ${disp} litros.`);return} const pat=$("#gr-pat").value; GRANEL.dist.push({fecha:iso(HOY).slice(0,10),pat,lt}); CARGAS.push({id:nCarga++,fecha:iso(HOY).slice(0,10),pat,origen:"Granel",est:"Estanque Oficina Central",lt,monto:0,km:VX[pat].km,cond:null}); audit("Distribuye combustible a granel",pat,"—",lt+" L"); tostada("Distribución registrada."); render(); };
 };
 
 /* ======================= REPORTES ======================= */
@@ -2284,7 +2277,7 @@ function vGastosVeh(){
   const {filas,tipos,tot}=resumenGastos();
   return `<section class="panel"><header><div><h2>Gastos por vehículo</h2><span class="sub">Combustible más gastos por documento · ${perTxt()}</span></div>${perCtl("gastos",filas.length)}</header>
   <div class="tabla-env">${filas.length?`<table class="t-centro"><thead><tr><th>Patente</th>${tipos.map(k=>`<th>${TGX[k]}</th>`).join("")}<th>Total</th></tr></thead><tbody>${filas.map(([p,o])=>`<tr class="clic" data-veh="${p}"><td>${placa(p)}</td>${tipos.map(k=>`<td class="num">${o[k]?clp(o[k]):"—"}</td>`).join("")}<td class="num"><b>${clp(o.t)}</b></td></tr>`).join("")}</tbody><tfoot><tr><th>Total</th>${tipos.map(k=>`<th class="num">${clp(tot[k])}</th>`).join("")}<th class="num">${clp(tot.t)}</th></tr></tfoot></table>`:vacio("Sin gastos en el periodo","Elige otro mes o el reporte anual.")}</div>
-  <div class="leyenda"><span class="tenue peq">Montos en pesos. Combustible: cargas con tarjeta, en efectivo e informadas al regreso; el granel se valoriza en la compra. Selecciona una patente para ver su hoja de vida.</span></div></section>`;
+  <div class="leyenda"><span class="tenue peq">Montos en pesos. Combustible: cargas con tarjeta, en efectivo e informadas al regreso. Selecciona una patente para ver su hoja de vida.</span></div></section>`;
 }
 function vReportes(){
   const t=sel.repTab, tabs=[["km","Kilómetros y costos"],["tes","Cometidos"],["oper","Operatividad mensual"],["rend","Rendimiento"],["gastos","Gastos por vehículo"]];
